@@ -9,10 +9,12 @@ type Product = {
   name: string;
   price: number;
   image_url: string;
+  images: string[] | null;
   category: string;
   product_type: string | null;
   character_theme: string | null;
   school_level: string | null;
+  is_archived: boolean | null;
 };
 
 export default function ProductSearch() {
@@ -27,8 +29,9 @@ export default function ProductSearch() {
       const { data } = await supabase
         .from("products")
         .select(
-          "id,name,price,image_url,category,product_type,character_theme,school_level"
+          "id,name,price,image_url,images,category,product_type,character_theme,school_level,is_archived"
         )
+        .or("is_archived.is.false,is_archived.is.null")
         .order("created_at", { ascending: false });
 
       setProducts((data as Product[]) || []);
@@ -52,6 +55,14 @@ export default function ProductSearch() {
       })
       .slice(0, 6);
   }, [products, search]);
+
+  function getProductImage(product: Product) {
+    if (product.images && product.images.length > 0) {
+      return product.images[0];
+    }
+
+    return product.image_url || "";
+  }
 
   function goToCatalogue() {
     if (!search.trim()) return;
@@ -77,7 +88,7 @@ export default function ProductSearch() {
         <input
           type="text"
           placeholder="Rechercher un article..."
-          className="w-full rounded-full border border-gray-300 px-5 py-3 text-sm text-black outline-none focus:border-pink-400"
+          className="w-full rounded-full border border-gray-300 px-5 py-2.5 text-sm text-black outline-none focus:border-[#1db7bd]"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
@@ -96,20 +107,20 @@ export default function ProductSearch() {
                   key={product.id}
                   type="button"
                   onClick={() => goToProduct(product.id)}
-                  className="flex w-full items-center gap-3 border-b p-3 text-left hover:bg-pink-50"
+                  className="flex w-full items-center gap-3 border-b p-3 text-left hover:bg-[#e9fbfc]"
                 >
-                  {product.image_url ? (
+                  {getProductImage(product) ? (
                     <img
-                      src={product.image_url}
+                      src={getProductImage(product)}
                       alt={product.name}
-                      className="h-14 w-14 rounded object-cover object-top"
+                      className="h-14 w-14 rounded-xl object-cover object-top"
                     />
                   ) : (
-                    <div className="h-14 w-14 rounded bg-gray-100" />
+                    <div className="h-14 w-14 rounded-xl bg-gray-100" />
                   )}
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-bold text-gray-900">
+                    <p className="truncate font-black text-gray-900">
                       {product.name}
                     </p>
 
@@ -118,7 +129,7 @@ export default function ProductSearch() {
                       {product.product_type ? ` • ${product.product_type}` : ""}
                     </p>
 
-                    <p className="text-sm font-bold text-pink-500">
+                    <p className="text-sm font-black text-[#f36f45]">
                       {Number(product.price).toLocaleString("fr-FR")} FCFA
                     </p>
                   </div>
@@ -128,21 +139,19 @@ export default function ProductSearch() {
               <button
                 type="button"
                 onClick={goToCatalogue}
-                className="block w-full bg-pink-500 p-3 text-center font-bold text-white hover:bg-pink-600"
+                className="block w-full bg-[#1db7bd] p-3 text-center font-black text-white hover:bg-[#159ca1]"
               >
                 Voir tous les résultats
               </button>
             </div>
           ) : (
             <div className="p-4">
-              <p className="text-sm text-gray-600">
-                Aucun produit trouvé.
-              </p>
+              <p className="text-sm text-gray-600">Aucun produit trouvé.</p>
 
               <button
                 type="button"
                 onClick={goToCatalogue}
-                className="mt-3 rounded bg-pink-500 px-4 py-2 text-sm font-bold text-white"
+                className="mt-3 rounded-full bg-[#f36f45] px-4 py-2 text-sm font-black text-white"
               >
                 Rechercher dans le catalogue
               </button>
