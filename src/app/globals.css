@@ -1,28 +1,51 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fffdf7;
+  --foreground: #111827;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Base globale */
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  max-width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  background: var(--background);
+  color: var(--foreground);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  margin: 0;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+input,
+textarea,
+button,
+select {
+  max-width: 100%;
+}
+
+/* Images */
+img {
+  max-width: 100%;
 }
 
 /* ============================= */
@@ -37,7 +60,7 @@ select {
   background-color: #ffffff;
   color: #111827;
 
-  border: 1.5px solid #dbeafe;
+  border: 1.5px solid #bfedf0;
   border-radius: 1rem;
 
   padding: 1rem 3rem 1rem 1rem;
@@ -58,7 +81,7 @@ select {
 }
 
 select:hover {
-  border-color: #fff1f5;
+  border-color: #1db7bd;
   background-color: #f8ffff;
 }
 
@@ -75,46 +98,21 @@ select:disabled {
   border-color: #e5e7eb;
 }
 
-/* Style visible dans certains navigateurs */
 select option {
   background-color: #ffffff;
   color: #111827;
   font-weight: 700;
 }
 
-/* Pour les menus dans les blocs admin ou commande */
 select.kidiclass-select {
   border-color: #bfedf0;
   background-color: #ffffff;
 }
 
-/* Google Places Autocomplete - DA KidiClass */
-.kidiclass-google-autocomplete {
-  display: block;
-  width: 100%;
-  color-scheme: light;
-  background: white !important;
-  border-radius: 1.2rem !important;
-  overflow: hidden;
-  font-family: inherit !important;
-}
+/* ============================= */
+/* GOOGLE AUTOCOMPLETE KIDICLASS */
+/* ============================= */
 
-/* Force le composant Google à rester en mode clair */
-.kidiclass-google-autocomplete * {
-  color-scheme: light;
-}
-
-/* Certains rendus Google utilisent ces variables */
-.kidiclass-google-autocomplete {
-  --gmpx-color-surface: #ffffff;
-  --gmpx-color-on-surface: #111827;
-  --gmpx-color-on-surface-variant: #6b7280;
-  --gmpx-color-primary: #1db7bd;
-  --gmpx-color-outline: #bfedf0;
-  --gmpx-font-family-base: inherit;
-}
-
-/* Google Places Autocomplete - KidiClass */
 .kidiclass-google-autocomplete {
   display: block !important;
   width: 100% !important;
@@ -131,22 +129,14 @@ select.kidiclass-select {
   --gmpx-color-outline: transparent;
   --gmpx-font-family-base: inherit;
 }
-/* Correction globale overflow admin */
-html,
-body {
-  max-width: 100%;
-  overflow-x: hidden;
+
+.kidiclass-google-autocomplete * {
+  color-scheme: light !important;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-input,
-textarea,
-button {
-  max-width: 100%;
-}
+/* ============================= */
+/* ADMIN OVERFLOW FIX */
+/* ============================= */
 
 .admin-content-fix {
   width: 100%;
