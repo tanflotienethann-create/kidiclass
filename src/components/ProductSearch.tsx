@@ -8,7 +8,7 @@ type Product = {
   id: number;
   name: string;
   price: number;
-  image_url: string;
+  image_url: string | null;
   images: string[] | null;
   category: string;
   product_type: string | null;
@@ -26,13 +26,19 @@ export default function ProductSearch() {
 
   useEffect(() => {
     async function fetchProducts() {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("products")
         .select(
           "id,name,price,image_url,images,category,product_type,character_theme,school_level,is_archived"
         )
         .or("is_archived.is.false,is_archived.is.null")
         .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Erreur recherche produits :", error);
+        setProducts([]);
+        return;
+      }
 
       setProducts((data as Product[]) || []);
     }
@@ -43,13 +49,15 @@ export default function ProductSearch() {
   const suggestions = useMemo(() => {
     if (search.trim().length < 2) return [];
 
-    const query = search.toLowerCase();
+    const query = search.toLowerCase().trim();
 
     return products
       .filter((product) => {
-        const searchableText = `${product.name} ${product.category} ${
-          product.product_type || ""
-        } ${product.character_theme || ""} ${product.school_level || ""}`;
+        const searchableText = `${product.name || ""} ${
+          product.category || ""
+        } ${product.product_type || ""} ${product.character_theme || ""} ${
+          product.school_level || ""
+        }`;
 
         return searchableText.toLowerCase().includes(query);
       })
@@ -61,7 +69,11 @@ export default function ProductSearch() {
       return product.images[0];
     }
 
-    return product.image_url || "";
+    if (product.image_url) {
+      return product.image_url;
+    }
+
+    return "";
   }
 
   function goToCatalogue() {
