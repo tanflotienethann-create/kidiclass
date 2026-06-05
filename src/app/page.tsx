@@ -3,8 +3,10 @@
 import { supabase } from "@/lib/supabase";
 import {
   ArrowRight,
+  Baby,
   Heart,
   PackageCheck,
+  School,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
@@ -29,6 +31,76 @@ type Product = {
   is_promo: boolean | null;
   is_archived: boolean | null;
 };
+
+const homeCategories = [
+  {
+    title: "Filles",
+    text: "Robes, ensembles et accessoires doux pour les petites stars.",
+    href: "/catalogue?category=Filles",
+    icon: Heart,
+    bg: "bg-[#fff1f5]",
+    color: "text-[#f36f45]",
+  },
+  {
+    title: "Garçons",
+    text: "Looks pratiques, sacs et pièces stylées pour tous les jours.",
+    href: "/catalogue?category=Garçons",
+    icon: Star,
+    bg: "bg-[#e9fbfc]",
+    color: "text-[#1db7bd]",
+  },
+  {
+    title: "Bébés",
+    text: "Articles tendres et confortables pour les plus petits.",
+    href: "/catalogue?category=Bébés",
+    icon: Baby,
+    bg: "bg-[#fff9cf]",
+    color: "text-[#c7a900]",
+  },
+  {
+    title: "Scolaire",
+    text: "Sacs, trousses, gourdes et packs pour la rentrée.",
+    href: "/catalogue?category=Scolaire",
+    icon: School,
+    bg: "bg-[#e9fbfc]",
+    color: "text-[#1db7bd]",
+  },
+  {
+    title: "Chaussures",
+    text: "Des modèles confortables pour accompagner les enfants.",
+    href: "/catalogue?category=Chaussures",
+    icon: ShoppingBag,
+    bg: "bg-[#fff1f5]",
+    color: "text-[#f36f45]",
+  },
+  {
+    title: "Accessoires",
+    text: "Les petits détails qui complètent chaque tenue.",
+    href: "/catalogue?category=Accessoires",
+    icon: Sparkles,
+    bg: "bg-[#fff9cf]",
+    color: "text-[#c7a900]",
+  },
+];
+
+const schoolSelection = [
+  {
+    title: "Sacs",
+    href: "/catalogue?productType=Sac",
+  },
+  {
+    title: "Trousses",
+    href: "/catalogue?productType=Trousse",
+  },
+  {
+    title: "Gourdes",
+    href: "/catalogue?productType=Gourde",
+  },
+  {
+    title: "CP à CM2",
+    href: "/catalogue?category=Scolaire",
+  },
+];
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -90,7 +162,7 @@ export default function HomePage() {
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
                 href="/catalogue"
-                className="flex items-center gap-2 rounded-full bg-[#f36f45] px-7 py-4 font-black text-white shadow-sm hover:bg-[#e85e33]"
+                className="kidiclass-button-primary flex items-center gap-2 px-7 py-4"
               >
                 Voir le catalogue
                 <ArrowRight size={20} strokeWidth={2.5} />
@@ -98,7 +170,7 @@ export default function HomePage() {
 
               <Link
                 href="/catalogue?category=Scolaire"
-                className="rounded-full border-2 border-[#1db7bd] px-7 py-4 font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white"
+                className="kidiclass-button-secondary px-7 py-4"
               >
                 Spécial rentrée
               </Link>
@@ -107,7 +179,7 @@ export default function HomePage() {
 
           <div className="rounded-[3rem] bg-white p-5 shadow-xl">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[2rem] bg-[#fff9cf] p-6">
+              <div className="rounded-[2rem] bg-[#fff9cf] p-6 transition hover:-translate-y-1 hover:shadow-lg">
                 <Sparkles className="text-[#c7a900]" size={34} />
                 <h2 className="mt-5 text-2xl font-black text-gray-950">
                   Nouveautés
@@ -117,7 +189,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="rounded-[2rem] bg-[#fff1f5] p-6">
+              <div className="rounded-[2rem] bg-[#fff1f5] p-6 transition hover:-translate-y-1 hover:shadow-lg">
                 <Heart className="text-[#f36f45]" size={34} />
                 <h2 className="mt-5 text-2xl font-black text-gray-950">
                   Coups de cœur
@@ -127,7 +199,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="rounded-[2rem] bg-[#e9fbfc] p-6 sm:col-span-2">
+              <div className="rounded-[2rem] bg-[#e9fbfc] p-6 transition hover:-translate-y-1 hover:shadow-lg sm:col-span-2">
                 <ShoppingBag className="text-[#1db7bd]" size={34} />
                 <h2 className="mt-5 text-2xl font-black text-gray-950">
                   Packs scolaires
@@ -143,7 +215,7 @@ export default function HomePage() {
 
       <section className="px-5 py-12">
         <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-3">
-          <div className="rounded-[2rem] bg-white p-6 shadow-sm">
+          <div className="kidiclass-card p-6">
             <Truck className="text-[#1db7bd]" size={32} strokeWidth={2.5} />
             <h3 className="mt-4 text-xl font-black text-gray-950">
               Livraison à Abidjan
@@ -153,7 +225,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="rounded-[2rem] bg-white p-6 shadow-sm">
+          <div className="kidiclass-card p-6">
             <ShieldCheck
               className="text-[#1db7bd]"
               size={32}
@@ -167,7 +239,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="rounded-[2rem] bg-white p-6 shadow-sm">
+          <div className="kidiclass-card p-6">
             <Star className="text-[#1db7bd]" size={32} strokeWidth={2.5} />
             <h3 className="mt-4 text-xl font-black text-gray-950">
               Sélection tendance
@@ -184,7 +256,113 @@ export default function HomePage() {
           <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.3em] text-[#1db7bd]">
-                Sélection
+                Catégories
+              </p>
+
+              <h2 className="mt-3 text-4xl font-black text-gray-950 md:text-5xl">
+                Explorer la boutique
+              </h2>
+            </div>
+
+            <Link
+              href="/catalogue"
+              className="kidiclass-button-secondary flex w-fit items-center gap-2 px-6 py-3"
+            >
+              Tout voir
+              <ArrowRight size={20} strokeWidth={2.5} />
+            </Link>
+          </div>
+
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {homeCategories.map((category) => {
+              const Icon = category.icon;
+
+              return (
+                <Link
+                  key={category.title}
+                  href={category.href}
+                  className="kidiclass-card group p-6"
+                >
+                  <div
+                    className={`flex h-16 w-16 items-center justify-center rounded-2xl ${category.bg} ${category.color}`}
+                  >
+                    <Icon size={32} strokeWidth={2.5} />
+                  </div>
+
+                  <h3 className="mt-6 text-2xl font-black text-gray-950">
+                    {category.title}
+                  </h3>
+
+                  <p className="mt-3 text-sm font-bold leading-6 text-gray-500">
+                    {category.text}
+                  </p>
+
+                  <p className="mt-5 flex items-center gap-2 text-sm font-black text-[#1db7bd] transition group-hover:gap-3 group-hover:text-[#f36f45]">
+                    Découvrir
+                    <ArrowRight size={18} strokeWidth={2.5} />
+                  </p>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-5 py-12">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-[3rem] bg-[#e9fbfc] p-8 md:p-12">
+          <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.3em] text-[#1db7bd]">
+                Sélection spéciale
+              </p>
+
+              <h2 className="mt-3 text-4xl font-black text-gray-950 md:text-5xl">
+                La rentrée avec style.
+              </h2>
+
+              <p className="mt-4 text-base font-bold leading-7 text-gray-600">
+                Sacs, trousses, gourdes, vêtements et accessoires pour préparer
+                la rentrée avec des articles pratiques, colorés et adaptés aux
+                enfants.
+              </p>
+
+              <Link
+                href="/catalogue?category=Scolaire"
+                className="kidiclass-button-primary mt-7 inline-flex items-center gap-2 px-7 py-4"
+              >
+                Découvrir la sélection scolaire
+                <ArrowRight size={20} strokeWidth={2.5} />
+              </Link>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {schoolSelection.map((item) => (
+                <Link
+                  key={item.title}
+                  href={item.href}
+                  className="rounded-[2rem] bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                >
+                  <h3 className="text-2xl font-black text-gray-950">
+                    {item.title}
+                  </h3>
+
+                  <p className="mt-4 flex items-center gap-2 text-sm font-black text-[#1db7bd]">
+                    Voir les articles
+                    <ArrowRight size={18} strokeWidth={2.5} />
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-5 py-12">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.3em] text-[#1db7bd]">
+                Nouveautés
               </p>
 
               <h2 className="mt-3 text-4xl font-black text-gray-950 md:text-5xl">
@@ -194,7 +372,7 @@ export default function HomePage() {
 
             <Link
               href="/catalogue"
-              className="flex w-fit items-center gap-2 rounded-full border-2 border-[#1db7bd] px-6 py-3 font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white"
+              className="kidiclass-button-secondary flex w-fit items-center gap-2 px-6 py-3"
             >
               Voir tout
               <ArrowRight size={20} strokeWidth={2.5} />
@@ -202,7 +380,7 @@ export default function HomePage() {
           </div>
 
           {products.length === 0 ? (
-            <div className="mt-8 rounded-[2rem] bg-white p-10 text-center shadow-sm">
+            <div className="kidiclass-card mt-8 p-10 text-center">
               <PackageCheck
                 className="mx-auto text-[#1db7bd]"
                 size={42}
@@ -223,7 +401,7 @@ export default function HomePage() {
                 <Link
                   key={product.id}
                   href={`/produit/${product.id}`}
-                  className="group overflow-hidden rounded-[2rem] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                  className="kidiclass-card group overflow-hidden"
                 >
                   <div className="relative h-80 overflow-hidden bg-[#fffdf7]">
                     {getProductImage(product) ? (
@@ -238,11 +416,25 @@ export default function HomePage() {
                       </div>
                     )}
 
-                    {product.is_promo && (
-                      <span className="absolute left-4 top-4 rounded-full bg-[#f36f45] px-3 py-1 text-xs font-black text-white">
-                        Promo
-                      </span>
-                    )}
+                    <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                      {product.is_promo && (
+                        <span className="rounded-full bg-[#f36f45] px-3 py-1 text-xs font-black text-white">
+                          Promo
+                        </span>
+                      )}
+
+                      {product.is_new && (
+                        <span className="rounded-full bg-[#e9fbfc] px-3 py-1 text-xs font-black text-[#1db7bd]">
+                          Nouveau
+                        </span>
+                      )}
+
+                      {product.is_favorite && (
+                        <span className="rounded-full bg-[#fff1f5] px-3 py-1 text-xs font-black text-[#f36f45]">
+                          Coup de cœur
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="p-5">
