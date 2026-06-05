@@ -13,7 +13,7 @@ import {
   Store,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type AdminShellProps = {
   title: string;
@@ -37,6 +37,40 @@ export default function AdminShell({
   const router = useRouter();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [checkingAdmin, setCheckingAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    async function checkAdminAccess() {
+      const { data: userData } = await supabase.auth.getUser();
+
+      if (!userData.user) {
+        setIsAdmin(false);
+        setCheckingAdmin(false);
+        router.replace("/admin/login");
+        return;
+      }
+
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", userData.user.id)
+        .single();
+
+      if (error || !profile || profile.role !== "admin") {
+        await supabase.auth.signOut();
+        setIsAdmin(false);
+        setCheckingAdmin(false);
+        router.replace("/admin/login");
+        return;
+      }
+
+      setIsAdmin(true);
+      setCheckingAdmin(false);
+    }
+
+    checkAdminAccess();
+  }, [router]);
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -47,6 +81,36 @@ export default function AdminShell({
   function isActiveLink(href: string) {
     if (href === "/admin") return pathname === "/admin";
     return pathname === href || pathname.startsWith(`${href}/`);
+  }
+
+  if (checkingAdmin) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#fffdf7] px-5">
+        <div className="max-w-md rounded-[2.5rem] border border-gray-100 bg-white p-10 text-center shadow-sm">
+          <img
+            src="/logo-kidiclass.png"
+            alt="KidiClass"
+            className="mx-auto h-20 w-auto object-contain"
+          />
+
+          <p className="mt-6 text-sm font-black uppercase tracking-[0.3em] text-[#1db7bd]">
+            Vérification
+          </p>
+
+          <h1 className="mt-3 text-3xl font-black text-gray-950">
+            Accès administrateur
+          </h1>
+
+          <p className="mt-3 font-bold leading-7 text-gray-500">
+            Nous vérifions vos droits avant d’afficher l’espace admin.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  if (!isAdmin) {
+    return null;
   }
 
   return (
