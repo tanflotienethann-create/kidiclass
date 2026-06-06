@@ -30,29 +30,32 @@ type PackItem = {
 };
 
 const categories = [
-  "Filles",
-  "Garçons",
-  "Bébés",
-  "Scolaire",
+  "Packs scolaires",
+  "Plage",
+  "Accessoires & jeux",
   "Chaussures",
-  "Accessoires",
-  "PACK",
+  "Vêtements",
 ];
 
 const productTypes = [
+  "Sac",
+  "Sac à goûter",
+  "Boîte à goûter",
+  "Gourde",
+  "Trousse",
+  "Pack scolaire",
+  "Serviette de plage",
+  "Maillot de bain",
+  "Horloge",
+  "Jeu",
+  "Chaussure",
+  "Vêtement",
   "Robe",
   "Ensemble",
   "T-shirt",
   "Pantalon",
   "Short",
   "Jupe",
-  "Chaussure",
-  "Sac",
-  "Trousse",
-  "Gourde",
-  "Boîte à goûter",
-  "Sac à goûter",
-  "Pack scolaire",
   "Accessoire",
   "Autre",
 ];
@@ -63,9 +66,6 @@ const packComponentOptions = [
   "Boîte à goûter",
   "Gourde",
   "Trousse",
-  "Tablier",
-  "Porte-goûter",
-  "Set de table",
   "Autre",
 ];
 
@@ -156,7 +156,7 @@ export default function AddProductForm() {
   );
   const [loading, setLoading] = useState(false);
 
-  const isPack = category === "PACK";
+  const isPack = category === "Packs scolaires" || category === "PACK";
 
   function handleImageSelection(e: ChangeEvent<HTMLInputElement>) {
     const selectedFiles = Array.from(e.target.files || []);
@@ -798,7 +798,7 @@ export default function AddProductForm() {
                   onChange={(value) => {
                     setCategory(value);
 
-                    if (value === "PACK") {
+                    if (value === "Packs scolaires" || value === "PACK") {
                       setProductType("Pack scolaire");
                     }
                   }}

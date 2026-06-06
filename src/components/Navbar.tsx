@@ -195,31 +195,31 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="/catalogue?category=Filles"
+            href="/catalogue?category=Packs%20scolaires"
             className="whitespace-nowrap hover:text-[#1db7bd]"
           >
-            Filles
+            Packs scolaires
           </Link>
 
           <Link
-            href="/catalogue?category=Garçons"
+            href="/catalogue?productType=Sac%20%C3%A0%20go%C3%BBter"
             className="whitespace-nowrap hover:text-[#1db7bd]"
           >
-            Garçons
+            Sacs à goûter
           </Link>
 
           <Link
-            href="/catalogue?category=Bébés"
+            href="/catalogue?productType=Bo%C3%AEte%20%C3%A0%20go%C3%BBter"
             className="whitespace-nowrap hover:text-[#1db7bd]"
           >
-            Bébés
+            Boîtes à goûter
           </Link>
 
           <Link
-            href="/catalogue?category=Scolaire"
+            href="/catalogue?category=Plage"
             className="whitespace-nowrap hover:text-[#1db7bd]"
           >
-            Scolaire
+            Plage
           </Link>
 
           <Link
@@ -230,10 +230,10 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="/catalogue?productType=Robe"
+            href="/catalogue?category=Accessoires%20%26%20jeux"
             className="whitespace-nowrap hover:text-[#1db7bd]"
           >
-            Robes
+            Accessoires & jeux
           </Link>
 
           <Link
@@ -244,10 +244,10 @@ export default function Navbar() {
           </Link>
 
           <Link
-            href="/catalogue?category=Accessoires"
+            href="/catalogue?category=V%C3%AAtements"
             className="whitespace-nowrap hover:text-[#1db7bd]"
           >
-            Accessoires
+            Vêtements
           </Link>
 
           {isConnected && (

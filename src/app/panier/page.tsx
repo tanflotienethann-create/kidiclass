@@ -91,7 +91,11 @@ export default function PanierPage() {
   function isPackProduct(productId: number) {
     const product = productStocks.find((item) => item.id === productId);
 
-    return product?.category === "PACK" || Boolean(product?.is_pack);
+    return (
+      product?.category === "Packs scolaires" ||
+      product?.category === "PACK" ||
+      Boolean(product?.is_pack)
+    );
   }
 
   function decreaseQuantity(index: number) {
@@ -334,7 +338,7 @@ export default function PanierPage() {
                     <div className="mb-3 flex flex-wrap gap-2">
                       {isPack && (
                         <span className="rounded-full bg-[#fff9cf] px-4 py-2 text-xs font-black text-[#c7a900]">
-                          PACK
+                          Pack scolaire
                         </span>
                       )}
 

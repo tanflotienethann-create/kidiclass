@@ -83,7 +83,10 @@ export default async function ProductPage({
 
   const product = productData as Product;
 
-  const isPack = product.category === "PACK" || Boolean(product.is_pack);
+  const isPack =
+    product.category === "Packs scolaires" ||
+    product.category === "PACK" ||
+    Boolean(product.is_pack);
 
   let packItems: PackItem[] = [];
   let variants: ProductVariant[] = [];

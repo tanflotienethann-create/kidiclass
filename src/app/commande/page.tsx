@@ -229,7 +229,11 @@ Merci de me communiquer le montant total avec livraison.
   }
 
   function isPackProduct(product: ProductStock) {
-    return product.category === "PACK" || Boolean(product.is_pack);
+    return (
+      product.category === "Packs scolaires" ||
+      product.category === "PACK" ||
+      Boolean(product.is_pack)
+    );
   }
 
   async function checkStockBeforeOrder() {

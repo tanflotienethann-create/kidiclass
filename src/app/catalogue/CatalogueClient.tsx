@@ -32,30 +32,33 @@ type Product = {
 
 const categories = [
   "Toutes",
-  "Filles",
-  "Garçons",
-  "Bébés",
-  "Scolaire",
+  "Packs scolaires",
+  "Plage",
+  "Accessoires & jeux",
   "Chaussures",
-  "Accessoires",
-  "PACK",
+  "Vêtements",
 ];
 
 const productTypes = [
   "Tous",
+  "Sac",
+  "Sac à goûter",
+  "Boîte à goûter",
+  "Gourde",
+  "Trousse",
+  "Pack scolaire",
+  "Serviette de plage",
+  "Maillot de bain",
+  "Horloge",
+  "Jeu",
+  "Chaussure",
+  "Vêtement",
   "Robe",
   "Ensemble",
   "T-shirt",
   "Pantalon",
   "Short",
   "Jupe",
-  "Chaussure",
-  "Sac",
-  "Trousse",
-  "Gourde",
-  "Boîte à goûter",
-  "Sac à goûter",
-  "Pack scolaire",
   "Accessoire",
   "Autre",
 ];
@@ -103,6 +106,12 @@ const sortOptions = [
   "Promos d'abord",
   "Disponibles d'abord",
 ];
+
+const categoryAliases: Record<string, string[]> = {
+  "Packs scolaires": ["Packs scolaires", "PACK", "Scolaire"],
+  "Accessoires & jeux": ["Accessoires & jeux", "Accessoires"],
+  Vêtements: ["Vêtements", "Filles", "Garçons", "Bébés"],
+};
 
 export default function CatalogueClient() {
   const searchParams = useSearchParams();
@@ -173,8 +182,10 @@ export default function CatalogueClient() {
 
       const matchesSearch = !query || searchableText.includes(query);
 
+      const categoryValues = categoryAliases[category] || [category];
+
       const matchesCategory =
-        category === "Toutes" || product.category === category;
+        category === "Toutes" || categoryValues.includes(product.category);
 
       const matchesType =
         productType === "Tous" || product.product_type === productType;
@@ -315,12 +326,12 @@ export default function CatalogueClient() {
           </p>
 
           <h1 className="mt-4 max-w-4xl text-5xl font-black leading-tight text-gray-950 md:text-7xl">
-            Trouvez la tenue, le sac ou l’accessoire parfait.
+            Trouvez le pack, l’article plage ou l’accessoire parfait.
           </h1>
 
           <p className="mt-5 max-w-2xl text-lg font-bold leading-8 text-gray-600">
-            Parcourez les nouveautés, les packs scolaires, les accessoires et
-            les articles coups de cœur de la boutique.
+            Parcourez les packs scolaires, les articles de plage, les jeux,
+            les chaussures et les sélections coups de cœur de la boutique.
           </p>
         </div>
       </section>

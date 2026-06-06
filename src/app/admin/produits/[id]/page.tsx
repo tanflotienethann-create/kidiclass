@@ -78,29 +78,32 @@ type ProductPackItemRow = {
 };
 
 const categories = [
-  "Filles",
-  "Garçons",
-  "Bébés",
-  "Scolaire",
+  "Packs scolaires",
+  "Plage",
+  "Accessoires & jeux",
   "Chaussures",
-  "Accessoires",
-  "PACK",
+  "Vêtements",
 ];
 
 const productTypes = [
+  "Sac",
+  "Sac à goûter",
+  "Boîte à goûter",
+  "Gourde",
+  "Trousse",
+  "Pack scolaire",
+  "Serviette de plage",
+  "Maillot de bain",
+  "Horloge",
+  "Jeu",
+  "Chaussure",
+  "Vêtement",
   "Robe",
   "Ensemble",
   "T-shirt",
   "Pantalon",
   "Short",
   "Jupe",
-  "Chaussure",
-  "Sac",
-  "Trousse",
-  "Gourde",
-  "Boîte à goûter",
-  "Sac à goûter",
-  "Pack scolaire",
   "Accessoire",
   "Autre",
 ];
@@ -111,9 +114,6 @@ const packComponentOptions = [
   "Boîte à goûter",
   "Gourde",
   "Trousse",
-  "Tablier",
-  "Porte-goûter",
-  "Set de table",
   "Autre",
 ];
 
@@ -238,7 +238,7 @@ export default function EditProductPage() {
     },
   ]);
 
-  const isPack = category === "PACK";
+  const isPack = category === "Packs scolaires" || category === "PACK";
 
   useEffect(() => {
     async function fetchProduct() {
@@ -265,7 +265,11 @@ export default function EditProductPage() {
       setPrice(String(product.price || ""));
       setOldPrice(product.old_price ? String(product.old_price) : "");
       setStock(String(product.stock || ""));
-      setCategory(product.category || "");
+      setCategory(
+        product.category === "PACK" || product.category === "Scolaire"
+          ? "Packs scolaires"
+          : product.category || ""
+      );
       setProductType(product.product_type || "");
       setCharacterTheme(product.character_theme || "");
       setSchoolLevel(product.school_level || "");
@@ -280,7 +284,7 @@ export default function EditProductPage() {
       setImageUrl(product.image_url || "");
       setExistingImages(product.images || []);
 
-      if (product.category === "PACK" || product.is_pack) {
+      if (product.category === "Packs scolaires" || product.category === "PACK" || product.is_pack) {
         const { data: packRows } = await supabase
           .from("product_pack_items")
           .select("*")
@@ -983,7 +987,7 @@ export default function EditProductPage() {
                   onChange={(value) => {
                     setCategory(value);
 
-                    if (value === "PACK") {
+                    if (value === "Packs scolaires" || value === "PACK") {
                       setProductType("Pack scolaire");
                     }
                   }}

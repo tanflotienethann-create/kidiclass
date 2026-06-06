@@ -3,7 +3,6 @@
 import { supabase } from "@/lib/supabase";
 import {
   ArrowRight,
-  Baby,
   Heart,
   PackageCheck,
   School,
@@ -34,52 +33,44 @@ type Product = {
 
 const homeCategories = [
   {
-    title: "Filles",
-    text: "Robes, ensembles et accessoires doux pour les petites stars.",
-    href: "/catalogue?category=Filles",
-    icon: Heart,
+    title: "Packs scolaires",
+    text: "Sacs, sacs à goûter, boîtes à goûter, gourdes et trousses réunis.",
+    href: "/catalogue?category=Packs%20scolaires",
+    icon: School,
     bg: "bg-[#fff1f5]",
     color: "text-[#f36f45]",
   },
   {
-    title: "Garçons",
-    text: "Looks pratiques, sacs et pièces stylées pour tous les jours.",
-    href: "/catalogue?category=Garçons",
-    icon: Star,
+    title: "Plage",
+    text: "Serviettes, maillots de bain et articles pratiques pour les sorties.",
+    href: "/catalogue?category=Plage",
+    icon: Sparkles,
     bg: "bg-[#e9fbfc]",
     color: "text-[#1db7bd]",
   },
   {
-    title: "Bébés",
-    text: "Articles tendres et confortables pour les plus petits.",
-    href: "/catalogue?category=Bébés",
-    icon: Baby,
+    title: "Accessoires & jeux",
+    text: "Horloges, jeux et petites trouvailles utiles pour les enfants.",
+    href: "/catalogue?category=Accessoires%20%26%20jeux",
+    icon: Star,
     bg: "bg-[#fff9cf]",
     color: "text-[#c7a900]",
-  },
-  {
-    title: "Scolaire",
-    text: "Sacs, trousses, gourdes et packs pour la rentrée.",
-    href: "/catalogue?category=Scolaire",
-    icon: School,
-    bg: "bg-[#e9fbfc]",
-    color: "text-[#1db7bd]",
   },
   {
     title: "Chaussures",
     text: "Des modèles confortables pour accompagner les enfants.",
     href: "/catalogue?category=Chaussures",
     icon: ShoppingBag,
-    bg: "bg-[#fff1f5]",
-    color: "text-[#f36f45]",
+    bg: "bg-[#e9fbfc]",
+    color: "text-[#1db7bd]",
   },
   {
-    title: "Accessoires",
-    text: "Les petits détails qui complètent chaque tenue.",
-    href: "/catalogue?category=Accessoires",
-    icon: Sparkles,
-    bg: "bg-[#fff9cf]",
-    color: "text-[#c7a900]",
+    title: "Vêtements",
+    text: "Une catégorie prête si la boutique ajoute des habits plus tard.",
+    href: "/catalogue?category=V%C3%AAtements",
+    icon: Heart,
+    bg: "bg-[#fff1f5]",
+    color: "text-[#f36f45]",
   },
 ];
 
@@ -87,6 +78,14 @@ const schoolSelection = [
   {
     title: "Sacs",
     href: "/catalogue?productType=Sac",
+  },
+  {
+    title: "Sacs à goûter",
+    href: "/catalogue?productType=Sac%20%C3%A0%20go%C3%BBter",
+  },
+  {
+    title: "Boîtes à goûter",
+    href: "/catalogue?productType=Bo%C3%AEte%20%C3%A0%20go%C3%BBter",
   },
   {
     title: "Trousses",
@@ -97,8 +96,8 @@ const schoolSelection = [
     href: "/catalogue?productType=Gourde",
   },
   {
-    title: "CP à CM2",
-    href: "/catalogue?category=Scolaire",
+    title: "Packs complets",
+    href: "/catalogue?category=Packs%20scolaires",
   },
 ];
 
@@ -150,13 +149,13 @@ export default function HomePage() {
             </p>
 
             <h1 className="mt-5 max-w-3xl text-5xl font-black leading-tight text-gray-950 md:text-7xl">
-              Des looks joyeux pour les enfants stylés.
+              Des packs et accessoires joyeux pour les enfants bien équipés.
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg font-bold leading-8 text-gray-600">
-              KidiClass sélectionne des vêtements, sacs, chaussures et
-              accessoires pour enfants, avec une touche joyeuse, pratique et
-              tendance.
+              KidiClass sélectionne surtout des packs scolaires, articles de
+              plage, accessoires, jeux et chaussures, avec une touche joyeuse,
+              pratique et tendance.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
@@ -169,7 +168,7 @@ export default function HomePage() {
               </Link>
 
               <Link
-                href="/catalogue?category=Scolaire"
+                href="/catalogue?category=Packs%20scolaires"
                 className="kidiclass-button-secondary px-7 py-4"
               >
                 Spécial rentrée
@@ -205,7 +204,7 @@ export default function HomePage() {
                   Packs scolaires
                 </h2>
                 <p className="mt-2 text-sm font-bold leading-6 text-gray-600">
-                  Sacs, trousses, gourdes et accessoires pratiques pour l’école.
+                  Sacs, sacs à goûter, boîtes à goûter, gourdes et trousses.
                 </p>
               </div>
             </div>
@@ -321,16 +320,16 @@ export default function HomePage() {
               </h2>
 
               <p className="mt-4 text-base font-bold leading-7 text-gray-600">
-                Sacs, trousses, gourdes, vêtements et accessoires pour préparer
-                la rentrée avec des articles pratiques, colorés et adaptés aux
-                enfants.
+                Sacs, sacs à goûter, boîtes à goûter, gourdes et trousses pour
+                préparer la rentrée avec des articles pratiques, colorés et
+                adaptés aux enfants.
               </p>
 
               <Link
-                href="/catalogue?category=Scolaire"
+                href="/catalogue?category=Packs%20scolaires"
                 className="kidiclass-button-primary mt-7 inline-flex items-center gap-2 px-7 py-4"
               >
-                Découvrir la sélection scolaire
+                Découvrir les packs scolaires
                 <ArrowRight size={20} strokeWidth={2.5} />
               </Link>
             </div>
