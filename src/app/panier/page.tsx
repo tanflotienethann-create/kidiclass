@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import {
   ArrowLeft,
@@ -31,24 +31,27 @@ type ProductStock = {
 };
 
 export default function PanierPage() {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window === "undefined") return [];
+
+    const storedCart = localStorage.getItem("kidiclass_cart");
+    return storedCart ? JSON.parse(storedCart) : [];
+  });
   const [productStocks, setProductStocks] = useState<ProductStock[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [promoCode, setPromoCode] = useState(() => {
+    if (typeof window === "undefined") return "";
 
-  useEffect(() => {
-    const storedCart = localStorage.getItem("kidiclass_cart");
+    return localStorage.getItem("kidiclass_promo_code") || "";
+  });
+  const [appliedPromoCode, setAppliedPromoCode] = useState(() => {
+    if (typeof window === "undefined") return "";
 
-    if (storedCart) {
-      const parsedCart = JSON.parse(storedCart) as CartItem[];
-      setCart(parsedCart);
-      fetchProductStocks(parsedCart);
-    } else {
-      setLoading(false);
-    }
-  }, []);
+    return localStorage.getItem("kidiclass_promo_code") || "";
+  });
 
-  async function fetchProductStocks(items: CartItem[]) {
+  const fetchProductStocks = useCallback(async (items: CartItem[]) => {
     const productIds = items.map((item) => item.productId);
 
     if (productIds.length === 0) {
@@ -63,11 +66,20 @@ export default function PanierPage() {
 
     setProductStocks((data as ProductStock[]) || []);
     setLoading(false);
-  }
+  }, []);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      fetchProductStocks(cart);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [cart, fetchProductStocks]);
 
   function saveCart(updatedCart: CartItem[]) {
     setCart(updatedCart);
     localStorage.setItem("kidiclass_cart", JSON.stringify(updatedCart));
+    window.dispatchEvent(new Event("kidiclass-cart-updated"));
   }
 
   function getProductStock(productId: number) {
@@ -131,6 +143,7 @@ export default function PanierPage() {
 
     if (updatedCart.length === 0) {
       localStorage.removeItem("kidiclass_cart");
+      window.dispatchEvent(new Event("kidiclass-cart-updated"));
     }
   }
 
@@ -138,6 +151,33 @@ export default function PanierPage() {
     setMessage("");
     setCart([]);
     localStorage.removeItem("kidiclass_cart");
+    window.dispatchEvent(new Event("kidiclass-cart-updated"));
+  }
+
+  function applyPromoCode() {
+    const normalizedCode = promoCode.trim().toUpperCase();
+
+    if (!normalizedCode) {
+      setMessage("Veuillez renseigner un code promo.");
+      return;
+    }
+
+    if (normalizedCode !== "KIDI10") {
+      setMessage("Code promo invalide. Essayez KIDI10.");
+      setAppliedPromoCode("");
+      localStorage.removeItem("kidiclass_promo_code");
+      return;
+    }
+
+    setMessage("");
+    setAppliedPromoCode(normalizedCode);
+    localStorage.setItem("kidiclass_promo_code", normalizedCode);
+  }
+
+  function removePromoCode() {
+    setAppliedPromoCode("");
+    setPromoCode("");
+    localStorage.removeItem("kidiclass_promo_code");
   }
 
   function validateCartBeforeCheckout() {
@@ -164,8 +204,16 @@ export default function PanierPage() {
     return sum + item.productPrice * item.quantity;
   }, 0);
 
-  const estimatedDeliveryFee = 1000;
-  const estimatedTotal = subtotal + estimatedDeliveryFee;
+  const freeDeliveryThreshold = 50000;
+  const amountBeforeFreeDelivery = Math.max(freeDeliveryThreshold - subtotal, 0);
+  const estimatedDeliveryFee = amountBeforeFreeDelivery === 0 ? 0 : 1000;
+  const promoDiscount =
+    appliedPromoCode === "KIDI10" ? Math.min(Math.round(subtotal * 0.1), 5000) : 0;
+  const estimatedTotal = Math.max(subtotal - promoDiscount, 0) + estimatedDeliveryFee;
+  const freeDeliveryProgress = Math.min(
+    Math.round((subtotal / freeDeliveryThreshold) * 100),
+    100
+  );
 
   if (loading) {
     return (
@@ -428,9 +476,62 @@ export default function PanierPage() {
             </div>
 
             <div className="rounded-2xl bg-[#fff9cf] p-4 text-sm font-bold leading-6 text-[#c7a900]">
-              Le montant de livraison peut être ajusté si la commande est hors
-              Abidjan ou à l’étranger.
+              {amountBeforeFreeDelivery === 0
+                ? "Livraison offerte à Abidjan pour cette commande."
+                : `Ajoutez ${amountBeforeFreeDelivery.toLocaleString(
+                    "fr-FR"
+                  )} FCFA pour profiter de la livraison offerte à Abidjan.`}
             </div>
+
+            <div className="rounded-2xl bg-[#e9fbfc] p-4">
+              <div className="h-3 overflow-hidden rounded-full bg-white">
+                <div
+                  className="h-full rounded-full bg-[#1db7bd] transition-all"
+                  style={{ width: `${freeDeliveryProgress}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-[#bfedf0] p-4">
+              <p className="text-sm font-black text-gray-950">Code promo</p>
+
+              <div className="mt-3 flex gap-2">
+                <input
+                  type="text"
+                  placeholder="KIDI10"
+                  className="min-w-0 flex-1 rounded-full border-2 border-[#bfedf0] px-4 py-3 text-sm font-black uppercase outline-none focus:border-[#1db7bd]"
+                  value={promoCode}
+                  onChange={(event) => setPromoCode(event.target.value)}
+                />
+
+                <button
+                  type="button"
+                  onClick={applyPromoCode}
+                  className="rounded-full bg-[#1db7bd] px-5 py-3 text-sm font-black text-white hover:bg-[#159ca1]"
+                >
+                  Appliquer
+                </button>
+              </div>
+
+              {appliedPromoCode && (
+                <button
+                  type="button"
+                  onClick={removePromoCode}
+                  className="mt-3 text-sm font-black text-[#f36f45]"
+                >
+                  Retirer le code {appliedPromoCode}
+                </button>
+              )}
+            </div>
+
+            {promoDiscount > 0 && (
+              <div className="flex justify-between gap-4 text-green-700">
+                <span className="font-bold">Remise {appliedPromoCode}</span>
+                <span className="font-black">
+                  -{promoDiscount.toLocaleString("fr-FR")} FCFA
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="mt-6 border-t border-gray-100 pt-6">

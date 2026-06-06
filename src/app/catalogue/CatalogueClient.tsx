@@ -2,10 +2,10 @@
 
 import KidiclassSelect from "@/components/KidiclassSelect";
 import { supabase } from "@/lib/supabase";
-import { Heart, PackageCheck, Search, Sparkles, Tag } from "lucide-react";
+import { Heart, PackageCheck, RotateCcw, Search, Sparkles, Tag } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type Product = {
   id: number;
@@ -93,6 +93,15 @@ const highlightOptions = [
   "Nouveautés",
   "Coups de cœur",
   "Promotions",
+  "Favoris",
+];
+
+const sortOptions = [
+  "Plus récents",
+  "Prix croissant",
+  "Prix décroissant",
+  "Promos d'abord",
+  "Disponibles d'abord",
 ];
 
 export default function CatalogueClient() {
@@ -111,16 +120,21 @@ export default function CatalogueClient() {
   const [characterTheme, setCharacterTheme] = useState("Tous");
   const [schoolLevel, setSchoolLevel] = useState("Tous");
   const [gender, setGender] = useState("Tous");
-  const [highlight, setHighlight] = useState("Tous");
+  const [highlight, setHighlight] = useState(
+    searchParams.get("highlight") || "Tous"
+  );
+  const [sortBy, setSortBy] = useState("Plus récents");
   const [brandSearch, setBrandSearch] = useState("");
   const [colorSearch, setColorSearch] = useState("");
   const [ageSearch, setAgeSearch] = useState("");
+  const [favoriteIds, setFavoriteIds] = useState<number[]>(() => {
+    if (typeof window === "undefined") return [];
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+    const storedFavorites = localStorage.getItem("kidiclass_favorites");
+    return storedFavorites ? JSON.parse(storedFavorites) : [];
+  });
 
-  async function fetchProducts() {
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
 
     const { data } = await supabase
@@ -131,10 +145,18 @@ export default function CatalogueClient() {
 
     setProducts((data as Product[]) || []);
     setLoading(false);
-  }
+  }, []);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      fetchProducts();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchProducts]);
 
   const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
+    const filtered = products.filter((product) => {
       const query = search.toLowerCase().trim();
 
       const searchableText = `
@@ -170,7 +192,8 @@ export default function CatalogueClient() {
         highlight === "Tous" ||
         (highlight === "Nouveautés" && product.is_new) ||
         (highlight === "Coups de cœur" && product.is_favorite) ||
-        (highlight === "Promotions" && product.is_promo);
+        (highlight === "Promotions" && product.is_promo) ||
+        (highlight === "Favoris" && favoriteIds.includes(product.id));
 
       const matchesBrand =
         !brandSearch.trim() ||
@@ -203,6 +226,26 @@ export default function CatalogueClient() {
         matchesAge
       );
     });
+
+    return filtered.sort((first, second) => {
+      if (sortBy === "Prix croissant") {
+        return Number(first.price || 0) - Number(second.price || 0);
+      }
+
+      if (sortBy === "Prix décroissant") {
+        return Number(second.price || 0) - Number(first.price || 0);
+      }
+
+      if (sortBy === "Promos d'abord") {
+        return Number(Boolean(second.is_promo)) - Number(Boolean(first.is_promo));
+      }
+
+      if (sortBy === "Disponibles d'abord") {
+        return Number(second.stock || 0) - Number(first.stock || 0);
+      }
+
+      return 0;
+    });
   }, [
     products,
     search,
@@ -215,7 +258,45 @@ export default function CatalogueClient() {
     brandSearch,
     colorSearch,
     ageSearch,
+    favoriteIds,
+    sortBy,
   ]);
+
+  function toggleFavorite(productId: number) {
+    const nextFavorites = favoriteIds.includes(productId)
+      ? favoriteIds.filter((id) => id !== productId)
+      : [...favoriteIds, productId];
+
+    setFavoriteIds(nextFavorites);
+    localStorage.setItem("kidiclass_favorites", JSON.stringify(nextFavorites));
+  }
+
+  function resetFilters() {
+    setSearch("");
+    setCategory("Toutes");
+    setProductType("Tous");
+    setCharacterTheme("Tous");
+    setSchoolLevel("Tous");
+    setGender("Tous");
+    setHighlight("Tous");
+    setSortBy("Plus récents");
+    setBrandSearch("");
+    setColorSearch("");
+    setAgeSearch("");
+  }
+
+  const activeFiltersCount = [
+    search.trim(),
+    category !== "Toutes",
+    productType !== "Tous",
+    characterTheme !== "Tous",
+    schoolLevel !== "Tous",
+    gender !== "Tous",
+    highlight !== "Tous",
+    brandSearch.trim(),
+    colorSearch.trim(),
+    ageSearch.trim(),
+  ].filter(Boolean).length;
 
   function getProductImage(product: Product) {
     if (product.images && product.images.length > 0) {
@@ -313,6 +394,13 @@ export default function CatalogueClient() {
                 options={highlightOptions}
                 onChange={setHighlight}
               />
+
+              <KidiclassSelect
+                label="Tri"
+                value={sortBy}
+                options={sortOptions}
+                onChange={setSortBy}
+              />
             </div>
 
             <div className="mt-5 grid gap-5 md:grid-cols-3">
@@ -339,6 +427,23 @@ export default function CatalogueClient() {
                 value={ageSearch}
                 onChange={(e) => setAgeSearch(e.target.value)}
               />
+            </div>
+
+            <div className="mt-6 flex flex-col justify-between gap-4 rounded-[1.8rem] bg-[#fffdf7] p-4 sm:flex-row sm:items-center">
+              <p className="text-sm font-bold text-gray-600">
+                {activeFiltersCount > 0
+                  ? `${activeFiltersCount} filtre(s) actif(s)`
+                  : "Aucun filtre actif"}
+              </p>
+
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="flex w-fit items-center gap-2 rounded-full border-2 border-[#1db7bd] px-5 py-3 text-sm font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white"
+              >
+                <RotateCcw size={17} strokeWidth={2.5} />
+                Réinitialiser
+              </button>
             </div>
           </div>
 
@@ -409,6 +514,26 @@ export default function CatalogueClient() {
                         </span>
                       )}
                     </div>
+
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        toggleFavorite(product.id);
+                      }}
+                      className={`absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-sm transition hover:scale-105 ${
+                        favoriteIds.includes(product.id)
+                          ? "text-[#f36f45]"
+                          : "text-gray-400 hover:text-[#f36f45]"
+                      }`}
+                      aria-label="Ajouter aux favoris"
+                    >
+                      <Heart
+                        size={20}
+                        fill={favoriteIds.includes(product.id) ? "currentColor" : "none"}
+                        strokeWidth={2.5}
+                      />
+                    </button>
                   </div>
 
                   <div className="p-5">

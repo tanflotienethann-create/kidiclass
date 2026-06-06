@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import KidiclassSelect from "@/components/KidiclassSelect";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { CheckCircle2, ShoppingCart } from "lucide-react";
 
@@ -96,7 +96,12 @@ const countryCodeOptions = countryCodes.map((item) => {
 });
 
 export default function CommandePage() {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window === "undefined") return [];
+
+    const storedCart = localStorage.getItem("kidiclass_cart");
+    return storedCart ? JSON.parse(storedCart) : [];
+  });
 
   const [customerName, setCustomerName] = useState("");
   const [countryCodeLabel, setCountryCodeLabel] = useState(
@@ -119,6 +124,11 @@ export default function CommandePage() {
   const [message, setMessage] = useState("");
   const [orderReference, setOrderReference] = useState("");
   const [loading, setLoading] = useState(false);
+  const [promoCode] = useState(() => {
+    if (typeof window === "undefined") return "";
+
+    return localStorage.getItem("kidiclass_promo_code") || "";
+  });
 
   const adminWhatsappNumber = "2250779311555";
 
@@ -127,21 +137,21 @@ export default function CommandePage() {
       return `${item.country} ${item.code}` === countryCodeLabel;
     })?.code || "+225";
 
-  useEffect(() => {
-    const storedCart = localStorage.getItem("kidiclass_cart");
-
-    if (storedCart) {
-      setCart(JSON.parse(storedCart));
-    }
-  }, []);
-
   const subtotal = cart.reduce(
     (sum, item) => sum + item.productPrice * item.quantity,
     0
   );
 
-  const deliveryFee = deliveryArea === "Abidjan" ? 1000 : 0;
-  const total = subtotal + deliveryFee;
+  const freeDeliveryThreshold = 50000;
+  const promoDiscount =
+    promoCode === "KIDI10" ? Math.min(Math.round(subtotal * 0.1), 5000) : 0;
+  const deliveryFee =
+    deliveryArea === "Abidjan" && subtotal >= freeDeliveryThreshold
+      ? 0
+      : deliveryArea === "Abidjan"
+      ? 1000
+      : 0;
+  const total = Math.max(subtotal - promoDiscount, 0) + deliveryFee;
 
   function generateOrderReference() {
     const year = new Date().getFullYear();
@@ -199,6 +209,8 @@ Produits :
 ${getCartSummary()}
 
 Sous-total produits : ${subtotal.toLocaleString("fr-FR")} FCFA
+Remise : ${promoDiscount.toLocaleString("fr-FR")} FCFA
+Total produits après remise : ${Math.max(subtotal - promoDiscount, 0).toLocaleString("fr-FR")} FCFA
 
 Les frais de livraison sont à confirmer selon la destination.
 Merci de me communiquer le montant total avec livraison.
@@ -518,6 +530,8 @@ Merci de me communiquer le montant total avec livraison.
     }
 
     localStorage.removeItem("kidiclass_cart");
+    localStorage.removeItem("kidiclass_promo_code");
+    window.dispatchEvent(new Event("kidiclass-cart-updated"));
     setCart([]);
 
     if (deliveryArea !== "Abidjan") {
@@ -879,7 +893,9 @@ Merci de me communiquer le montant total avec livraison.
               <div className="flex justify-between text-gray-700">
                 <span>Livraison Abidjan</span>
                 <span className="font-bold">
-                  {deliveryFee.toLocaleString("fr-FR")} FCFA
+                  {deliveryFee === 0
+                    ? "Offerte"
+                    : `${deliveryFee.toLocaleString("fr-FR")} FCFA`}
                 </span>
               </div>
             ) : (
@@ -889,8 +905,18 @@ Merci de me communiquer le montant total avec livraison.
             )}
 
             <div className="rounded-2xl bg-[#e9fbfc] p-4 text-sm font-bold leading-6 text-[#1db7bd]">
-              La livraison à 1 000 FCFA concerne uniquement Abidjan.
+              La livraison à Abidjan est offerte dès{" "}
+              {freeDeliveryThreshold.toLocaleString("fr-FR")} FCFA d’achat.
             </div>
+
+            {promoDiscount > 0 && (
+              <div className="flex justify-between text-green-700">
+                <span>Remise {promoCode}</span>
+                <span className="font-bold">
+                  -{promoDiscount.toLocaleString("fr-FR")} FCFA
+                </span>
+              </div>
+            )}
 
             {deliveryArea === "Abidjan" && (
               <div className="rounded-2xl bg-[#fff9cf] p-4 text-sm font-bold leading-6 text-[#c7a900]">

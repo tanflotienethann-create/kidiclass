@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { CheckCircle2, Minus, Plus, ShoppingBag } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { CheckCircle2, Heart, Minus, Plus, ShoppingBag, Zap } from "lucide-react";
 
 type CartItem = {
   productId: number;
@@ -30,9 +31,18 @@ export default function ProductActions({
   stock,
   sizes,
 }: ProductActionsProps) {
+  const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
   const [message, setMessage] = useState("");
+  const [isFavorite, setIsFavorite] = useState(() => {
+    if (typeof window === "undefined") return false;
+
+    const storedFavorites = localStorage.getItem("kidiclass_favorites");
+    const favorites: number[] = storedFavorites ? JSON.parse(storedFavorites) : [];
+
+    return favorites.includes(productId);
+  });
 
   const availableSizes = useMemo(() => {
     if (!sizes) return [];
@@ -66,17 +76,17 @@ export default function ProductActions({
 
     if (isOutOfStock) {
       setMessage("Ce produit est actuellement en rupture de stock.");
-      return;
+      return false;
     }
 
     if (quantity > stock) {
       setMessage(`Stock insuffisant. Stock disponible : ${stock}.`);
-      return;
+      return false;
     }
 
     if (availableSizes.length > 0 && !selectedSize) {
       setMessage("Veuillez choisir une taille ou une pointure.");
-      return;
+      return false;
     }
 
     const storedCart = localStorage.getItem("kidiclass_cart");
@@ -92,7 +102,7 @@ export default function ProductActions({
 
       if (newQuantity > stock) {
         setMessage(`Stock insuffisant. Stock disponible : ${stock}.`);
-        return;
+        return false;
       }
 
       currentCart[existingItemIndex] = {
@@ -111,7 +121,28 @@ export default function ProductActions({
     }
 
     localStorage.setItem("kidiclass_cart", JSON.stringify(currentCart));
+    window.dispatchEvent(new Event("kidiclass-cart-updated"));
     setMessage("Produit ajouté au panier.");
+    return true;
+  }
+
+  function buyNow() {
+    const added = addToCart();
+
+    if (added) {
+      router.push("/panier");
+    }
+  }
+
+  function toggleFavorite() {
+    const storedFavorites = localStorage.getItem("kidiclass_favorites");
+    const favorites: number[] = storedFavorites ? JSON.parse(storedFavorites) : [];
+    const nextFavorites = favorites.includes(productId)
+      ? favorites.filter((id) => id !== productId)
+      : [...favorites, productId];
+
+    localStorage.setItem("kidiclass_favorites", JSON.stringify(nextFavorites));
+    setIsFavorite(nextFavorites.includes(productId));
   }
 
   return (
@@ -215,12 +246,35 @@ export default function ProductActions({
           {isOutOfStock ? "Indisponible" : "Ajouter au panier"}
         </button>
 
+        <button
+          type="button"
+          onClick={buyNow}
+          disabled={isOutOfStock}
+          className="flex items-center justify-center gap-2 rounded-full bg-[#1db7bd] px-7 py-4 font-black text-white shadow-sm hover:bg-[#159ca1] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <Zap size={18} strokeWidth={2.5} />
+          Acheter maintenant
+        </button>
+
         <Link
           href="/panier"
           className="rounded-full border-2 border-[#1db7bd] px-7 py-4 text-center font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white"
         >
           Voir le panier
         </Link>
+
+        <button
+          type="button"
+          onClick={toggleFavorite}
+          className={`flex items-center justify-center gap-2 rounded-full border-2 px-7 py-4 font-black transition ${
+            isFavorite
+              ? "border-[#f36f45] bg-[#fff1f5] text-[#f36f45]"
+              : "border-[#f36f45] bg-white text-[#f36f45] hover:bg-[#fff1f5]"
+          }`}
+        >
+          <Heart size={18} fill={isFavorite ? "currentColor" : "none"} strokeWidth={2.5} />
+          {isFavorite ? "Dans mes favoris" : "Ajouter aux favoris"}
+        </button>
       </div>
     </div>
   );

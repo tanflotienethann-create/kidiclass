@@ -5,7 +5,11 @@ import { usePathname, useRouter } from "next/navigation";
 import ProductSearch from "./ProductSearch";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { LogOut, UserRound } from "lucide-react";
+import { Heart, LogOut, ShoppingBag, UserRound } from "lucide-react";
+
+type CartItem = {
+  quantity: number;
+};
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -13,6 +17,7 @@ export default function Navbar() {
 
   const [isConnected, setIsConnected] = useState(false);
   const [checkingUser, setCheckingUser] = useState(true);
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     async function checkUser() {
@@ -38,6 +43,26 @@ export default function Navbar() {
 
     return () => {
       subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    function updateCartCount() {
+      const storedCart = localStorage.getItem("kidiclass_cart");
+      const parsedCart: CartItem[] = storedCart ? JSON.parse(storedCart) : [];
+
+      setCartCount(
+        parsedCart.reduce((total, item) => total + Number(item.quantity || 0), 0)
+      );
+    }
+
+    updateCartCount();
+    window.addEventListener("storage", updateCartCount);
+    window.addEventListener("kidiclass-cart-updated", updateCartCount);
+
+    return () => {
+      window.removeEventListener("storage", updateCartCount);
+      window.removeEventListener("kidiclass-cart-updated", updateCartCount);
     };
   }, []);
 
@@ -95,6 +120,14 @@ export default function Navbar() {
               Suivi
             </Link>
 
+            <Link
+              href="/catalogue?highlight=Favoris"
+              className="hidden items-center gap-2 rounded-full px-3 py-2 hover:bg-[#fff1f5] hover:text-[#f36f45] md:flex"
+            >
+              <Heart size={18} strokeWidth={2.5} />
+              Favoris
+            </Link>
+
             {isConnected && (
               <Link
                 href="/compte"
@@ -134,9 +167,15 @@ export default function Navbar() {
 
             <Link
               href="/panier"
-              className="rounded-full bg-[#f36f45] px-5 py-2 font-bold text-white shadow-sm hover:bg-[#e85e33]"
+              className="relative flex items-center gap-2 rounded-full bg-[#f36f45] px-5 py-2 font-bold text-white shadow-sm hover:bg-[#e85e33]"
             >
+              <ShoppingBag size={18} strokeWidth={2.5} />
               Panier
+              {cartCount > 0 && (
+                <span className="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full bg-[#1db7bd] px-1 text-xs font-black text-white ring-2 ring-white">
+                  {cartCount}
+                </span>
+              )}
             </Link>
           </div>
         </div>
@@ -244,6 +283,13 @@ export default function Navbar() {
             className="whitespace-nowrap text-[#f36f45] hover:text-[#1db7bd] md:hidden"
           >
             Admin
+          </Link>
+
+          <Link
+            href="/catalogue?highlight=Favoris"
+            className="whitespace-nowrap text-[#f36f45] hover:text-[#1db7bd] md:hidden"
+          >
+            Favoris
           </Link>
         </div>
       </nav>
