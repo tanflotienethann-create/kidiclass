@@ -212,6 +212,13 @@ export default function LoginPage() {
             </p>
 
             <Link
+              href="/admin/login"
+              className="mt-4 block rounded-full border-2 border-[#1db7bd] px-5 py-3 text-center text-sm font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white"
+            >
+              Se connecter à l’admin
+            </Link>
+
+            <Link
               href="/"
               className="mt-4 block text-center text-sm font-black text-[#f36f45]"
             >

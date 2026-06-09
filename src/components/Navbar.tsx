@@ -45,15 +45,32 @@ export default function Navbar() {
   const router = useRouter();
 
   const [isConnected, setIsConnected] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [checkingUser, setCheckingUser] = useState(true);
   const [cartCount, setCartCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    async function updateAdminStatus(userId?: string) {
+      if (!userId) {
+        setIsAdmin(false);
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", userId)
+        .single();
+
+      setIsAdmin(profile?.role === "admin");
+    }
+
     async function checkUser() {
       const { data } = await supabase.auth.getUser();
 
       setIsConnected(Boolean(data.user));
+      await updateAdminStatus(data.user?.id);
       setCheckingUser(false);
     }
 
@@ -61,8 +78,9 @@ export default function Navbar() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setIsConnected(Boolean(session?.user));
+      await updateAdminStatus(session?.user?.id);
       setCheckingUser(false);
     });
 
@@ -102,6 +120,7 @@ export default function Navbar() {
     await supabase.auth.signOut();
 
     setIsConnected(false);
+    setIsAdmin(false);
     setMobileMenuOpen(false);
     router.push("/");
     router.refresh();
@@ -167,6 +186,15 @@ export default function Navbar() {
                 aria-label="Compte"
               >
                 <UserRound size={20} strokeWidth={2.5} />
+              </Link>
+            )}
+
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="hidden rounded-full border border-[#1db7bd] px-4 py-2 text-sm font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white md:block"
+              >
+                Espace admin
               </Link>
             )}
 
@@ -287,13 +315,15 @@ export default function Navbar() {
                 )
               )}
 
-              <Link
-                href="/admin"
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-2xl bg-[#e9fbfc] px-4 py-3 text-sm font-black text-[#1db7bd]"
-              >
-                Admin
-              </Link>
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="rounded-2xl bg-[#e9fbfc] px-4 py-3 text-sm font-black text-[#1db7bd]"
+                >
+                  Espace admin
+                </Link>
+              )}
             </div>
 
             <div>
