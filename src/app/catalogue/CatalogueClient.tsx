@@ -44,6 +44,7 @@ const categories = [
 const productTypes = [
   "Tous",
   "Sac",
+  "Sac à roulette",
   "Sac à goûter",
   "Boîte à goûter",
   "Gourde",

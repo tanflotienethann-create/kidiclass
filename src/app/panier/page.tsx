@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { getDeliveryFee, isRollingBagProduct } from "@/lib/delivery";
 import { supabase } from "@/lib/supabase";
 import {
   ArrowLeft,
@@ -27,6 +28,7 @@ type ProductStock = {
   name: string;
   stock: number;
   category: string | null;
+  product_type: string | null;
   is_pack: boolean | null;
 };
 
@@ -61,7 +63,7 @@ export default function PanierPage() {
 
     const { data } = await supabase
       .from("products")
-      .select("id,name,stock,category,is_pack")
+      .select("id,name,stock,category,product_type,is_pack")
       .in("id", productIds);
 
     setProductStocks((data as ProductStock[]) || []);
@@ -204,16 +206,17 @@ export default function PanierPage() {
     return sum + item.productPrice * item.quantity;
   }, 0);
 
-  const freeDeliveryThreshold = 50000;
-  const amountBeforeFreeDelivery = Math.max(freeDeliveryThreshold - subtotal, 0);
-  const estimatedDeliveryFee = amountBeforeFreeDelivery === 0 ? 0 : 1000;
+  const hasRollingBag = cart.some((item) => {
+    const product = productStocks.find((stockItem) => {
+      return stockItem.id === item.productId;
+    });
+
+    return isRollingBagProduct(product || { name: item.productName });
+  });
+  const estimatedDeliveryFee = getDeliveryFee("Abidjan", hasRollingBag);
   const promoDiscount =
     appliedPromoCode === "KIDI10" ? Math.min(Math.round(subtotal * 0.1), 5000) : 0;
   const estimatedTotal = Math.max(subtotal - promoDiscount, 0) + estimatedDeliveryFee;
-  const freeDeliveryProgress = Math.min(
-    Math.round((subtotal / freeDeliveryThreshold) * 100),
-    100
-  );
 
   if (loading) {
     return (
@@ -445,8 +448,8 @@ export default function PanierPage() {
           </h2>
 
           <p className="mt-2 text-sm font-bold leading-6 text-gray-500">
-            La livraison à Abidjan est estimée à 1 000 FCFA. Les livraisons hors
-            Abidjan sont confirmées sur WhatsApp.
+            Livraison Abidjan : 1 000 FCFA. Avec un sac à roulette : 2 000
+            FCFA. Bassam, Songon et Anyama : 2 500 FCFA.
           </p>
 
           <div className="mt-7 space-y-4">
@@ -465,27 +468,19 @@ export default function PanierPage() {
             </div>
 
             <div className="flex justify-between gap-4 text-gray-700">
-              <span className="font-bold">Livraison Abidjan</span>
+              <span className="font-bold">
+                {hasRollingBag
+                  ? "Livraison Abidjan avec sac à roulette"
+                  : "Livraison Abidjan"}
+              </span>
               <span className="font-black">
                 {estimatedDeliveryFee.toLocaleString("fr-FR")} FCFA
               </span>
             </div>
 
             <div className="rounded-2xl bg-[#fff9cf] p-4 text-sm font-bold leading-6 text-[#c7a900]">
-              {amountBeforeFreeDelivery === 0
-                ? "Livraison offerte à Abidjan pour cette commande."
-                : `Ajoutez ${amountBeforeFreeDelivery.toLocaleString(
-                    "fr-FR"
-                  )} FCFA pour profiter de la livraison offerte à Abidjan.`}
-            </div>
-
-            <div className="rounded-2xl bg-[#e9fbfc] p-4">
-              <div className="h-3 overflow-hidden rounded-full bg-white">
-                <div
-                  className="h-full rounded-full bg-[#1db7bd] transition-all"
-                  style={{ width: `${freeDeliveryProgress}%` }}
-                />
-              </div>
+              Les frais de livraison sont appliqués selon la zone choisie au
+              moment de la commande.
             </div>
 
             <div className="rounded-2xl border border-[#bfedf0] p-4">

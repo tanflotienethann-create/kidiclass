@@ -81,7 +81,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-[9999] bg-white shadow-sm">
       <div className="bg-[#1db7bd] px-4 py-1.5 text-center text-sm font-bold text-white">
-        Livraison à Abidjan à 1 000 FCFA — Expédition possible sur demande
+        Livraison : Abidjan 1 000 FCFA, sac à roulette 2 000 FCFA, Bassam/Songon/Anyama 2 500 FCFA
       </div>
 
       <div className="border-b border-gray-100 bg-white">
@@ -227,6 +227,13 @@ export default function Navbar() {
             className="whitespace-nowrap hover:text-[#1db7bd]"
           >
             Sacs
+          </Link>
+
+          <Link
+            href="/catalogue?productType=Sac%20%C3%A0%20roulette"
+            className="whitespace-nowrap hover:text-[#1db7bd]"
+          >
+            Sacs à roulette
           </Link>
 
           <Link

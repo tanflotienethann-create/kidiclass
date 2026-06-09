@@ -3,7 +3,12 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import KidiclassSelect from "@/components/KidiclassSelect";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import {
+  getDeliveryFee,
+  isFixedDeliveryArea,
+  isRollingBagProduct,
+} from "@/lib/delivery";
 import { supabase } from "@/lib/supabase";
 import { CheckCircle2, ShoppingCart } from "lucide-react";
 
@@ -25,6 +30,7 @@ type ProductStock = {
   name: string;
   stock: number;
   category: string | null;
+  product_type: string | null;
   is_pack: boolean | null;
 };
 
@@ -40,7 +46,6 @@ type PackItem = {
 const abidjanCommunes = [
   "Abobo",
   "Adjamé",
-  "Anyama",
   "Attécoubé",
   "Bingerville",
   "Cocody",
@@ -48,12 +53,18 @@ const abidjanCommunes = [
   "Marcory",
   "Plateau",
   "Port-Bouët",
-  "Songon",
   "Treichville",
   "Yopougon",
 ];
 
-const deliveryAreas = ["Abidjan", "Intérieur Côte d'Ivoire", "Étranger"];
+const deliveryAreas = [
+  "Abidjan",
+  "Bassam",
+  "Songon",
+  "Anyama",
+  "Intérieur Côte d'Ivoire",
+  "Étranger",
+];
 
 const paymentMethods = ["Espèces", "Wave", "Orange Money"];
 
@@ -129,6 +140,7 @@ export default function CommandePage() {
 
     return localStorage.getItem("kidiclass_promo_code") || "";
   });
+  const [hasRollingBag, setHasRollingBag] = useState(false);
 
   const adminWhatsappNumber = "2250779311555";
 
@@ -142,16 +154,44 @@ export default function CommandePage() {
     0
   );
 
-  const freeDeliveryThreshold = 50000;
   const promoDiscount =
     promoCode === "KIDI10" ? Math.min(Math.round(subtotal * 0.1), 5000) : 0;
-  const deliveryFee =
-    deliveryArea === "Abidjan" && subtotal >= freeDeliveryThreshold
-      ? 0
-      : deliveryArea === "Abidjan"
-      ? 1000
-      : 0;
+  const deliveryFee = getDeliveryFee(deliveryArea, hasRollingBag);
   const total = Math.max(subtotal - promoDiscount, 0) + deliveryFee;
+
+  const fetchCartDeliveryInfo = useCallback(async () => {
+    const productIds = cart.map((item) => item.productId);
+
+    if (productIds.length === 0) {
+      setHasRollingBag(false);
+      return;
+    }
+
+    const { data } = await supabase
+      .from("products")
+      .select("id,name,product_type")
+      .in("id", productIds);
+
+    const products = (data as ProductStock[]) || [];
+
+    setHasRollingBag(
+      cart.some((item) => {
+        const product = products.find((productItem) => {
+          return productItem.id === item.productId;
+        });
+
+        return isRollingBagProduct(product || { name: item.productName });
+      })
+    );
+  }, [cart]);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      fetchCartDeliveryInfo();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchCartDeliveryInfo]);
 
   function generateOrderReference() {
     const year = new Date().getFullYear();
@@ -240,7 +280,7 @@ Merci de me communiquer le montant total avec livraison.
     for (const item of cart) {
       const { data: product, error } = await supabase
         .from("products")
-        .select("id,name,stock,category,is_pack")
+        .select("id,name,stock,category,product_type,is_pack")
         .eq("id", item.productId)
         .single();
 
@@ -466,8 +506,9 @@ Merci de me communiquer le montant total avec livraison.
     const currentUserId = userData.user?.id || null;
     const loyaltyPoints = getLoyaltyPoints(total);
 
-    const initialStatus =
-      deliveryArea === "Abidjan" ? "En attente" : "Expédition à confirmer";
+      const initialStatus = isFixedDeliveryArea(deliveryArea)
+        ? "En attente"
+        : "Expédition à confirmer";
 
     const { data: order, error: orderError } = await supabase
       .from("orders")
@@ -486,7 +527,9 @@ Merci de me communiquer le montant total avec livraison.
             deliveryLatitude && deliveryLongitude
               ? `https://www.google.com/maps?q=${deliveryLatitude},${deliveryLongitude}`
               : "",
-          payment_method: deliveryArea === "Abidjan" ? paymentMethod : "À confirmer",
+          payment_method: isFixedDeliveryArea(deliveryArea)
+            ? paymentMethod
+            : "À confirmer",
           delivery_area: deliveryArea,
           delivery_fee: deliveryFee,
           total_amount: total,
@@ -538,7 +581,7 @@ Merci de me communiquer le montant total avec livraison.
     window.dispatchEvent(new Event("kidiclass-cart-updated"));
     setCart([]);
 
-    if (deliveryArea !== "Abidjan") {
+    if (!isFixedDeliveryArea(deliveryArea)) {
       openWhatsappDirectly(reference);
       setLoading(false);
       return;
@@ -723,6 +766,9 @@ Merci de me communiquer le montant total avec livraison.
                   if (value === "Abidjan") {
                     setCustomerCity("Cocody");
                     setPaymentMethod("Espèces");
+                  } else if (isFixedDeliveryArea(value)) {
+                    setCustomerCity(value);
+                    setPaymentMethod("Espèces");
                   } else {
                     setCustomerCity("");
                     setPaymentMethod("À confirmer");
@@ -797,7 +843,7 @@ Merci de me communiquer le montant total avec livraison.
               </h2>
             </div>
 
-            {deliveryArea === "Abidjan" ? (
+            {isFixedDeliveryArea(deliveryArea) ? (
               <div className="space-y-4">
                 <KidiclassSelect
                   label="Moyen de paiement"
@@ -814,8 +860,8 @@ Merci de me communiquer le montant total avec livraison.
             ) : (
               <div className="space-y-4">
                 <div className="rounded-2xl border border-orange-200 bg-orange-50 p-5 text-sm font-bold leading-6 text-orange-700">
-                  Pour les livraisons hors Abidjan ou à l’étranger, les frais de
-                  livraison sont calculés au cas par cas. Votre commande sera
+                  Pour les livraisons hors zones fixes ou à l’étranger, les frais
+                  de livraison sont calculés au cas par cas. Votre commande sera
                   enregistrée, puis vous serez redirigé vers WhatsApp pour
                   finaliser l’expédition.
                 </div>
@@ -830,7 +876,7 @@ Merci de me communiquer le montant total avec livraison.
           >
             {loading
               ? "Validation..."
-              : deliveryArea === "Abidjan"
+              : isFixedDeliveryArea(deliveryArea)
               ? "Valider la commande"
               : "Enregistrer et finaliser sur WhatsApp"}
           </button>
@@ -893,24 +939,26 @@ Merci de me communiquer le montant total avec livraison.
               </span>
             </div>
 
-            {deliveryArea === "Abidjan" ? (
+            {isFixedDeliveryArea(deliveryArea) ? (
               <div className="flex justify-between text-gray-700">
-                <span>Livraison Abidjan</span>
+                <span>
+                  {deliveryArea === "Abidjan" && hasRollingBag
+                    ? "Livraison Abidjan avec sac à roulette"
+                    : `Livraison ${deliveryArea}`}
+                </span>
                 <span className="font-bold">
-                  {deliveryFee === 0
-                    ? "Offerte"
-                    : `${deliveryFee.toLocaleString("fr-FR")} FCFA`}
+                  {deliveryFee.toLocaleString("fr-FR")} FCFA
                 </span>
               </div>
             ) : (
               <div className="rounded-2xl bg-orange-50 p-4 text-sm font-bold leading-6 text-orange-700">
-                Livraison hors Abidjan : montant à confirmer sur WhatsApp.
+                Livraison hors zones fixes : montant à confirmer sur WhatsApp.
               </div>
             )}
 
             <div className="rounded-2xl bg-[#e9fbfc] p-4 text-sm font-bold leading-6 text-[#1db7bd]">
-              La livraison à Abidjan est offerte dès{" "}
-              {freeDeliveryThreshold.toLocaleString("fr-FR")} FCFA d’achat.
+              Livraison Abidjan : 1 000 FCFA. Avec un sac à roulette : 2 000
+              FCFA. Bassam, Songon et Anyama : 2 500 FCFA.
             </div>
 
             {promoDiscount > 0 && (
@@ -922,7 +970,7 @@ Merci de me communiquer le montant total avec livraison.
               </div>
             )}
 
-            {deliveryArea === "Abidjan" && (
+            {isFixedDeliveryArea(deliveryArea) && (
               <div className="rounded-2xl bg-[#fff9cf] p-4 text-sm font-bold leading-6 text-[#c7a900]">
                 Moyen de paiement choisi : {paymentMethod}
               </div>
@@ -934,7 +982,7 @@ Merci de me communiquer le montant total avec livraison.
               <span>Total</span>
 
               <span className="text-right text-[#f36f45]">
-                {deliveryArea === "Abidjan"
+                {isFixedDeliveryArea(deliveryArea)
                   ? `${total.toLocaleString("fr-FR")} FCFA`
                   : `${subtotal.toLocaleString(
                       "fr-FR"

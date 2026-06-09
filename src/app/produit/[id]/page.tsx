@@ -466,11 +466,11 @@ export default async function ProductPage({
               />
 
               <p className="mt-3 text-sm font-black text-gray-950">
-                Livraison Abidjan
+                Livraison locale
               </p>
 
               <p className="mt-1 text-xs font-bold text-gray-500">
-                À partir de 1 000 FCFA
+                Abidjan 1 000 FCFA, sac à roulette 2 000 FCFA
               </p>
             </div>
 

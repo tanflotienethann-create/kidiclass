@@ -42,6 +42,7 @@ const categories = [
 
 const productTypes = [
   "Sac",
+  "Sac à roulette",
   "Sac à goûter",
   "Boîte à goûter",
   "Gourde",
@@ -65,6 +66,7 @@ const productTypes = [
 
 const packComponentOptions = [
   "Sac",
+  "Sac à roulette",
   "Sac à goûter",
   "Boîte à goûter",
   "Gourde",

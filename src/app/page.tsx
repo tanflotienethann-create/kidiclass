@@ -82,6 +82,10 @@ const schoolSelection = [
     href: "/catalogue?productType=Sac",
   },
   {
+    title: "Sacs à roulette",
+    href: "/catalogue?productType=Sac%20%C3%A0%20roulette",
+  },
+  {
     title: "Sacs à goûter",
     href: "/catalogue?productType=Sac%20%C3%A0%20go%C3%BBter",
   },
@@ -219,10 +223,11 @@ export default function HomePage() {
           <div className="kidiclass-card p-6">
             <Truck className="text-[#1db7bd]" size={32} strokeWidth={2.5} />
             <h3 className="mt-4 text-xl font-black text-gray-950">
-              Livraison à Abidjan
+              Livraison locale
             </h3>
             <p className="mt-2 text-sm font-bold leading-6 text-gray-500">
-              Livraison à 1 000 FCFA à Abidjan.
+              Abidjan : 1 000 FCFA. Sac à roulette : 2 000 FCFA. Bassam,
+              Songon et Anyama : 2 500 FCFA.
             </p>
           </div>
 

@@ -78,7 +78,7 @@ export default function LoginPage() {
               </div>
 
               <div className="rounded-2xl bg-white p-4 text-center shadow-sm">
-                <p className="text-2xl font-black text-[#f36f45]">1 000</p>
+                <p className="text-2xl font-black text-[#f36f45]">Locale</p>
                 <p className="mt-1 text-xs font-bold text-gray-500">
                   livraison
                 </p>
