@@ -29,19 +29,6 @@ const mainLinks = [
 const categoryLinks = [
   { label: "Nouveautés", href: "/catalogue" },
   { label: "Packs scolaires", href: "/catalogue?category=Packs%20scolaires" },
-  {
-    label: "Sacs à roulette",
-    href: "/catalogue?productType=Sac%20%C3%A0%20roulette",
-  },
-  { label: "Sacs", href: "/catalogue?productType=Sac" },
-  {
-    label: "Sacs à goûter",
-    href: "/catalogue?productType=Sac%20%C3%A0%20go%C3%BBter",
-  },
-  {
-    label: "Boîtes à goûter",
-    href: "/catalogue?productType=Bo%C3%AEte%20%C3%A0%20go%C3%BBter",
-  },
   { label: "Plage", href: "/catalogue?category=Plage" },
   { label: "Accessoires & jeux", href: "/catalogue?category=Accessoires%20%26%20jeux" },
   { label: "Chaussures", href: "/catalogue?category=Chaussures" },
