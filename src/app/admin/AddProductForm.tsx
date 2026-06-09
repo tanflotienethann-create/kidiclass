@@ -1,6 +1,9 @@
 "use client";
 
 import KidiclassSelect from "@/components/KidiclassSelect";
+import {
+  availabilityOptions,
+} from "@/lib/productAvailability";
 import { supabase } from "@/lib/supabase";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import {
@@ -113,6 +116,9 @@ export default function AddProductForm() {
   const [price, setPrice] = useState("");
   const [oldPrice, setOldPrice] = useState("");
   const [stock, setStock] = useState("");
+  const [availabilityStatus, setAvailabilityStatus] = useState(
+    availabilityOptions[0]
+  );
 
   const [category, setCategory] = useState("");
   const [productType, setProductType] = useState("");
@@ -305,6 +311,7 @@ export default function AddProductForm() {
     setPrice("");
     setOldPrice("");
     setStock("");
+    setAvailabilityStatus(availabilityOptions[0]);
     setCategory("");
     setProductType("");
     setCharacterTheme("");
@@ -409,6 +416,7 @@ export default function AddProductForm() {
             price: Number(price),
             old_price: oldPrice ? Number(oldPrice) : null,
             stock: finalStock,
+            availability_status: availabilityStatus,
             category,
             product_type: productType,
             character_theme: characterTheme,
@@ -788,6 +796,13 @@ export default function AddProductForm() {
                   />
                 </label>
               )}
+
+              <KidiclassSelect
+                label="Disponibilité affichée au client"
+                value={availabilityStatus}
+                options={availabilityOptions}
+                onChange={setAvailabilityStatus}
+              />
 
               <div className="grid gap-5 md:grid-cols-2">
                 <KidiclassSelect

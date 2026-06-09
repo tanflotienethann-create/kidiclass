@@ -1,5 +1,6 @@
 "use client";
 
+import { getProductAvailabilityLabel } from "@/lib/productAvailability";
 import { supabase } from "@/lib/supabase";
 import {
   ArrowRight,
@@ -21,6 +22,7 @@ type Product = {
   price: number;
   old_price: number | null;
   stock: number;
+  availability_status: string | null;
   image_url: string | null;
   images: string[] | null;
   category: string;
@@ -109,7 +111,7 @@ export default function HomePage() {
       const { data, error } = await supabase
         .from("products")
         .select(
-          "id,name,price,old_price,stock,image_url,images,category,product_type,is_new,is_favorite,is_promo,is_archived"
+          "id,name,price,old_price,stock,availability_status,image_url,images,category,product_type,is_new,is_favorite,is_promo,is_archived"
         )
         .or("is_archived.is.false,is_archived.is.null")
         .order("created_at", { ascending: false })
@@ -472,7 +474,9 @@ export default function HomePage() {
                         }`}
                       >
                         {Number(product.stock || 0) > 0
-                          ? "Disponible"
+                          ? getProductAvailabilityLabel(
+                              product.availability_status
+                            )
                           : "Rupture"}
                       </span>
                     </div>

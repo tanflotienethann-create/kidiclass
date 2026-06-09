@@ -264,7 +264,7 @@ Merci de me communiquer le montant total avec livraison.
       if (item.quantity > availableStock) {
         return {
           valid: false,
-          message: `Stock insuffisant pour "${typedProduct.name}". Stock disponible : ${availableStock}.`,
+          message: `Quantité demandée indisponible pour "${typedProduct.name}".`,
         };
       }
 
@@ -292,7 +292,7 @@ Merci de me communiquer le montant total avec livraison.
           if (componentStock < neededQuantity) {
             return {
               valid: false,
-              message: `Stock insuffisant pour le composant "${packItem.component_name}" dans le pack "${typedProduct.name}".`,
+              message: `Quantité demandée indisponible pour le pack "${typedProduct.name}".`,
             };
           }
         }

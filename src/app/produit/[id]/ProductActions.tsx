@@ -80,7 +80,7 @@ export default function ProductActions({
     }
 
     if (quantity > stock) {
-      setMessage(`Stock insuffisant. Stock disponible : ${stock}.`);
+      setMessage("Quantité demandée indisponible.");
       return false;
     }
 
@@ -101,7 +101,7 @@ export default function ProductActions({
       const newQuantity = existingItem.quantity + quantity;
 
       if (newQuantity > stock) {
-        setMessage(`Stock insuffisant. Stock disponible : ${stock}.`);
+        setMessage("Quantité demandée indisponible.");
         return false;
       }
 
@@ -212,9 +212,11 @@ export default function ProductActions({
           </button>
         </div>
 
-        <p className="mt-2 text-xs font-bold text-gray-500">
-          Stock disponible : {stock}
-        </p>
+        {isOutOfStock && (
+          <p className="mt-2 text-xs font-bold text-red-500">
+            Produit indisponible actuellement
+          </p>
+        )}
       </div>
 
       {message && (

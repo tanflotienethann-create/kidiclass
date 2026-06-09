@@ -1,6 +1,7 @@
 "use client";
 
 import KidiclassSelect from "@/components/KidiclassSelect";
+import { getProductAvailabilityLabel } from "@/lib/productAvailability";
 import { supabase } from "@/lib/supabase";
 import { Heart, PackageCheck, RotateCcw, Search, Sparkles, Tag } from "lucide-react";
 import Link from "next/link";
@@ -13,6 +14,7 @@ type Product = {
   price: number;
   old_price: number | null;
   stock: number;
+  availability_status: string | null;
   image_url: string | null;
   images: string[] | null;
   category: string;
@@ -583,7 +585,9 @@ export default function CatalogueClient() {
                         }`}
                       >
                         {Number(product.stock || 0) > 0
-                          ? "Disponible"
+                          ? getProductAvailabilityLabel(
+                              product.availability_status
+                            )
                           : "Rupture"}
                       </span>
                     </div>

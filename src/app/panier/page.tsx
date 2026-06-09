@@ -120,9 +120,7 @@ export default function PanierPage() {
     const availableStock = getProductStock(item.productId);
 
     if (item.quantity >= availableStock) {
-      setMessage(
-        `Stock insuffisant pour "${item.productName}". Stock disponible : ${availableStock}.`
-      );
+      setMessage(`Quantité demandée indisponible pour "${item.productName}".`);
       return;
     }
 
@@ -194,9 +192,7 @@ export default function PanierPage() {
       }
 
       if (item.quantity > availableStock) {
-        setMessage(
-          `Stock insuffisant pour "${item.productName}". Stock disponible : ${availableStock}.`
-        );
+        setMessage(`Quantité demandée indisponible pour "${item.productName}".`);
         return false;
       }
     }
@@ -356,7 +352,7 @@ export default function PanierPage() {
 
                       {quantityTooHigh && !isOutOfStock && (
                         <span className="rounded-full bg-orange-50 px-4 py-2 text-xs font-black text-orange-600">
-                          Stock insuffisant
+                          Quantité indisponible
                         </span>
                       )}
                     </div>
@@ -371,15 +367,11 @@ export default function PanierPage() {
                       {Number(item.productPrice).toLocaleString("fr-FR")} FCFA
                     </p>
 
-                    <p
-                      className={`mt-3 w-fit rounded-full px-4 py-2 text-xs font-black ${
-                        isOutOfStock || quantityTooHigh
-                          ? "bg-red-50 text-red-500"
-                          : "bg-green-50 text-green-600"
-                      }`}
-                    >
-                      Stock disponible : {availableStock}
-                    </p>
+                    {(isOutOfStock || quantityTooHigh) && (
+                      <p className="mt-3 w-fit rounded-full bg-red-50 px-4 py-2 text-xs font-black text-red-500">
+                        Quantité indisponible
+                      </p>
+                    )}
 
                     <div className="mt-5 flex w-fit items-center gap-3 rounded-full border border-gray-200 bg-white p-2">
                       <button

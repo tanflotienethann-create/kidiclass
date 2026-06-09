@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getProductAvailabilityLabel } from "@/lib/productAvailability";
 import { supabase } from "@/lib/supabase";
 import ProductGallery from "./ProductGallery";
 import ProductActions from "./ProductActions";
@@ -26,6 +27,7 @@ type Product = {
   price: number;
   old_price: number | null;
   stock: number;
+  availability_status: string | null;
   image_url: string | null;
   images: string[] | null;
   category: string | null;
@@ -117,6 +119,9 @@ export default async function ProductPage({
       : [];
 
   const isOutOfStock = Number(product.stock || 0) <= 0;
+  const availabilityLabel = getProductAvailabilityLabel(
+    product.availability_status
+  );
 
   const hasOldPrice =
     product.old_price !== null &&
@@ -236,9 +241,7 @@ export default async function ProductPage({
               >
                 {isOutOfStock
                   ? "Indisponible actuellement"
-                  : isPack
-                  ? `${product.stock} pack(s) disponible(s)`
-                  : `${product.stock} article(s) disponible(s)`}
+                  : availabilityLabel}
               </p>
             </div>
 
@@ -346,8 +349,8 @@ export default async function ProductPage({
               </h2>
 
               <p className="mt-2 text-sm font-bold leading-6 text-gray-500">
-                Le pack est disponible uniquement si tous ses composants sont en
-                stock.
+                Le pack est disponible uniquement si tous ses composants sont
+                prêts.
               </p>
 
               <div className="mt-6 space-y-3">
@@ -383,7 +386,7 @@ export default async function ProductPage({
                           }`}
                         >
                           {componentIsAvailable
-                            ? `Stock : ${componentStock}`
+                            ? "Disponible"
                             : "Rupture"}
                         </span>
                       </div>
@@ -405,7 +408,7 @@ export default async function ProductPage({
               </div>
 
               <h2 className="text-3xl font-black text-gray-950">
-                Tailles, couleurs et stocks
+                Tailles et couleurs
               </h2>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -435,7 +438,7 @@ export default async function ProductPage({
                         }`}
                       >
                         {variantStock > 0
-                          ? `Stock : ${variantStock}`
+                          ? "Disponible"
                           : "Rupture"}
                       </p>
                     </div>
