@@ -321,27 +321,27 @@ export default function CatalogueClient() {
   }
 
   return (
-    <main className="min-h-screen bg-[#fffdf7]">
-      <section className="bg-[#e9fbfc] px-5 py-16">
+    <main className="min-h-screen bg-[#faf8f4]">
+      <section className="retail-band px-5 py-14">
         <div className="mx-auto max-w-7xl">
-          <p className="text-sm font-black uppercase tracking-[0.4em] text-[#1db7bd]">
+          <p className="text-sm font-black uppercase text-[#e85035]">
             Catalogue KidiClass
           </p>
 
-          <h1 className="mt-4 max-w-4xl text-5xl font-black leading-tight text-gray-950 md:text-7xl">
-            Trouvez le pack, l’article plage ou l’accessoire parfait.
+          <h1 className="mt-4 max-w-4xl text-5xl font-black leading-tight text-[#111827] md:text-7xl">
+            Tous les essentiels kids au même endroit.
           </h1>
 
-          <p className="mt-5 max-w-2xl text-lg font-bold leading-8 text-gray-600">
-            Parcourez les packs scolaires, les articles de plage, les jeux,
-            les chaussures et les sélections coups de cœur de la boutique.
+          <p className="mt-5 max-w-2xl text-lg font-bold leading-8 text-gray-700">
+            Filtrez les packs, chaussures, accessoires et articles de plage
+            avec une présentation plus claire et plus boutique.
           </p>
         </div>
       </section>
 
       <section className="px-5 py-10">
         <div className="mx-auto max-w-7xl">
-          <div className="rounded-[2.5rem] border border-gray-100 bg-white p-6 shadow-sm md:p-8">
+          <div className="retail-card p-6 md:p-8">
             <div className="grid gap-5 lg:grid-cols-[1.2fr_1fr_1fr]">
               <div>
                 <label className="mb-2 block text-sm font-black text-gray-700">
@@ -358,7 +358,7 @@ export default function CatalogueClient() {
                   <input
                     type="text"
                     placeholder="Rechercher un produit..."
-                    className="w-full rounded-[1.4rem] border-2 border-[#bfedf0] bg-white py-4 pl-14 pr-5 font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15"
+                    className="w-full rounded-xl border border-[#ddd6cc] bg-white py-4 pl-14 pr-5 font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
@@ -421,7 +421,7 @@ export default function CatalogueClient() {
               <input
                 type="text"
                 placeholder="Marque : Disney, Barbie..."
-                className="rounded-[1.4rem] border-2 border-[#bfedf0] bg-white p-4 font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15"
+                className="rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
                 value={brandSearch}
                 onChange={(e) => setBrandSearch(e.target.value)}
               />
@@ -429,7 +429,7 @@ export default function CatalogueClient() {
               <input
                 type="text"
                 placeholder="Couleur : rose, bleu..."
-                className="rounded-[1.4rem] border-2 border-[#bfedf0] bg-white p-4 font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15"
+                className="rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
                 value={colorSearch}
                 onChange={(e) => setColorSearch(e.target.value)}
               />
@@ -437,13 +437,13 @@ export default function CatalogueClient() {
               <input
                 type="text"
                 placeholder="Âge : 3-6 ans..."
-                className="rounded-[1.4rem] border-2 border-[#bfedf0] bg-white p-4 font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15"
+                className="rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
                 value={ageSearch}
                 onChange={(e) => setAgeSearch(e.target.value)}
               />
             </div>
 
-            <div className="mt-6 flex flex-col justify-between gap-4 rounded-[1.8rem] bg-[#fffdf7] p-4 sm:flex-row sm:items-center">
+            <div className="mt-6 flex flex-col justify-between gap-4 rounded-xl bg-[#faf8f4] p-4 sm:flex-row sm:items-center">
               <p className="text-sm font-bold text-gray-600">
                 {activeFiltersCount > 0
                   ? `${activeFiltersCount} filtre(s) actif(s)`
@@ -453,7 +453,7 @@ export default function CatalogueClient() {
               <button
                 type="button"
                 onClick={resetFilters}
-                className="flex w-fit items-center gap-2 rounded-full border-2 border-[#1db7bd] px-5 py-3 text-sm font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white"
+                className="flex w-fit items-center gap-2 rounded-lg border border-[#111827] px-5 py-3 text-sm font-black text-[#111827] hover:bg-[#111827] hover:text-white"
               >
                 <RotateCcw size={17} strokeWidth={2.5} />
                 Réinitialiser
@@ -472,11 +472,11 @@ export default function CatalogueClient() {
           </div>
 
           {loading ? (
-            <div className="mt-8 rounded-[2rem] bg-white p-10 text-center font-black text-[#1db7bd] shadow-sm">
+            <div className="retail-card mt-8 p-10 text-center font-black text-[#17324d]">
               Chargement des produits...
             </div>
           ) : filteredProducts.length === 0 ? (
-            <div className="mt-8 rounded-[2rem] border border-dashed border-[#bfedf0] bg-white p-10 text-center shadow-sm">
+            <div className="retail-card mt-8 border-dashed p-10 text-center">
               <h3 className="text-2xl font-black text-gray-950">
                 Aucun produit trouvé
               </h3>
@@ -491,9 +491,9 @@ export default function CatalogueClient() {
                 <Link
                   key={product.id}
                   href={`/produit/${product.id}`}
-                  className="group overflow-hidden rounded-[2rem] border border-gray-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                  className="group overflow-hidden rounded-xl border border-[#e4ded4] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
                 >
-                  <div className="relative h-80 overflow-hidden bg-[#fffdf7]">
+                  <div className="relative h-80 overflow-hidden bg-[#f4efe7]">
                     {getProductImage(product) ? (
                       <img
                         src={getProductImage(product)}
@@ -508,14 +508,14 @@ export default function CatalogueClient() {
 
                     <div className="absolute left-4 top-4 flex flex-wrap gap-2">
                       {product.is_new && (
-                        <span className="flex items-center gap-1 rounded-full bg-[#e9fbfc] px-3 py-1 text-xs font-black text-[#1db7bd]">
+                        <span className="flex items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-black text-[#111827] shadow-sm">
                           <Sparkles size={13} strokeWidth={3} />
                           Nouveau
                         </span>
                       )}
 
                       {product.is_favorite && (
-                        <span className="flex items-center gap-1 rounded-full bg-[#fff1f5] px-3 py-1 text-xs font-black text-[#f36f45]">
+                        <span className="flex items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-black text-[#111827] shadow-sm">
                           <Heart size={13} strokeWidth={3} />
                           Coup de cœur
                         </span>
@@ -581,7 +581,7 @@ export default function CatalogueClient() {
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-black ${
                           Number(product.stock || 0) > 0
-                            ? "bg-[#e9fbfc] text-[#1db7bd]"
+                            ? "bg-[#f4efe7] text-[#17324d]"
                             : "bg-red-50 text-red-500"
                         }`}
                       >

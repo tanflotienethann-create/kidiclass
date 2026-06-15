@@ -1,22 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fffdf7;
+  --background: #faf8f4;
   --foreground: #111827;
 
-  --kidiclass-turquoise: #1db7bd;
-  --kidiclass-turquoise-dark: #159ca1;
-  --kidiclass-turquoise-light: #e9fbfc;
+  --kidiclass-turquoise: #0f766e;
+  --kidiclass-turquoise-dark: #0f5f59;
+  --kidiclass-turquoise-light: #e6f4f1;
 
-  --kidiclass-orange: #f36f45;
-  --kidiclass-orange-dark: #e85e33;
+  --kidiclass-orange: #e85035;
+  --kidiclass-orange-dark: #c93f2a;
 
-  --kidiclass-yellow: #fff9cf;
-  --kidiclass-yellow-dark: #c7a900;
+  --kidiclass-yellow: #fff3bf;
+  --kidiclass-yellow-dark: #9a6b00;
 
-  --kidiclass-pink: #fff1f5;
-  --kidiclass-border: #bfedf0;
-  --kidiclass-bg: #fffdf7;
+  --kidiclass-pink: #ffe8e0;
+  --kidiclass-border: #ddd6cc;
+  --kidiclass-bg: #faf8f4;
+  --kidiclass-ink: #1f2933;
+  --kidiclass-denim: #17324d;
+  --kidiclass-cream: #f4efe7;
 }
 
 /* ============================= */
@@ -89,7 +92,7 @@ a:focus-visible {
 }
 
 ::selection {
-  background: rgba(29, 183, 189, 0.22);
+  background: rgba(232, 80, 53, 0.18);
   color: #111827;
 }
 
@@ -103,16 +106,16 @@ a:focus-visible {
 }
 
 ::-webkit-scrollbar-track {
-  background: #fffdf7;
+  background: #faf8f4;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #bfedf0;
+  background: #d8d0c4;
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #1db7bd;
+  background: #17324d;
 }
 
 /* ============================= */
@@ -142,8 +145,8 @@ select {
   background-color: #ffffff;
   color: #111827;
 
-  border: 2px solid #bfedf0;
-  border-radius: 1.4rem;
+  border: 1px solid #ddd6cc;
+  border-radius: 0.75rem;
 
   padding: 1rem 3rem 1rem 1rem;
 
@@ -153,7 +156,7 @@ select {
   outline: none;
   cursor: pointer;
 
-  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%231db7bd' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2317324d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 1rem center;
   background-size: 1.1rem;
@@ -163,13 +166,13 @@ select {
 }
 
 select:hover {
-  border-color: #1db7bd;
-  background-color: #f8ffff;
+  border-color: #17324d;
+  background-color: #fbfaf7;
 }
 
 select:focus {
-  border-color: #1db7bd;
-  box-shadow: 0 0 0 4px rgba(29, 183, 189, 0.15);
+  border-color: #17324d;
+  box-shadow: 0 0 0 4px rgba(23, 50, 77, 0.1);
   background-color: #ffffff;
 }
 
@@ -191,50 +194,95 @@ select option {
 /* ============================= */
 
 .kidiclass-card {
-  border: 1px solid rgba(17, 24, 39, 0.06);
+  border: 1px solid rgba(31, 41, 51, 0.1);
   background: #ffffff;
-  border-radius: 2rem;
-  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.06);
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 24px rgba(31, 41, 51, 0.06);
   transition: transform 0.25s ease, box-shadow 0.25s ease,
     border-color 0.25s ease;
 }
 
 .kidiclass-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(29, 183, 189, 0.35);
-  box-shadow: 0 18px 45px rgba(17, 24, 39, 0.1);
+  transform: translateY(-3px);
+  border-color: rgba(23, 50, 77, 0.25);
+  box-shadow: 0 16px 38px rgba(31, 41, 51, 0.12);
 }
 
 .kidiclass-button-primary {
-  background: #f36f45;
+  background: #111827;
   color: #ffffff;
-  border-radius: 999px;
+  border-radius: 0.65rem;
   font-weight: 900;
   transition: background-color 0.2s ease, transform 0.2s ease,
     box-shadow 0.2s ease;
 }
 
 .kidiclass-button-primary:hover {
-  background: #e85e33;
+  background: #e85035;
   transform: translateY(-1px);
   box-shadow: 0 10px 25px rgba(243, 111, 69, 0.25);
 }
 
 .kidiclass-button-secondary {
-  border: 2px solid #1db7bd;
-  color: #1db7bd;
+  border: 1px solid #111827;
+  color: #111827;
   background: #ffffff;
-  border-radius: 999px;
+  border-radius: 0.65rem;
   font-weight: 900;
   transition: background-color 0.2s ease, color 0.2s ease,
     transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .kidiclass-button-secondary:hover {
-  background: #1db7bd;
+  background: #111827;
   color: #ffffff;
   transform: translateY(-1px);
   box-shadow: 0 10px 25px rgba(29, 183, 189, 0.2);
+}
+
+.retail-band {
+  background:
+    linear-gradient(135deg, rgba(255, 243, 191, 0.92), rgba(250, 248, 244, 0.8)),
+    radial-gradient(circle at top right, rgba(232, 80, 53, 0.18), transparent 34%),
+    #faf8f4;
+}
+
+.retail-chip {
+  border: 1px solid #ddd6cc;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #17324d;
+  font-weight: 900;
+}
+
+.retail-card {
+  border: 1px solid rgba(31, 41, 51, 0.1);
+  border-radius: 0.75rem;
+  background: #ffffff;
+  box-shadow: 0 8px 26px rgba(31, 41, 51, 0.06);
+}
+
+.retail-section-title {
+  color: #111827;
+  letter-spacing: 0;
+}
+
+main {
+  background-color: #faf8f4;
+}
+
+[class*="rounded-[2rem]"],
+[class*="rounded-[2.2rem]"],
+[class*="rounded-[2.5rem]"],
+[class*="rounded-[3rem]"] {
+  border-radius: 0.85rem !important;
+}
+
+[class*="tracking-[0.4em]"],
+[class*="tracking-[0.3em]"],
+[class*="tracking-[0.25em]"],
+[class*="tracking-[0.2em]"] {
+  letter-spacing: 0.08em !important;
 }
 
 /* ============================= */

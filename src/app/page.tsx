@@ -146,22 +146,21 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#fffdf7]">
-      <section className="overflow-hidden bg-[#e9fbfc] px-5 py-16 md:py-24">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
+    <main className="min-h-screen bg-[#faf8f4]">
+      <section className="retail-band overflow-hidden px-5 py-8 md:py-12">
+        <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
-            <p className="text-sm font-black uppercase tracking-[0.4em] text-[#1db7bd]">
-              Boutique enfant
+            <p className="text-sm font-black uppercase text-[#e85035]">
+              Boutique enfant tendance
             </p>
 
-            <h1 className="mt-5 max-w-3xl text-5xl font-black leading-tight text-gray-950 md:text-7xl">
-              Des packs et accessoires joyeux pour les enfants bien équipés.
+            <h1 className="mt-5 max-w-3xl text-5xl font-black leading-tight text-[#111827] md:text-7xl">
+              La rentrée, la plage et les looks kids réunis.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg font-bold leading-8 text-gray-600">
-              KidiClass sélectionne surtout des packs scolaires, articles de
-              plage, accessoires, jeux et chaussures, avec une touche joyeuse,
-              pratique et tendance.
+            <p className="mt-6 max-w-2xl text-lg font-bold leading-8 text-gray-700">
+              Des essentiels enfant faciles à porter, des packs pratiques et
+              des accessoires colorés, présentés comme une vraie boutique mode.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
@@ -182,43 +181,192 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="rounded-[3rem] bg-white p-5 shadow-xl">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-[2rem] bg-[#fff9cf] p-6 transition hover:-translate-y-1 hover:shadow-lg">
-                <Sparkles className="text-[#c7a900]" size={34} />
-                <h2 className="mt-5 text-2xl font-black text-gray-950">
-                  Nouveautés
-                </h2>
-                <p className="mt-2 text-sm font-bold leading-6 text-gray-600">
-                  Des articles frais pour renouveler le dressing des enfants.
-                </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="relative min-h-72 overflow-hidden rounded-xl bg-[#17324d] p-7 text-white shadow-xl sm:col-span-2">
+              <div className="absolute bottom-0 right-0 hidden h-32 w-32 rounded-full bg-[#fff3bf] md:block" />
+              <div className="absolute right-8 top-8 hidden rounded-full bg-white/10 px-5 py-2 text-sm font-black md:block">
+                Collection kids
               </div>
-
-              <div className="rounded-[2rem] bg-[#fff1f5] p-6 transition hover:-translate-y-1 hover:shadow-lg">
-                <Heart className="text-[#f36f45]" size={34} />
-                <h2 className="mt-5 text-2xl font-black text-gray-950">
-                  Coups de cœur
-                </h2>
-                <p className="mt-2 text-sm font-bold leading-6 text-gray-600">
-                  Les pièces préférées de la boutique.
-                </p>
-              </div>
-
-              <div className="rounded-[2rem] bg-[#e9fbfc] p-6 transition hover:-translate-y-1 hover:shadow-lg sm:col-span-2">
-                <ShoppingBag className="text-[#1db7bd]" size={34} />
-                <h2 className="mt-5 text-2xl font-black text-gray-950">
+              <div className="relative max-w-lg">
+                <ShoppingBag size={38} />
+                <h2 className="mt-5 text-4xl font-black leading-tight">
                   Packs scolaires
                 </h2>
-                <p className="mt-2 text-sm font-bold leading-6 text-gray-600">
-                  Sacs, sacs à goûter, boîtes à goûter, gourdes et trousses.
+                <p className="mt-3 text-sm font-bold leading-6 text-white/80">
+                  Sacs, gourdes, trousses et articles utiles pour une rentrée
+                  nette et stylée.
                 </p>
               </div>
+            </div>
+
+            <div className="retail-card p-6 text-gray-950">
+              <Sparkles className="text-[#e85035]" size={30} />
+              <h2 className="mt-4 text-2xl font-black text-gray-950">
+                Nouveautés
+              </h2>
+              <p className="mt-2 text-sm font-bold leading-6 text-gray-600">
+                Les derniers articles ajoutés à la boutique.
+              </p>
+            </div>
+
+            <div className="retail-card p-6 text-gray-950">
+              <Heart className="text-[#0f766e]" size={30} />
+              <h2 className="mt-4 text-2xl font-black text-gray-950">
+                Coups de cœur
+              </h2>
+              <p className="mt-2 text-sm font-bold leading-6 text-gray-600">
+                Les choix préférés pour enfants.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="px-5 py-12">
+      <section className="border-b border-[#e4ded4] bg-white px-5 py-5">
+        <div className="mx-auto flex max-w-7xl gap-3 overflow-x-auto">
+          {homeCategories.map((category) => (
+            <Link
+              key={category.title}
+              href={category.href}
+              className="whitespace-nowrap rounded-full border border-[#ddd6cc] bg-white px-5 py-3 text-sm font-black text-gray-950 transition hover:border-[#111827] hover:bg-[#faf8f4]"
+            >
+              {category.title}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="px-5 py-10">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div>
+              <p className="text-sm font-black uppercase text-[#e85035]">
+                À shopper
+              </p>
+
+              <h2 className="mt-2 text-4xl font-black text-gray-950 md:text-5xl">
+                Derniers articles
+              </h2>
+            </div>
+
+            <Link
+              href="/catalogue"
+              className="kidiclass-button-secondary flex w-fit items-center gap-2 px-6 py-3"
+            >
+              Voir tout
+              <ArrowRight size={20} strokeWidth={2.5} />
+            </Link>
+          </div>
+
+          {products.length === 0 ? (
+            <div className="kidiclass-card mt-8 p-10 text-center">
+              <PackageCheck
+                className="mx-auto text-[#1db7bd]"
+                size={42}
+                strokeWidth={2.5}
+              />
+
+              <h3 className="mt-4 text-2xl font-black text-gray-950">
+                Aucun produit pour le moment
+              </h3>
+
+              <p className="mt-2 font-bold text-gray-500">
+                Ajoutez des produits depuis l’espace admin.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {products.map((product) => (
+                <Link
+                  key={product.id}
+                  href={`/produit/${product.id}`}
+                  className="kidiclass-card group overflow-hidden"
+                >
+                  <div className="relative h-72 overflow-hidden bg-[#f4efe7]">
+                    {getProductImage(product) ? (
+                      <img
+                        src={getProductImage(product)}
+                        alt={product.name}
+                        className="h-full w-full object-cover object-top transition duration-300 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-gray-400">
+                        <PackageCheck size={44} strokeWidth={2.5} />
+                      </div>
+                    )}
+
+                    <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                      {product.is_promo && (
+                        <span className="rounded-full bg-[#f36f45] px-3 py-1 text-xs font-black text-white">
+                          Promo
+                        </span>
+                      )}
+
+                      {product.is_new && (
+                        <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-[#111827] shadow-sm">
+                          Nouveau
+                        </span>
+                      )}
+
+                      {product.is_favorite && (
+                        <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-[#111827] shadow-sm">
+                          Coup de cœur
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="p-5">
+                    <p className="text-xs font-black uppercase text-[#17324d]">
+                      {product.category}
+                    </p>
+
+                    <h3 className="mt-2 line-clamp-2 text-xl font-black text-gray-950">
+                      {product.name}
+                    </h3>
+
+                    <p className="mt-2 text-sm font-bold text-gray-500">
+                      {product.product_type || "Article KidiClass"}
+                    </p>
+
+                    <div className="mt-4 flex items-end justify-between gap-3">
+                      <div>
+                        <p className="text-xl font-black text-[#111827]">
+                          {Number(product.price || 0).toLocaleString("fr-FR")}{" "}
+                          FCFA
+                        </p>
+
+                        {product.old_price && (
+                          <p className="text-sm font-bold text-gray-400 line-through">
+                            {Number(product.old_price).toLocaleString("fr-FR")}{" "}
+                            FCFA
+                          </p>
+                        )}
+                      </div>
+
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-black ${
+                          Number(product.stock || 0) > 0
+                            ? "bg-[#f4efe7] text-[#17324d]"
+                            : "bg-red-50 text-red-500"
+                        }`}
+                      >
+                        {Number(product.stock || 0) > 0
+                          ? getProductAvailabilityLabel(
+                              product.availability_status
+                            )
+                          : "Rupture"}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="px-5 py-10">
         <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-3">
           <div className="kidiclass-card p-6">
             <Truck className="text-[#1db7bd]" size={32} strokeWidth={2.5} />
@@ -363,135 +511,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="px-5 py-12">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
-            <div>
-              <p className="text-sm font-black uppercase tracking-[0.3em] text-[#1db7bd]">
-                Nouveautés
-              </p>
-
-              <h2 className="mt-3 text-4xl font-black text-gray-950 md:text-5xl">
-                Derniers articles
-              </h2>
-            </div>
-
-            <Link
-              href="/catalogue"
-              className="kidiclass-button-secondary flex w-fit items-center gap-2 px-6 py-3"
-            >
-              Voir tout
-              <ArrowRight size={20} strokeWidth={2.5} />
-            </Link>
-          </div>
-
-          {products.length === 0 ? (
-            <div className="kidiclass-card mt-8 p-10 text-center">
-              <PackageCheck
-                className="mx-auto text-[#1db7bd]"
-                size={42}
-                strokeWidth={2.5}
-              />
-
-              <h3 className="mt-4 text-2xl font-black text-gray-950">
-                Aucun produit pour le moment
-              </h3>
-
-              <p className="mt-2 font-bold text-gray-500">
-                Ajoutez des produits depuis l’espace admin.
-              </p>
-            </div>
-          ) : (
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {products.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/produit/${product.id}`}
-                  className="kidiclass-card group overflow-hidden"
-                >
-                  <div className="relative h-80 overflow-hidden bg-[#fffdf7]">
-                    {getProductImage(product) ? (
-                      <img
-                        src={getProductImage(product)}
-                        alt={product.name}
-                        className="h-full w-full object-cover object-top transition duration-300 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-gray-400">
-                        <PackageCheck size={44} strokeWidth={2.5} />
-                      </div>
-                    )}
-
-                    <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-                      {product.is_promo && (
-                        <span className="rounded-full bg-[#f36f45] px-3 py-1 text-xs font-black text-white">
-                          Promo
-                        </span>
-                      )}
-
-                      {product.is_new && (
-                        <span className="rounded-full bg-[#e9fbfc] px-3 py-1 text-xs font-black text-[#1db7bd]">
-                          Nouveau
-                        </span>
-                      )}
-
-                      {product.is_favorite && (
-                        <span className="rounded-full bg-[#fff1f5] px-3 py-1 text-xs font-black text-[#f36f45]">
-                          Coup de cœur
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="p-5">
-                    <p className="text-xs font-black uppercase tracking-[0.2em] text-[#1db7bd]">
-                      {product.category}
-                    </p>
-
-                    <h3 className="mt-2 line-clamp-2 text-xl font-black text-gray-950">
-                      {product.name}
-                    </h3>
-
-                    <p className="mt-2 text-sm font-bold text-gray-500">
-                      {product.product_type || "Article KidiClass"}
-                    </p>
-
-                    <div className="mt-4 flex items-end justify-between gap-3">
-                      <div>
-                        <p className="text-xl font-black text-[#f36f45]">
-                          {Number(product.price || 0).toLocaleString("fr-FR")}{" "}
-                          FCFA
-                        </p>
-
-                        {product.old_price && (
-                          <p className="text-sm font-bold text-gray-400 line-through">
-                            {Number(product.old_price).toLocaleString("fr-FR")}{" "}
-                            FCFA
-                          </p>
-                        )}
-                      </div>
-
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-black ${
-                          Number(product.stock || 0) > 0
-                            ? "bg-[#e9fbfc] text-[#1db7bd]"
-                            : "bg-red-50 text-red-500"
-                        }`}
-                      >
-                        {Number(product.stock || 0) > 0
-                          ? getProductAvailabilityLabel(
-                              product.availability_status
-                            )
-                          : "Rupture"}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
     </main>
   );
 }

@@ -66,6 +66,7 @@ export default function SuiviPage() {
     "Côte d’Ivoire +225"
   );
   const [phone, setPhone] = useState("");
+  const [reference, setReference] = useState("");
   const [orders, setOrders] = useState<Order[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -77,6 +78,32 @@ export default function SuiviPage() {
 
   function cleanPhone(value: string) {
     return value.replace(/\D/g, "");
+  }
+
+  function getPhoneVariants(value: string) {
+    const cleaned = cleanPhone(value);
+    const withoutCountryCode = cleaned.startsWith("225")
+      ? cleaned.slice(3)
+      : cleaned;
+    const withoutLeadingZero = withoutCountryCode.replace(/^0+/, "");
+
+    return Array.from(
+      new Set([cleaned, withoutCountryCode, withoutLeadingZero].filter(Boolean))
+    );
+  }
+
+  function phoneMatchesOrder(orderPhone: string | null, searchedPhone: string) {
+    const orderVariants = getPhoneVariants(orderPhone || "");
+    const searchVariants = getPhoneVariants(searchedPhone);
+
+    return searchVariants.some((searchValue) => {
+      return orderVariants.some((orderValue) => {
+        return (
+          orderValue.includes(searchValue) ||
+          searchValue.includes(orderValue)
+        );
+      });
+    });
   }
 
   function getStepIndex(status: string | null) {
@@ -101,39 +128,54 @@ export default function SuiviPage() {
     setMessage("");
     setOrders([]);
 
-    if (!phone.trim()) {
-      setMessage("Veuillez renseigner votre numéro de téléphone.");
+    if (!phone.trim() && !reference.trim()) {
+      setMessage("Veuillez renseigner votre numéro ou votre référence de commande.");
       setLoading(false);
       return;
     }
 
     const searchedPhone = cleanPhone(`${selectedCountryCode}${phone}`);
+    const searchedReference = reference.trim().toUpperCase();
 
-    const { data, error } = await supabase
-      .from("orders")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const { data, error } = await supabase.rpc("track_kidiclass_orders", {
+      search_phone: phone.trim() ? searchedPhone : "",
+      search_reference: searchedReference,
+    });
+
+    let allOrders = (data as Order[]) || [];
 
     if (error) {
-      setMessage("Erreur recherche : " + error.message);
-      setLoading(false);
-      return;
+      const fallback = await supabase
+        .from("orders")
+        .select(
+          "id,order_reference,customer_name,customer_phone,customer_city,customer_address,payment_method,status,total_amount,delivery_area,delivery_fee,created_at"
+        )
+        .order("created_at", { ascending: false });
+
+      if (fallback.error) {
+        setMessage(
+          "Impossible de charger le suivi. Vérifiez que la fonction Supabase de suivi est installée."
+        );
+        setLoading(false);
+        return;
+      }
+
+      allOrders = (fallback.data as Order[]) || [];
     }
 
-    const allOrders = (data as Order[]) || [];
-
     const matchedOrders = allOrders.filter((order) => {
-      const orderPhone = cleanPhone(order.customer_phone || "");
+      const matchesPhone =
+        !phone.trim() || phoneMatchesOrder(order.customer_phone, searchedPhone);
 
-      return (
-        orderPhone.includes(cleanPhone(phone)) ||
-        orderPhone.includes(searchedPhone) ||
-        searchedPhone.includes(orderPhone)
-      );
+      const matchesReference =
+        !searchedReference ||
+        (order.order_reference || "").toUpperCase().includes(searchedReference);
+
+      return matchesPhone && matchesReference;
     });
 
     if (matchedOrders.length === 0) {
-      setMessage("Aucune commande trouvée avec ce numéro.");
+      setMessage("Aucune commande trouvée avec ces informations.");
       setLoading(false);
       return;
     }
@@ -143,24 +185,21 @@ export default function SuiviPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#fffdf7]">
-      <section className="relative overflow-hidden border-b border-gray-100 bg-[#e9fbfc] px-6 py-14">
-        <div className="absolute -left-20 top-10 h-64 w-64 rounded-full bg-[#ffe773]/70 blur-3xl" />
-        <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-[#f36f45]/20 blur-3xl" />
-
+    <main className="min-h-screen bg-[#faf8f4]">
+      <section className="retail-band border-b border-[#ddd6cc] px-6 py-14">
         <div className="relative mx-auto max-w-5xl text-center">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-black uppercase tracking-wide text-[#1db7bd] shadow-sm">
+          <div className="retail-chip mb-5 inline-flex items-center gap-2 px-5 py-2 text-sm uppercase">
             <Truck size={18} strokeWidth={2.5} />
             Suivi de commande
           </div>
 
-          <h1 className="text-5xl font-black leading-tight text-gray-950 md:text-7xl">
-            Où en est votre commande ?
+          <h1 className="retail-section-title text-5xl font-black leading-tight md:text-7xl">
+            Suivre mon colis
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-lg font-bold leading-8 text-gray-600">
-            Entrez le numéro de téléphone utilisé lors de votre achat pour voir
-            l’état de vos commandes KidiClass.
+            Entrez votre numéro de téléphone ou la référence reçue après achat
+            pour retrouver l’avancement de votre commande.
           </p>
         </div>
       </section>
@@ -168,9 +207,9 @@ export default function SuiviPage() {
       <section className="mx-auto max-w-5xl px-6 py-10">
         <form
           onSubmit={handleSearch}
-          className="rounded-[2.5rem] border border-gray-100 bg-white p-7 shadow-sm"
+          className="retail-card p-7"
         >
-          <div className="grid gap-4 md:grid-cols-[280px_1fr_auto] md:items-end">
+          <div className="grid gap-4 md:grid-cols-[220px_1fr_1fr_auto] md:items-end">
             <KidiclassSelect
               label="Indicatif"
               value={countryCodeLabel}
@@ -186,16 +225,30 @@ export default function SuiviPage() {
               <input
                 type="tel"
                 placeholder="Ex : 07 79 31 15 55"
-                className="w-full rounded-[1.4rem] border-2 border-[#bfedf0] bg-white p-4 font-bold text-black shadow-sm outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15"
+                className="w-full rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold text-black outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
+              />
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-black text-gray-700">
+                Référence
+              </span>
+
+              <input
+                type="text"
+                placeholder="Ex : KDC-2026-1234"
+                className="w-full rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold uppercase text-black outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                value={reference}
+                onChange={(e) => setReference(e.target.value)}
               />
             </label>
 
             <button
               type="submit"
               disabled={loading}
-              className="flex h-[58px] items-center justify-center gap-2 rounded-full bg-[#f36f45] px-7 font-black text-white shadow-sm hover:bg-[#e85e33] disabled:opacity-50"
+              className="flex h-[58px] items-center justify-center gap-2 rounded-xl bg-[#111827] px-7 font-black text-white shadow-sm hover:bg-[#e85035] disabled:opacity-50"
             >
               <Search size={20} strokeWidth={2.5} />
               {loading ? "Recherche..." : "Suivre"}
