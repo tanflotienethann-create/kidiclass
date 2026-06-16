@@ -49,7 +49,7 @@ export default function KidiclassSelect({
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className={`flex min-h-[68px] w-full items-center justify-between gap-4 rounded-[1.4rem] border-2 bg-white px-5 py-4 text-left text-base font-black shadow-sm outline-none transition ${
+        className={`flex min-h-[56px] w-full items-center justify-between gap-3 rounded-xl border bg-white px-4 py-3 text-left text-base font-black shadow-sm outline-none transition sm:min-h-[68px] sm:gap-4 sm:rounded-[1.4rem] sm:border-2 sm:px-5 sm:py-4 ${
           open
             ? "border-[#1db7bd] ring-4 ring-[#1db7bd]/15"
             : "border-[#bfedf0] hover:border-[#1db7bd] hover:bg-[#f8ffff]"
@@ -64,17 +64,17 @@ export default function KidiclassSelect({
         </span>
 
         <span
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] transition ${
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] transition sm:h-11 sm:w-11 ${
             open ? "rotate-180" : ""
           }`}
         >
-          <ChevronDown size={22} strokeWidth={3} />
+          <ChevronDown size={20} strokeWidth={3} />
         </span>
       </button>
 
       {open && (
-        <div className="absolute left-0 right-0 z-[99999] mt-3 overflow-hidden rounded-[1.5rem] border border-[#bfedf0] bg-white p-2 shadow-2xl">
-          <div className="max-h-72 overflow-y-auto pr-1">
+        <div className="absolute left-0 right-0 z-[99999] mt-2 overflow-hidden rounded-xl border border-[#bfedf0] bg-white p-2 shadow-2xl sm:mt-3 sm:rounded-[1.5rem]">
+          <div className="max-h-60 overflow-y-auto pr-1 sm:max-h-72">
             {options.map((option) => {
               const isSelected = option === value;
 
@@ -86,7 +86,7 @@ export default function KidiclassSelect({
                     onChange(option);
                     setOpen(false);
                   }}
-                  className={`flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-left text-sm font-black transition ${
+                  className={`flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-left text-sm font-black transition sm:rounded-2xl ${
                     isSelected
                       ? "bg-[#1db7bd] text-white"
                       : "text-gray-800 hover:bg-[#e9fbfc] hover:text-[#1db7bd]"

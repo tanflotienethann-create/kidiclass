@@ -147,26 +147,26 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-[#faf8f4]">
-      <section className="retail-band overflow-hidden px-5 py-8 md:py-12">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+      <section className="retail-band overflow-hidden px-4 py-7 sm:px-5 md:py-12">
+        <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
             <p className="text-sm font-black uppercase text-[#e85035]">
               Boutique enfant tendance
             </p>
 
-            <h1 className="mt-5 max-w-3xl text-5xl font-black leading-tight text-[#111827] md:text-7xl">
+            <h1 className="mt-4 max-w-3xl text-4xl font-black leading-tight text-[#111827] sm:text-5xl md:text-7xl">
               La rentrée, la plage et les looks kids réunis.
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg font-bold leading-8 text-gray-700">
+            <p className="mt-4 max-w-2xl text-base font-bold leading-7 text-gray-700 sm:text-lg sm:leading-8">
               Des essentiels enfant faciles à porter, des packs pratiques et
               des accessoires colorés, présentés comme une vraie boutique mode.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="mt-6 grid gap-3 min-[420px]:flex min-[420px]:flex-wrap sm:mt-8 sm:gap-4">
               <Link
                 href="/catalogue"
-                className="kidiclass-button-primary flex items-center gap-2 px-7 py-4"
+                className="kidiclass-button-primary flex items-center justify-center gap-2 px-6 py-3.5 sm:px-7 sm:py-4"
               >
                 Voir le catalogue
                 <ArrowRight size={20} strokeWidth={2.5} />
@@ -174,14 +174,14 @@ export default function HomePage() {
 
               <Link
                 href="/catalogue?category=Packs%20scolaires"
-                className="kidiclass-button-secondary px-7 py-4"
+                className="kidiclass-button-secondary text-center px-6 py-3.5 sm:px-7 sm:py-4"
               >
                 Spécial rentrée
               </Link>
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="hidden gap-4 md:grid sm:grid-cols-2">
             <div className="relative min-h-72 overflow-hidden rounded-xl bg-[#17324d] p-7 text-white shadow-xl sm:col-span-2">
               <div className="absolute bottom-0 right-0 hidden h-32 w-32 rounded-full bg-[#fff3bf] md:block" />
               <div className="absolute right-8 top-8 hidden rounded-full bg-white/10 px-5 py-2 text-sm font-black md:block">
@@ -222,13 +222,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-b border-[#e4ded4] bg-white px-5 py-5">
-        <div className="mx-auto flex max-w-7xl gap-3 overflow-x-auto">
+      <section className="border-b border-[#e4ded4] bg-white px-4 py-4 sm:px-5 sm:py-5">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
           {homeCategories.map((category) => (
             <Link
               key={category.title}
               href={category.href}
-              className="whitespace-nowrap rounded-full border border-[#ddd6cc] bg-white px-5 py-3 text-sm font-black text-gray-950 transition hover:border-[#111827] hover:bg-[#faf8f4]"
+              className="rounded-xl border border-[#ddd6cc] bg-white px-3 py-3 text-center text-sm font-black text-gray-950 transition hover:border-[#111827] hover:bg-[#faf8f4] sm:rounded-full sm:px-5"
             >
               {category.title}
             </Link>
@@ -236,7 +236,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="px-5 py-10">
+      <section className="px-4 py-8 sm:px-5 sm:py-10">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
@@ -244,7 +244,7 @@ export default function HomePage() {
                 À shopper
               </p>
 
-              <h2 className="mt-2 text-4xl font-black text-gray-950 md:text-5xl">
+              <h2 className="mt-2 text-3xl font-black text-gray-950 sm:text-4xl md:text-5xl">
                 Derniers articles
               </h2>
             </div>
@@ -275,14 +275,14 @@ export default function HomePage() {
               </p>
             </div>
           ) : (
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
               {products.map((product) => (
                 <Link
                   key={product.id}
                   href={`/produit/${product.id}`}
                   className="kidiclass-card group overflow-hidden"
                 >
-                  <div className="relative h-72 overflow-hidden bg-[#f4efe7]">
+                  <div className="relative h-64 overflow-hidden bg-[#f4efe7] sm:h-72">
                     {getProductImage(product) ? (
                       <img
                         src={getProductImage(product)}
@@ -316,7 +316,7 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  <div className="p-5">
+                  <div className="p-4 sm:p-5">
                     <p className="text-xs font-black uppercase text-[#17324d]">
                       {product.category}
                     </p>
@@ -329,7 +329,7 @@ export default function HomePage() {
                       {product.product_type || "Article KidiClass"}
                     </p>
 
-                    <div className="mt-4 flex items-end justify-between gap-3">
+                    <div className="mt-4 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-end min-[420px]:justify-between">
                       <div>
                         <p className="text-xl font-black text-[#111827]">
                           {Number(product.price || 0).toLocaleString("fr-FR")}{" "}
@@ -366,7 +366,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="px-5 py-10">
+      <section className="px-4 py-8 sm:px-5 sm:py-10">
         <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-3">
           <div className="kidiclass-card p-6">
             <Truck className="text-[#1db7bd]" size={32} strokeWidth={2.5} />
@@ -405,7 +405,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="px-5 py-12">
+      <section className="px-4 py-8 sm:px-5 sm:py-12">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
             <div>
@@ -413,7 +413,7 @@ export default function HomePage() {
                 Catégories
               </p>
 
-              <h2 className="mt-3 text-4xl font-black text-gray-950 md:text-5xl">
+              <h2 className="mt-3 text-3xl font-black text-gray-950 sm:text-4xl md:text-5xl">
                 Explorer la boutique
               </h2>
             </div>
@@ -427,7 +427,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
             {homeCategories.map((category) => {
               const Icon = category.icon;
 
@@ -435,7 +435,7 @@ export default function HomePage() {
                 <Link
                   key={category.title}
                   href={category.href}
-                  className="kidiclass-card group p-6"
+                  className="kidiclass-card group p-5 sm:p-6"
                 >
                   <div
                     className={`flex h-16 w-16 items-center justify-center rounded-2xl ${category.bg} ${category.color}`}
@@ -443,7 +443,7 @@ export default function HomePage() {
                     <Icon size={32} strokeWidth={2.5} />
                   </div>
 
-                  <h3 className="mt-6 text-2xl font-black text-gray-950">
+                  <h3 className="mt-5 text-xl font-black text-gray-950 sm:mt-6 sm:text-2xl">
                     {category.title}
                   </h3>
 
@@ -462,15 +462,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="px-5 py-12">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-[3rem] bg-[#e9fbfc] p-8 md:p-12">
+      <section className="px-4 py-8 sm:px-5 sm:py-12">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-2xl bg-[#e9fbfc] p-5 sm:rounded-[3rem] sm:p-8 md:p-12">
           <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-center">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.3em] text-[#1db7bd]">
                 Sélection spéciale
               </p>
 
-              <h2 className="mt-3 text-4xl font-black text-gray-950 md:text-5xl">
+              <h2 className="mt-3 text-3xl font-black text-gray-950 sm:text-4xl md:text-5xl">
                 La rentrée avec style.
               </h2>
 
@@ -482,7 +482,7 @@ export default function HomePage() {
 
               <Link
                 href="/catalogue?category=Packs%20scolaires"
-                className="kidiclass-button-primary mt-7 inline-flex items-center gap-2 px-7 py-4"
+                className="kidiclass-button-primary mt-7 inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 text-center sm:w-fit sm:px-7 sm:py-4"
               >
                 Découvrir les packs scolaires
                 <ArrowRight size={20} strokeWidth={2.5} />
@@ -494,9 +494,9 @@ export default function HomePage() {
                 <Link
                   key={item.title}
                   href={item.href}
-                  className="rounded-[2rem] bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                  className="rounded-2xl bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl sm:rounded-[2rem] sm:p-6"
                 >
-                  <h3 className="text-2xl font-black text-gray-950">
+                  <h3 className="text-xl font-black text-gray-950 sm:text-2xl">
                     {item.title}
                   </h3>
 

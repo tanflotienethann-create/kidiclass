@@ -322,27 +322,27 @@ export default function CatalogueClient() {
 
   return (
     <main className="min-h-screen bg-[#faf8f4]">
-      <section className="retail-band px-5 py-14">
+      <section className="retail-band px-4 py-8 sm:px-5 sm:py-14">
         <div className="mx-auto max-w-7xl">
           <p className="text-sm font-black uppercase text-[#e85035]">
             Catalogue KidiClass
           </p>
 
-          <h1 className="mt-4 max-w-4xl text-5xl font-black leading-tight text-[#111827] md:text-7xl">
+          <h1 className="mt-4 max-w-4xl text-4xl font-black leading-tight text-[#111827] sm:text-5xl md:text-7xl">
             Tous les essentiels kids au même endroit.
           </h1>
 
-          <p className="mt-5 max-w-2xl text-lg font-bold leading-8 text-gray-700">
+          <p className="mt-4 max-w-2xl text-base font-bold leading-7 text-gray-700 sm:mt-5 sm:text-lg sm:leading-8">
             Filtrez les packs, chaussures, accessoires et articles de plage
             avec une présentation plus claire et plus boutique.
           </p>
         </div>
       </section>
 
-      <section className="px-5 py-10">
+      <section className="px-4 py-8 sm:px-5 sm:py-10">
         <div className="mx-auto max-w-7xl">
-          <div className="retail-card p-6 md:p-8">
-            <div className="grid gap-5 lg:grid-cols-[1.2fr_1fr_1fr]">
+          <div className="retail-card p-4 sm:p-6 md:p-8">
+            <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr_1fr] lg:gap-5">
               <div>
                 <label className="mb-2 block text-sm font-black text-gray-700">
                   Recherche
@@ -358,7 +358,7 @@ export default function CatalogueClient() {
                   <input
                     type="text"
                     placeholder="Rechercher un produit..."
-                    className="w-full rounded-xl border border-[#ddd6cc] bg-white py-4 pl-14 pr-5 font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                    className="w-full rounded-xl border border-[#ddd6cc] bg-white py-3.5 pl-12 pr-4 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10 sm:py-4 sm:pl-14 sm:pr-5"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
@@ -380,7 +380,7 @@ export default function CatalogueClient() {
               />
             </div>
 
-            <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <KidiclassSelect
                 label="Personnage / thème"
                 value={characterTheme}
@@ -417,11 +417,11 @@ export default function CatalogueClient() {
               />
             </div>
 
-            <div className="mt-5 grid gap-5 md:grid-cols-3">
+            <div className="mt-4 grid gap-4 md:grid-cols-3">
               <input
                 type="text"
                 placeholder="Marque : Disney, Barbie..."
-                className="rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                className="rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10 sm:p-4"
                 value={brandSearch}
                 onChange={(e) => setBrandSearch(e.target.value)}
               />
@@ -429,7 +429,7 @@ export default function CatalogueClient() {
               <input
                 type="text"
                 placeholder="Couleur : rose, bleu..."
-                className="rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                className="rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10 sm:p-4"
                 value={colorSearch}
                 onChange={(e) => setColorSearch(e.target.value)}
               />
@@ -437,13 +437,13 @@ export default function CatalogueClient() {
               <input
                 type="text"
                 placeholder="Âge : 3-6 ans..."
-                className="rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                className="rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10 sm:p-4"
                 value={ageSearch}
                 onChange={(e) => setAgeSearch(e.target.value)}
               />
             </div>
 
-            <div className="mt-6 flex flex-col justify-between gap-4 rounded-xl bg-[#faf8f4] p-4 sm:flex-row sm:items-center">
+            <div className="mt-5 flex flex-col justify-between gap-3 rounded-xl bg-[#faf8f4] p-4 sm:flex-row sm:items-center sm:gap-4">
               <p className="text-sm font-bold text-gray-600">
                 {activeFiltersCount > 0
                   ? `${activeFiltersCount} filtre(s) actif(s)`
@@ -453,7 +453,7 @@ export default function CatalogueClient() {
               <button
                 type="button"
                 onClick={resetFilters}
-                className="flex w-fit items-center gap-2 rounded-lg border border-[#111827] px-5 py-3 text-sm font-black text-[#111827] hover:bg-[#111827] hover:text-white"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#111827] px-5 py-3 text-sm font-black text-[#111827] hover:bg-[#111827] hover:text-white sm:w-fit"
               >
                 <RotateCcw size={17} strokeWidth={2.5} />
                 Réinitialiser
@@ -461,8 +461,8 @@ export default function CatalogueClient() {
             </div>
           </div>
 
-          <div className="mt-8 flex items-center justify-between gap-4">
-            <h2 className="text-3xl font-black text-gray-950">
+          <div className="mt-6 flex items-center justify-between gap-4 sm:mt-8">
+            <h2 className="text-2xl font-black text-gray-950 sm:text-3xl">
               {loading
                 ? "Chargement..."
                 : `${filteredProducts.length} article${
@@ -486,14 +486,14 @@ export default function CatalogueClient() {
               </p>
             </div>
           ) : (
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
               {filteredProducts.map((product) => (
                 <Link
                   key={product.id}
                   href={`/produit/${product.id}`}
                   className="group overflow-hidden rounded-xl border border-[#e4ded4] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
                 >
-                  <div className="relative h-80 overflow-hidden bg-[#f4efe7]">
+                  <div className="relative h-64 overflow-hidden bg-[#f4efe7] sm:h-80">
                     {getProductImage(product) ? (
                       <img
                         src={getProductImage(product)}
@@ -550,8 +550,8 @@ export default function CatalogueClient() {
                     </button>
                   </div>
 
-                  <div className="p-5">
-                    <p className="text-xs font-black uppercase tracking-[0.2em] text-[#1db7bd]">
+                  <div className="p-4 sm:p-5">
+                    <p className="text-xs font-black uppercase text-[#17324d]">
                       {product.category}
                     </p>
 
@@ -563,9 +563,9 @@ export default function CatalogueClient() {
                       {product.product_type || "Article KidiClass"}
                     </p>
 
-                    <div className="mt-4 flex items-end justify-between gap-3">
+                    <div className="mt-4 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-end min-[420px]:justify-between">
                       <div>
-                        <p className="text-xl font-black text-[#f36f45]">
+                        <p className="text-xl font-black text-[#111827]">
                           {Number(product.price || 0).toLocaleString("fr-FR")}{" "}
                           FCFA
                         </p>

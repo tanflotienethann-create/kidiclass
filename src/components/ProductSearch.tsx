@@ -100,7 +100,7 @@ export default function ProductSearch() {
         <input
           type="text"
           placeholder="Rechercher un article..."
-          className="w-full rounded-full border border-gray-300 px-5 py-2.5 text-sm text-black outline-none focus:border-[#1db7bd]"
+          className="w-full rounded-full border border-gray-300 px-4 py-3 text-base font-bold text-black outline-none placeholder:text-gray-400 focus:border-[#1db7bd] sm:px-5 sm:py-2.5 sm:text-sm"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
@@ -111,7 +111,7 @@ export default function ProductSearch() {
       </form>
 
       {isOpen && search.trim().length >= 2 && (
-        <div className="absolute left-0 right-0 top-full z-[99999] mt-2 overflow-hidden rounded-2xl border bg-white shadow-xl">
+        <div className="absolute left-0 right-0 top-full z-[99999] mt-2 max-h-[70vh] overflow-y-auto rounded-2xl border bg-white shadow-xl">
           {suggestions.length > 0 ? (
             <div>
               {suggestions.map((product) => (
@@ -125,18 +125,18 @@ export default function ProductSearch() {
                     <img
                       src={getProductImage(product)}
                       alt={product.name}
-                      className="h-14 w-14 rounded-xl object-cover object-top"
+                      className="h-12 w-12 shrink-0 rounded-xl object-cover object-top sm:h-14 sm:w-14"
                     />
                   ) : (
-                    <div className="h-14 w-14 rounded-xl bg-gray-100" />
+                    <div className="h-12 w-12 shrink-0 rounded-xl bg-gray-100 sm:h-14 sm:w-14" />
                   )}
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-black text-gray-900">
+                    <p className="truncate text-sm font-black text-gray-900 sm:text-base">
                       {product.name}
                     </p>
 
-                    <p className="text-xs text-gray-500">
+                    <p className="truncate text-xs text-gray-500">
                       {product.category}
                       {product.product_type ? ` • ${product.product_type}` : ""}
                     </p>
