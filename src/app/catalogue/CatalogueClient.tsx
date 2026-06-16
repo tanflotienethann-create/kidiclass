@@ -648,14 +648,14 @@ export default function CatalogueClient() {
 
                     <div className="absolute left-2 top-2 flex flex-wrap gap-1.5 sm:left-4 sm:top-4 sm:gap-2">
                       {product.is_new && (
-                        <span className="flex items-center gap-1 rounded-full bg-white px-2 py-1 text-[10px] font-black text-[#111827] shadow-sm sm:px-3 sm:text-xs">
+                        <span className="flex items-center gap-1 rounded-full bg-[#e9fbfc] px-2 py-1 text-[10px] font-black text-[#0f766e] shadow-sm sm:px-3 sm:text-xs">
                           <Sparkles size={13} strokeWidth={3} />
                           Nouveau
                         </span>
                       )}
 
                       {product.is_favorite && (
-                        <span className="flex items-center gap-1 rounded-full bg-white px-2 py-1 text-[10px] font-black text-[#111827] shadow-sm sm:px-3 sm:text-xs">
+                        <span className="flex items-center gap-1 rounded-full bg-[#fff1f5] px-2 py-1 text-[10px] font-black text-[#f36f45] shadow-sm sm:px-3 sm:text-xs">
                           <Heart size={13} strokeWidth={3} />
                           Coup de cœur
                         </span>
@@ -691,7 +691,7 @@ export default function CatalogueClient() {
                   </div>
 
                   <div className="p-3 sm:p-5">
-                    <p className="text-xs font-black uppercase text-[#17324d]">
+                    <p className="text-xs font-black uppercase text-[#1db7bd]">
                       {product.category}
                     </p>
 
@@ -699,13 +699,9 @@ export default function CatalogueClient() {
                       {product.name}
                     </h3>
 
-                    <p className="mt-1 line-clamp-1 text-xs font-bold text-gray-500 sm:mt-2 sm:text-sm">
-                      {product.product_type || "Article KidiClass"}
-                    </p>
-
                     <div className="mt-3 flex flex-col gap-2 sm:mt-4 min-[520px]:flex-row min-[520px]:items-end min-[520px]:justify-between">
                       <div>
-                        <p className="text-sm font-black text-[#111827] sm:text-xl">
+                        <p className="text-sm font-black text-[#f36f45] sm:text-xl">
                           {Number(product.price || 0).toLocaleString("fr-FR")}{" "}
                           FCFA
                         </p>
@@ -721,7 +717,7 @@ export default function CatalogueClient() {
                       <span
                         className={`w-fit rounded-full px-2 py-1 text-[10px] font-black sm:px-3 sm:text-xs ${
                           Number(product.stock || 0) > 0
-                            ? "bg-[#f4efe7] text-[#17324d]"
+                            ? "bg-[#e9fbfc] text-[#0f766e]"
                             : "bg-red-50 text-red-500"
                         }`}
                       >

@@ -303,13 +303,13 @@ export default function HomePage() {
                       )}
 
                       {product.is_new && (
-                        <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-[#111827] shadow-sm">
+                        <span className="rounded-full bg-[#e9fbfc] px-3 py-1 text-xs font-black text-[#0f766e] shadow-sm">
                           Nouveau
                         </span>
                       )}
 
                       {product.is_favorite && (
-                        <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-[#111827] shadow-sm">
+                        <span className="rounded-full bg-[#fff1f5] px-3 py-1 text-xs font-black text-[#f36f45] shadow-sm">
                           Coup de cœur
                         </span>
                       )}
@@ -317,7 +317,7 @@ export default function HomePage() {
                   </div>
 
                   <div className="p-4 sm:p-5">
-                    <p className="text-xs font-black uppercase text-[#17324d]">
+                    <p className="text-xs font-black uppercase text-[#1db7bd]">
                       {product.category}
                     </p>
 
@@ -325,13 +325,9 @@ export default function HomePage() {
                       {product.name}
                     </h3>
 
-                    <p className="mt-2 text-sm font-bold text-gray-500">
-                      {product.product_type || "Article KidiClass"}
-                    </p>
-
                     <div className="mt-4 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-end min-[420px]:justify-between">
                       <div>
-                        <p className="text-xl font-black text-[#111827]">
+                        <p className="text-xl font-black text-[#f36f45]">
                           {Number(product.price || 0).toLocaleString("fr-FR")}{" "}
                           FCFA
                         </p>
@@ -347,7 +343,7 @@ export default function HomePage() {
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-black ${
                           Number(product.stock || 0) > 0
-                            ? "bg-[#f4efe7] text-[#17324d]"
+                            ? "bg-[#e9fbfc] text-[#0f766e]"
                             : "bg-red-50 text-red-500"
                         }`}
                       >
