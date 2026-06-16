@@ -262,38 +262,40 @@ export default function AdminOrdersList() {
             @page { size: 148mm 210mm; margin: 0; }
             * { box-sizing: border-box; }
             html, body { margin: 0; min-height: 100%; background: #f4efe7; font-family: Arial, sans-serif; color: #17324d; }
-            body { padding: 18px; }
+            body { padding: 14px; }
             .print-help { max-width: 148mm; margin: 0 auto 12px; border-radius: 14px; background: #17324d; color: white; padding: 12px 16px; font-size: 14px; font-weight: 800; line-height: 1.5; }
-            .receipt { width: 148mm; min-height: 210mm; margin: 0 auto; background: white; border: 3px solid #0f8f8d; border-radius: 14px; padding: 7mm; overflow: hidden; }
-            .logo { display: block; width: 98mm; max-height: 28mm; object-fit: contain; margin: 0 auto 1mm; }
-            .tagline { text-align: center; color: #ff6b00; font-size: 13px; font-weight: 900; margin-bottom: 5mm; }
-            .phone { display: flex; align-items: center; justify-content: center; gap: 8px; color: #0f8f8d; font-size: 20px; font-weight: 900; border-top: 2px dotted #b8e3e1; border-bottom: 2px dotted #b8e3e1; padding: 2.5mm 0; }
-            .info { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin: 4mm 0; }
-            .box { border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,.12); padding: 4mm; min-height: 25mm; }
-            .label { font-size: 10px; font-weight: 900; color: #17324d; text-transform: uppercase; }
-            .value { margin-top: 2mm; font-size: 18px; font-weight: 900; color: #0f8f8d; line-height: 1.15; word-break: break-word; }
+            .receipt { width: 148mm; height: 210mm; margin: 0 auto; background: white; border: 2px solid #0f8f8d; border-radius: 12px; padding: 5mm; overflow: hidden; display: flex; flex-direction: column; }
+            .logo-frame { height: 22mm; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+            .logo { display: block; width: 90mm; height: auto; transform: scale(1.45); transform-origin: center; }
+            .tagline { text-align: center; color: #ff6b00; font-size: 11px; font-weight: 900; margin-bottom: 2.5mm; }
+            .phone { display: flex; align-items: center; justify-content: center; gap: 6px; color: #0f8f8d; font-size: 16px; font-weight: 900; border-top: 2px dotted #b8e3e1; border-bottom: 2px dotted #b8e3e1; padding: 1.5mm 0; }
+            .info { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin: 3mm 0; }
+            .box { border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.12); padding: 3mm; min-height: 19mm; }
+            .label { font-size: 8px; font-weight: 900; color: #17324d; text-transform: uppercase; }
+            .value { margin-top: 1.2mm; font-size: 14px; font-weight: 900; color: #0f8f8d; line-height: 1.12; word-break: break-word; }
             .zone .value { color: #ff6b00; }
-            .section-title { margin-top: 4mm; background: #0f9f9b; color: white; padding: 3mm 5mm; border-radius: 14px 14px 0 0; font-size: 17px; font-weight: 900; }
-            .items { border: 1px solid #d8eeed; border-radius: 0 0 14px 14px; overflow: hidden; }
-            .header, .item { display: grid; grid-template-columns: 18mm 1fr 28mm; gap: 4mm; align-items: center; padding: 3mm 5mm; }
-            .header { color: #0f8f8d; font-size: 11px; font-weight: 900; border-bottom: 1px solid #d8eeed; text-transform: uppercase; }
-            .item { border-bottom: 1px dotted #b8e3e1; min-height: 20mm; }
+            .section-title { margin-top: 2mm; background: #0f9f9b; color: white; padding: 2mm 4mm; border-radius: 10px 10px 0 0; font-size: 13px; font-weight: 900; }
+            .items { border: 1px solid #d8eeed; border-radius: 0 0 10px 10px; overflow: hidden; flex-shrink: 0; }
+            .header, .item { display: grid; grid-template-columns: 15mm 1fr 24mm; gap: 3mm; align-items: center; padding: 2mm 4mm; }
+            .header { color: #0f8f8d; font-size: 8px; font-weight: 900; border-bottom: 1px solid #d8eeed; text-transform: uppercase; }
+            .item { border-bottom: 1px dotted #b8e3e1; min-height: 15mm; }
             .item:last-child { border-bottom: 0; }
-            .item img, .placeholder { width: 15mm; height: 17mm; object-fit: cover; border-radius: 7px; background: #edf4f4; }
-            .item-name { font-size: 16px; font-weight: 900; line-height: 1.2; }
-            .item-price { text-align: right; color: #0f8f8d; font-size: 16px; font-weight: 900; white-space: nowrap; }
-            .totals { margin-top: 4mm; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,.12); padding: 4mm; }
-            .line { display: flex; justify-content: space-between; gap: 8px; padding: 2mm 0; border-bottom: 1px solid #b8e3e1; font-size: 12px; font-weight: 800; }
+            .item img, .placeholder { width: 12mm; height: 13mm; object-fit: cover; border-radius: 6px; background: #edf4f4; }
+            .item-name { font-size: 12px; font-weight: 900; line-height: 1.15; }
+            .item-price { text-align: right; color: #0f8f8d; font-size: 12px; font-weight: 900; white-space: nowrap; }
+            .totals { margin-top: 3mm; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.12); padding: 3mm; flex-shrink: 0; }
+            .line { display: flex; justify-content: space-between; gap: 8px; padding: 1.45mm 0; border-bottom: 1px solid #b8e3e1; font-size: 10px; font-weight: 800; }
             .line:last-child { border-bottom: 0; }
-            .line strong { text-align: right; }
-            .pay { display: flex; align-items: center; justify-content: space-between; gap: 4mm; margin-top: 3mm; color: #ff6b00; font-size: 19px; font-weight: 900; }
-            .amount { background: #ff6b00; color: white; border-radius: 9px; padding: 3mm 6mm; font-size: 26px; white-space: nowrap; }
-            .note { margin-top: 5mm; border: 2px solid #7ac8c8; border-radius: 14px; padding: 4mm; text-align: center; color: #0f8f8d; font-size: 16px; font-weight: 900; }
-            .thanks { color: #ff6b00; font-size: 22px; margin-top: 3mm; }
+            .line strong { text-align: right; max-width: 72mm; }
+            .line.payment strong { font-size: 8.5px; line-height: 1.15; }
+            .pay { display: flex; align-items: center; justify-content: space-between; gap: 4mm; margin-top: 2.5mm; color: #ff6b00; font-size: 16px; font-weight: 900; }
+            .amount { background: #ff6b00; color: white; border-radius: 8px; padding: 2mm 4mm; font-size: 22px; white-space: nowrap; }
+            .note { margin-top: 3mm; border: 1.5px solid #7ac8c8; border-radius: 10px; padding: 3mm; text-align: center; color: #0f8f8d; font-size: 12px; font-weight: 900; flex-shrink: 0; }
+            .thanks { color: #ff6b00; font-size: 17px; margin-top: 2mm; }
             @media print {
               html, body { width: 148mm; height: 210mm; background: white; padding: 0; }
               .print-help { display: none; }
-              .receipt { width: 148mm; min-height: 210mm; margin: 0; border-radius: 0; box-shadow: none; page-break-after: avoid; }
+              .receipt { width: 148mm; height: 210mm; margin: 0; border-radius: 0; box-shadow: none; page-break-after: avoid; page-break-inside: avoid; break-inside: avoid; }
             }
           </style>
         </head>
@@ -303,7 +305,9 @@ export default function AdminOrdersList() {
             Si l’imprimante reste en A4, le reçu apparaîtra comme une demi-page A4.
           </div>
           <div class="receipt">
-            <img class="logo" src="/logo-kidiclass.png" alt="KidiClass" />
+            <div class="logo-frame">
+              <img class="logo" src="/logo-kidiclass.png" alt="KidiClass" />
+            </div>
             <div class="tagline">Les enfants sapés comme jamais...</div>
             <div class="phone">☎ 0779311555</div>
             <div class="info">
@@ -326,7 +330,7 @@ export default function AdminOrdersList() {
             <div class="totals">
               <div class="line"><span>Sous-total articles</span><strong>${itemsTotal.toLocaleString("fr-FR")}F</strong></div>
               <div class="line"><span>Livraison</span><strong>${Number(order.delivery_fee || 0).toLocaleString("fr-FR")}F</strong></div>
-              <div class="line"><span>Option paiement</span><strong>${order.payment_method || ""}</strong></div>
+              <div class="line payment"><span>Option paiement</span><strong>${order.payment_method || ""}</strong></div>
               ${
                 deposit > 0
                   ? `<div class="line"><span>Payé / à payer maintenant</span><strong>${deposit.toLocaleString("fr-FR")}F</strong></div>
