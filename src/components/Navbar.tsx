@@ -148,8 +148,10 @@ export default function Navbar() {
             />
           </Link>
 
-          <div className="hidden min-w-0 md:block">
-            <ProductSearch />
+          <div className="hidden min-w-0 justify-center md:flex">
+            <div className="w-full max-w-xl">
+              <ProductSearch />
+            </div>
           </div>
 
           <div className="flex items-center justify-end gap-1.5 sm:gap-2">
@@ -240,7 +242,7 @@ export default function Navbar() {
       </div>
 
       <nav className="hidden border-t border-gray-100 bg-white lg:block">
-        <div className="mx-auto flex max-w-7xl flex-wrap gap-2 px-5 py-3 text-sm font-black text-gray-800">
+        <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-2 px-5 py-3 text-sm font-black text-gray-800">
           {categoryLinks.map((link) => (
             <Link
               key={link.href}
