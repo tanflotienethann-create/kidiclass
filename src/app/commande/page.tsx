@@ -138,6 +138,7 @@ export default function CommandePage() {
   const [deliveryMapAddress, setDeliveryMapAddress] = useState("");
 
   const [paymentMethod, setPaymentMethod] = useState("Paiement à la livraison");
+  const [mobileMoneyMethod, setMobileMoneyMethod] = useState("Wave");
 
   const [message, setMessage] = useState("");
   const [orderReference, setOrderReference] = useState("");
@@ -169,6 +170,10 @@ export default function CommandePage() {
   const paymentOptions = getPaymentOptions(hasPreorderProduct);
   const depositAmount = getDepositAmount(total, paymentMethod);
   const remainingAmount = getRemainingAmount(total, paymentMethod);
+  const showMobileMoneyChoice = needsManualPaymentLink();
+  const savedPaymentMethod = showMobileMoneyChoice
+    ? `${paymentMethod} (${mobileMoneyMethod})`
+    : paymentMethod;
 
   const fetchCartDeliveryInfo = useCallback(async () => {
     const productIds = cart.map((item) => item.productId);
@@ -569,7 +574,7 @@ Merci de me communiquer le montant total avec livraison.
               ? `https://www.google.com/maps?q=${deliveryLatitude},${deliveryLongitude}`
               : "",
           payment_method: isFixedDeliveryArea(deliveryArea)
-            ? paymentMethod
+            ? savedPaymentMethod
             : "À confirmer",
           delivery_area: deliveryArea,
           delivery_fee: deliveryFee,
@@ -893,6 +898,15 @@ Merci de me communiquer le montant total avec livraison.
                   onChange={setPaymentMethod}
                 />
 
+                {showMobileMoneyChoice && (
+                  <KidiclassSelect
+                    label="Moyen Mobile Money"
+                    value={mobileMoneyMethod}
+                    options={["Wave", "Orange Money"]}
+                    onChange={setMobileMoneyMethod}
+                  />
+                )}
+
                 <div className="space-y-3 rounded-2xl bg-[#e9fbfc] p-5 text-sm font-bold leading-6 text-[#1db7bd]">
                   <p>
                     {hasPreorderProduct
@@ -909,7 +923,9 @@ Merci de me communiquer le montant total avec livraison.
                     paymentMethod.includes("acompte")) && (
                     <p>
                       Aucun paiement en ligne n’est intégré au site pour le
-                      moment. L’administrateur vous enverra le lien de paiement
+                      moment. Vous avez choisi{" "}
+                      <span className="font-black">{mobileMoneyMethod}</span>.
+                      L’administrateur vous enverra le lien de paiement
                       manuellement sur WhatsApp.
                     </p>
                   )}
@@ -1030,7 +1046,7 @@ Merci de me communiquer le montant total avec livraison.
 
             {isFixedDeliveryArea(deliveryArea) && (
               <div className="rounded-2xl bg-[#fff9cf] p-4 text-sm font-bold leading-6 text-[#c7a900]">
-                Option de paiement choisie : {paymentMethod}
+                Option de paiement choisie : {savedPaymentMethod}
                 {depositAmount > 0 && (
                   <>
                     <br />

@@ -178,9 +178,9 @@ export default function AdminOrderHistoryList() {
     if (!cleanedPhone) return "";
 
     const text = encodeURIComponent(
-      `Bonjour ${order.customer_name || ""}, votre commande KidiClass ${
-        order.order_reference || ""
-      } a bien été livrée. Merci pour votre confiance.`
+      `Bonjour ${order.customer_name || "cher client"},\n\nNous vous confirmons que votre commande KidiClass ${
+        order.order_reference ? `n° ${order.order_reference}` : ""
+      } a bien été livrée.\n\nNous espérons que vos articles vous plaisent. Merci pour votre confiance et à très bientôt chez KidiClass.\n\nL’équipe KidiClass`
     );
 
     return `https://wa.me/${cleanedPhone}?text=${text}`;

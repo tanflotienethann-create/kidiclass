@@ -26,12 +26,12 @@ export function getDepositAmount(total: number, paymentMethod?: string | null) {
 
   if (
     paymentMethod.includes("acompte 50%") ||
-    paymentMethod === "Paiement en deux fois"
+    paymentMethod.includes("Paiement en deux fois")
   ) {
     return Math.ceil(Number(total || 0) / 2);
   }
 
-  if (paymentMethod === "Paiement Mobile Money intégral") {
+  if (paymentMethod.includes("Paiement Mobile Money intégral")) {
     return Number(total || 0);
   }
 
@@ -62,13 +62,13 @@ export function getPaymentInstruction(total: number, paymentMethod?: string | nu
     )} FCFA.`;
   }
 
-  if (paymentMethod === "Paiement Mobile Money intégral") {
+  if (paymentMethod.includes("Paiement Mobile Money intégral")) {
     return `Total à régler par Mobile Money : ${deposit.toLocaleString(
       "fr-FR"
     )} FCFA.`;
   }
 
-  if (paymentMethod === "Paiement en deux fois") {
+  if (paymentMethod.includes("Paiement en deux fois")) {
     return `Premier paiement pour réserver : ${deposit.toLocaleString(
       "fr-FR"
     )} FCFA. Deuxième paiement : ${remaining.toLocaleString("fr-FR")} FCFA.`;
@@ -84,38 +84,48 @@ export function getAdminWhatsappMessage(order: {
   total_amount?: number | null;
   status?: string | null;
 }) {
-  const name = order.customer_name || "client";
+  const name = order.customer_name || "cher client";
   const reference = order.order_reference || "";
   const method = order.payment_method || "";
+  const total = Number(order.total_amount || 0);
   const remaining = getRemainingAmount(Number(order.total_amount || 0), method);
+  const intro = `Bonjour ${name},\n\nNous vous contactons de la part de KidiClass concernant votre commande ${
+    reference ? `n° ${reference}` : ""
+  }.`;
+  const outro =
+    "\n\nMerci pour votre confiance.\nL’équipe KidiClass";
 
   if (order.status === "Arrivée à Abidjan" && method.includes("solde avant livraison")) {
-    return `Bonjour ${name}, votre commande KidiClass ${reference} est arrivée à Abidjan. Le solde restant est de ${remaining.toLocaleString(
+    return `${intro}\n\nBonne nouvelle : votre précommande est arrivée à Abidjan.\n\nLe solde restant à régler est de ${remaining.toLocaleString(
       "fr-FR"
-    )} FCFA. Cliquez sur ce lien pour effectuer votre paiement : `;
+    )} FCFA.\n\nCliquez sur ce lien pour effectuer votre paiement : \n\nUne fois le paiement confirmé, votre commande sera programmée pour une livraison le lendemain.${outro}`;
   }
 
   if (order.status === "Arrivée à Abidjan" && method.includes("solde à la livraison")) {
-    return `Bonjour ${name}, votre commande KidiClass ${reference} est arrivée à Abidjan. Elle sera livrée demain. Vous pourrez payer le solde restant de ${remaining.toLocaleString(
+    return `${intro}\n\nBonne nouvelle : votre précommande est arrivée à Abidjan.\n\nVotre livraison sera programmée pour demain. Vous pourrez régler le solde restant de ${remaining.toLocaleString(
       "fr-FR"
-    )} FCFA au moment de la livraison.`;
+    )} FCFA directement au moment de la livraison.${outro}`;
   }
 
-  if (method === "Paiement Mobile Money intégral") {
-    return `Bonjour ${name}, pour finaliser votre commande KidiClass ${reference}, Cliquez sur ce lien pour effectuer votre paiement : `;
-  }
-
-  if (method === "Paiement en deux fois") {
-    return `Bonjour ${name}, votre commande KidiClass ${reference} est réservée. Après le deuxième paiement de ${remaining.toLocaleString(
+  if (method.includes("Paiement Mobile Money intégral")) {
+    return `${intro}\n\nVotre commande est prête à être confirmée. Le montant total à régler est de ${total.toLocaleString(
       "fr-FR"
-    )} FCFA, votre commande sera livrée le lendemain. Cliquez sur ce lien pour effectuer votre paiement : `;
+    )} FCFA via ${method.includes("Wave") ? "Wave" : method.includes("Orange") ? "Orange Money" : "Mobile Money"}.\n\nCliquez sur ce lien pour effectuer votre paiement : \n\nAprès confirmation du paiement, votre commande sera livrée sous 24h.${outro}`;
   }
 
-  if (method === "Paiement à la livraison") {
-    return `Bonjour ${name}, votre commande KidiClass ${reference} sera livrée sous 24h. Vous réglerez la totalité au moment de la livraison.`;
+  if (method.includes("Paiement en deux fois")) {
+    return `${intro}\n\nVotre commande a bien été réservée avec un premier paiement. Le solde restant est de ${remaining.toLocaleString(
+      "fr-FR"
+    )} FCFA.\n\nCliquez sur ce lien pour effectuer votre paiement : \n\nAprès confirmation du deuxième paiement, votre commande sera livrée le lendemain.${outro}`;
   }
 
-  return `Bonjour ${name}, votre commande KidiClass ${reference} est actuellement au statut : ${
+  if (method.includes("Paiement à la livraison")) {
+    return `${intro}\n\nVotre commande est confirmée et sera livrée sous 24h.\n\nLe montant total de ${total.toLocaleString(
+      "fr-FR"
+    )} FCFA sera à régler directement au moment de la livraison.${outro}`;
+  }
+
+  return `${intro}\n\nVotre commande est actuellement au statut : ${
     order.status || "En attente"
-  }.`;
+  }.\n\nNous reviendrons vers vous dès qu’une nouvelle étape sera disponible.${outro}`;
 }
