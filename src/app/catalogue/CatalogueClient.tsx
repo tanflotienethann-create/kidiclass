@@ -3,7 +3,16 @@
 import KidiclassSelect from "@/components/KidiclassSelect";
 import { getProductAvailabilityLabel } from "@/lib/productAvailability";
 import { supabase } from "@/lib/supabase";
-import { Heart, PackageCheck, RotateCcw, Search, Sparkles, Tag } from "lucide-react";
+import {
+  Heart,
+  PackageCheck,
+  RotateCcw,
+  Search,
+  SlidersHorizontal,
+  Sparkles,
+  Tag,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -139,6 +148,7 @@ export default function CatalogueClient() {
   const [brandSearch, setBrandSearch] = useState("");
   const [colorSearch, setColorSearch] = useState("");
   const [ageSearch, setAgeSearch] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState<number[]>(() => {
     if (typeof window === "undefined") return [];
 
@@ -339,9 +349,125 @@ export default function CatalogueClient() {
         </div>
       </section>
 
+      {filtersOpen && (
+        <div className="fixed inset-0 z-[10000]">
+          <button
+            type="button"
+            className="absolute inset-0 bg-gray-950/45"
+            aria-label="Fermer les filtres"
+            onClick={() => setFiltersOpen(false)}
+          />
+
+          <aside className="absolute left-0 top-0 flex h-full w-[min(92vw,420px)] flex-col bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#e4ded4] px-4 py-4 sm:px-5">
+              <div>
+                <p className="text-xs font-black uppercase text-[#e85035]">
+                  Catalogue
+                </p>
+                <h2 className="text-2xl font-black text-gray-950">Filtres</h2>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setFiltersOpen(false)}
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-[#ddd6cc] text-gray-950 hover:border-[#17324d]"
+                aria-label="Fermer"
+              >
+                <X size={22} strokeWidth={2.5} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-5">
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-2 block text-sm font-black text-gray-700">
+                    Recherche
+                  </label>
+
+                  <div className="relative">
+                    <Search
+                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                      size={20}
+                      strokeWidth={2.5}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Rechercher un produit..."
+                      className="w-full rounded-xl border border-[#ddd6cc] bg-white py-3.5 pl-12 pr-4 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <KidiclassSelect label="Catégorie" value={category} options={categories} onChange={setCategory} />
+                <KidiclassSelect label="Type de produit" value={productType} options={productTypes} onChange={setProductType} />
+                <KidiclassSelect label="Personnage / thème" value={characterTheme} options={characterThemes} onChange={setCharacterTheme} />
+                <KidiclassSelect label="Niveau scolaire" value={schoolLevel} options={schoolLevels} onChange={setSchoolLevel} />
+                <KidiclassSelect label="Sexe" value={gender} options={genders} onChange={setGender} />
+                <KidiclassSelect label="Mise en avant" value={highlight} options={highlightOptions} onChange={setHighlight} />
+                <KidiclassSelect label="Tri" value={sortBy} options={sortOptions} onChange={setSortBy} />
+
+                <input
+                  type="text"
+                  placeholder="Marque : Disney, Barbie..."
+                  className="w-full rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                  value={brandSearch}
+                  onChange={(e) => setBrandSearch(e.target.value)}
+                />
+
+                <input
+                  type="text"
+                  placeholder="Couleur : rose, bleu..."
+                  className="w-full rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                  value={colorSearch}
+                  onChange={(e) => setColorSearch(e.target.value)}
+                />
+
+                <input
+                  type="text"
+                  placeholder="Âge : 3-6 ans..."
+                  className="w-full rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                  value={ageSearch}
+                  onChange={(e) => setAgeSearch(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="border-t border-[#e4ded4] bg-[#faf8f4] p-4 sm:p-5">
+              <p className="mb-3 text-sm font-bold text-gray-600">
+                {activeFiltersCount > 0
+                  ? `${activeFiltersCount} filtre(s) actif(s)`
+                  : "Aucun filtre actif"}
+              </p>
+
+              <div className="grid gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFiltersOpen(false)}
+                  className="kidiclass-button-primary flex items-center justify-center px-5 py-3"
+                >
+                  Voir les articles
+                </button>
+
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#111827] px-5 py-3 text-sm font-black text-[#111827] hover:bg-[#111827] hover:text-white"
+                >
+                  <RotateCcw size={17} strokeWidth={2.5} />
+                  Réinitialiser
+                </button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      )}
+
       <section className="px-4 py-8 sm:px-5 sm:py-10">
         <div className="mx-auto max-w-7xl">
-          <div className="retail-card p-4 sm:p-6 md:p-8">
+          <div className="hidden">
             <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr_1fr] lg:gap-5">
               <div>
                 <label className="mb-2 block text-sm font-black text-gray-700">
@@ -461,7 +587,21 @@ export default function CatalogueClient() {
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-between gap-4 sm:mt-8">
+          <div className="mt-6 flex flex-col justify-between gap-3 sm:mt-8 sm:flex-row sm:items-center sm:gap-4">
+            <button
+              type="button"
+              onClick={() => setFiltersOpen(true)}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#17324d] px-5 py-3.5 text-sm font-black text-white shadow-sm transition hover:bg-[#111827] sm:w-fit"
+            >
+              <SlidersHorizontal size={18} strokeWidth={2.5} />
+              Filtres
+              {activeFiltersCount > 0 && (
+                <span className="rounded-full bg-white px-2 py-0.5 text-xs font-black text-[#17324d]">
+                  {activeFiltersCount}
+                </span>
+              )}
+            </button>
+
             <h2 className="text-2xl font-black text-gray-950 sm:text-3xl">
               {loading
                 ? "Chargement..."
@@ -486,14 +626,14 @@ export default function CatalogueClient() {
               </p>
             </div>
           ) : (
-            <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 md:grid-cols-3 md:gap-5 xl:grid-cols-4">
               {filteredProducts.map((product) => (
                 <Link
                   key={product.id}
                   href={`/produit/${product.id}`}
                   className="group overflow-hidden rounded-xl border border-[#e4ded4] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
                 >
-                  <div className="relative h-64 overflow-hidden bg-[#f4efe7] sm:h-80">
+                  <div className="relative h-44 overflow-hidden bg-[#f4efe7] sm:h-64 lg:h-80">
                     {getProductImage(product) ? (
                       <img
                         src={getProductImage(product)}
@@ -506,23 +646,23 @@ export default function CatalogueClient() {
                       </div>
                     )}
 
-                    <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+                    <div className="absolute left-2 top-2 flex flex-wrap gap-1.5 sm:left-4 sm:top-4 sm:gap-2">
                       {product.is_new && (
-                        <span className="flex items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-black text-[#111827] shadow-sm">
+                        <span className="flex items-center gap-1 rounded-full bg-white px-2 py-1 text-[10px] font-black text-[#111827] shadow-sm sm:px-3 sm:text-xs">
                           <Sparkles size={13} strokeWidth={3} />
                           Nouveau
                         </span>
                       )}
 
                       {product.is_favorite && (
-                        <span className="flex items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-black text-[#111827] shadow-sm">
+                        <span className="flex items-center gap-1 rounded-full bg-white px-2 py-1 text-[10px] font-black text-[#111827] shadow-sm sm:px-3 sm:text-xs">
                           <Heart size={13} strokeWidth={3} />
                           Coup de cœur
                         </span>
                       )}
 
                       {product.is_promo && (
-                        <span className="flex items-center gap-1 rounded-full bg-[#f36f45] px-3 py-1 text-xs font-black text-white">
+                        <span className="flex items-center gap-1 rounded-full bg-[#f36f45] px-2 py-1 text-[10px] font-black text-white sm:px-3 sm:text-xs">
                           <Tag size={13} strokeWidth={3} />
                           Promo
                         </span>
@@ -535,7 +675,7 @@ export default function CatalogueClient() {
                         event.preventDefault();
                         toggleFavorite(product.id);
                       }}
-                      className={`absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-sm transition hover:scale-105 ${
+                      className={`absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm transition hover:scale-105 sm:right-4 sm:top-4 sm:h-11 sm:w-11 ${
                         favoriteIds.includes(product.id)
                           ? "text-[#f36f45]"
                           : "text-gray-400 hover:text-[#f36f45]"
@@ -550,28 +690,28 @@ export default function CatalogueClient() {
                     </button>
                   </div>
 
-                  <div className="p-4 sm:p-5">
+                  <div className="p-3 sm:p-5">
                     <p className="text-xs font-black uppercase text-[#17324d]">
                       {product.category}
                     </p>
 
-                    <h3 className="mt-2 line-clamp-2 text-xl font-black text-gray-950">
+                    <h3 className="mt-2 line-clamp-2 text-sm font-black text-gray-950 sm:text-xl">
                       {product.name}
                     </h3>
 
-                    <p className="mt-2 text-sm font-bold text-gray-500">
+                    <p className="mt-1 line-clamp-1 text-xs font-bold text-gray-500 sm:mt-2 sm:text-sm">
                       {product.product_type || "Article KidiClass"}
                     </p>
 
-                    <div className="mt-4 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-end min-[420px]:justify-between">
+                    <div className="mt-3 flex flex-col gap-2 sm:mt-4 min-[520px]:flex-row min-[520px]:items-end min-[520px]:justify-between">
                       <div>
-                        <p className="text-xl font-black text-[#111827]">
+                        <p className="text-sm font-black text-[#111827] sm:text-xl">
                           {Number(product.price || 0).toLocaleString("fr-FR")}{" "}
                           FCFA
                         </p>
 
                         {product.old_price && (
-                          <p className="text-sm font-bold text-gray-400 line-through">
+                          <p className="text-xs font-bold text-gray-400 line-through sm:text-sm">
                             {Number(product.old_price).toLocaleString("fr-FR")}{" "}
                             FCFA
                           </p>
@@ -579,7 +719,7 @@ export default function CatalogueClient() {
                       </div>
 
                       <span
-                        className={`rounded-full px-3 py-1 text-xs font-black ${
+                        className={`w-fit rounded-full px-2 py-1 text-[10px] font-black sm:px-3 sm:text-xs ${
                           Number(product.stock || 0) > 0
                             ? "bg-[#f4efe7] text-[#17324d]"
                             : "bg-red-50 text-red-500"
