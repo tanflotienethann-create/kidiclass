@@ -66,10 +66,6 @@ export default function AdminOrdersList() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
   const activeOrders = useMemo(() => {
     return orders
       .filter((order) => order.status !== "Livrée")
@@ -111,6 +107,14 @@ export default function AdminOrdersList() {
     setOrders((data as Order[]) || []);
     setLoading(false);
   }
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      fetchOrders();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   async function updateOrderStatus(orderId: number, newStatus: string) {
     setMessage("");

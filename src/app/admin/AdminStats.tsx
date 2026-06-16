@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import {
   Banknote,
@@ -27,7 +27,7 @@ export default function AdminStats() {
     revenue: 0,
   });
 
-  async function fetchStats() {
+  const fetchStats = useCallback(async () => {
     const { count: productsCount } = await supabase
       .from("products")
       .select("*", { count: "exact", head: true });
@@ -59,11 +59,15 @@ export default function AdminStats() {
       deliveredOrdersCount,
       revenue,
     });
-  }
+  }, []);
 
   useEffect(() => {
-    fetchStats();
-  }, []);
+    const timeoutId = window.setTimeout(() => {
+      fetchStats();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [fetchStats]);
 
   const cards = [
     {

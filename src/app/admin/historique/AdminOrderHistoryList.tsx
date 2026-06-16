@@ -66,10 +66,6 @@ export default function AdminOrderHistoryList() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    fetchDeliveredOrders();
-  }, []);
-
   const deliveredOrders = useMemo(() => {
     return orders
       .filter((order) => order.status === "Livrée")
@@ -113,6 +109,14 @@ export default function AdminOrderHistoryList() {
     setOrders((data as Order[]) || []);
     setLoading(false);
   }
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      fetchDeliveredOrders();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   async function updateOrderStatus(orderId: number, newStatus: string) {
     setMessage("");

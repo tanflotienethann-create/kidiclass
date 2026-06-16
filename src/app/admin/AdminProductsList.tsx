@@ -48,10 +48,6 @@ export default function AdminProductsList() {
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
   async function fetchProducts() {
     setLoading(true);
     setMessage("");
@@ -75,6 +71,14 @@ export default function AdminProductsList() {
     setProducts((data as Product[]) || []);
     setLoading(false);
   }
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      fetchProducts();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   async function archiveProduct(productId: number) {
     setArchiving(true);
