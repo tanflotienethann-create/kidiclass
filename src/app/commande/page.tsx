@@ -9,6 +9,14 @@ import {
   isFixedDeliveryArea,
   isRollingBagProduct,
 } from "@/lib/delivery";
+import {
+  getDefaultPaymentOption,
+  getDepositAmount,
+  getPaymentInstruction,
+  getPaymentOptions,
+  getRemainingAmount,
+  isPreorderAvailability,
+} from "@/lib/paymentWorkflow";
 import { supabase } from "@/lib/supabase";
 import { CheckCircle2, ShoppingCart } from "lucide-react";
 
@@ -31,6 +39,7 @@ type ProductStock = {
   stock: number;
   category: string | null;
   product_type: string | null;
+  availability_status: string | null;
   is_pack: boolean | null;
 };
 
@@ -65,8 +74,6 @@ const deliveryAreas = [
   "Intérieur Côte d'Ivoire",
   "Étranger",
 ];
-
-const paymentMethods = ["Espèces", "Wave", "Orange Money"];
 
 const countryCodes = [
   { country: "Côte d’Ivoire", code: "+225" },
@@ -130,7 +137,7 @@ export default function CommandePage() {
   );
   const [deliveryMapAddress, setDeliveryMapAddress] = useState("");
 
-  const [paymentMethod, setPaymentMethod] = useState("Espèces");
+  const [paymentMethod, setPaymentMethod] = useState("Paiement à la livraison");
 
   const [message, setMessage] = useState("");
   const [orderReference, setOrderReference] = useState("");
@@ -141,6 +148,7 @@ export default function CommandePage() {
     return localStorage.getItem("kidiclass_promo_code") || "";
   });
   const [hasRollingBag, setHasRollingBag] = useState(false);
+  const [hasPreorderProduct, setHasPreorderProduct] = useState(false);
 
   const adminWhatsappNumber = "2250779311555";
 
@@ -158,6 +166,9 @@ export default function CommandePage() {
     promoCode === "KIDI10" ? Math.min(Math.round(subtotal * 0.1), 5000) : 0;
   const deliveryFee = getDeliveryFee(deliveryArea, hasRollingBag);
   const total = Math.max(subtotal - promoDiscount, 0) + deliveryFee;
+  const paymentOptions = getPaymentOptions(hasPreorderProduct);
+  const depositAmount = getDepositAmount(total, paymentMethod);
+  const remainingAmount = getRemainingAmount(total, paymentMethod);
 
   const fetchCartDeliveryInfo = useCallback(async () => {
     const productIds = cart.map((item) => item.productId);
@@ -169,7 +180,7 @@ export default function CommandePage() {
 
     const { data } = await supabase
       .from("products")
-      .select("id,name,product_type")
+      .select("id,name,product_type,availability_status")
       .in("id", productIds);
 
     const products = (data as ProductStock[]) || [];
@@ -183,6 +194,12 @@ export default function CommandePage() {
         return isRollingBagProduct(product || { name: item.productName });
       })
     );
+
+    setHasPreorderProduct(
+      products.some((product) =>
+        isPreorderAvailability(product.availability_status)
+      )
+    );
   }, [cart]);
 
   useEffect(() => {
@@ -193,6 +210,20 @@ export default function CommandePage() {
     return () => window.clearTimeout(timeoutId);
   }, [fetchCartDeliveryInfo]);
 
+  useEffect(() => {
+    if (!isFixedDeliveryArea(deliveryArea)) return;
+
+    const nextOptions = getPaymentOptions(hasPreorderProduct);
+
+    if (!nextOptions.includes(paymentMethod)) {
+      const timeoutId = window.setTimeout(() => {
+        setPaymentMethod(getDefaultPaymentOption(hasPreorderProduct));
+      }, 0);
+
+      return () => window.clearTimeout(timeoutId);
+    }
+  }, [deliveryArea, hasPreorderProduct, paymentMethod]);
+
   function generateOrderReference() {
     const year = new Date().getFullYear();
     const randomNumber = Math.floor(1000 + Math.random() * 9000);
@@ -202,6 +233,14 @@ export default function CommandePage() {
 
   function getLoyaltyPoints(amount: number) {
     return Math.floor(Number(amount || 0) / 1000);
+  }
+
+  function needsManualPaymentLink() {
+    return (
+      paymentMethod.includes("Mobile Money") ||
+      paymentMethod.includes("deux fois") ||
+      paymentMethod.includes("acompte")
+    );
   }
 
   function getCartSummary() {
@@ -507,7 +546,9 @@ Merci de me communiquer le montant total avec livraison.
     const loyaltyPoints = getLoyaltyPoints(total);
 
       const initialStatus = isFixedDeliveryArea(deliveryArea)
-        ? "En attente"
+        ? needsManualPaymentLink()
+          ? "En attente de paiement"
+          : "En attente"
         : "Expédition à confirmer";
 
     const { data: order, error: orderError } = await supabase
@@ -765,10 +806,10 @@ Merci de me communiquer le montant total avec livraison.
 
                   if (value === "Abidjan") {
                     setCustomerCity("Cocody");
-                    setPaymentMethod("Espèces");
+                    setPaymentMethod(getDefaultPaymentOption(hasPreorderProduct));
                   } else if (isFixedDeliveryArea(value)) {
                     setCustomerCity(value);
-                    setPaymentMethod("Espèces");
+                    setPaymentMethod(getDefaultPaymentOption(hasPreorderProduct));
                   } else {
                     setCustomerCity("");
                     setPaymentMethod("À confirmer");
@@ -846,15 +887,32 @@ Merci de me communiquer le montant total avec livraison.
             {isFixedDeliveryArea(deliveryArea) ? (
               <div className="space-y-4">
                 <KidiclassSelect
-                  label="Moyen de paiement"
+                  label="Option de paiement"
                   value={paymentMethod}
-                  options={paymentMethods}
+                  options={paymentOptions}
                   onChange={setPaymentMethod}
                 />
 
-                <div className="rounded-2xl bg-[#e9fbfc] p-5 text-sm font-bold leading-6 text-[#1db7bd]">
-                  Le règlement se fera à la livraison avec :{" "}
-                  <span className="font-black">{paymentMethod}</span>.
+                <div className="space-y-3 rounded-2xl bg-[#e9fbfc] p-5 text-sm font-bold leading-6 text-[#1db7bd]">
+                  <p>
+                    {hasPreorderProduct
+                      ? "Votre panier contient au moins un article en précommande. Un acompte de 50 % est demandé pour réserver la commande."
+                      : "Vos articles sont disponibles sous 24h. Choisissez comment vous souhaitez régler la commande."}
+                  </p>
+
+                  <p className="font-black text-gray-950">
+                    {getPaymentInstruction(total, paymentMethod)}
+                  </p>
+
+                  {(paymentMethod.includes("Mobile Money") ||
+                    paymentMethod.includes("deux fois") ||
+                    paymentMethod.includes("acompte")) && (
+                    <p>
+                      Aucun paiement en ligne n’est intégré au site pour le
+                      moment. L’administrateur vous enverra le lien de paiement
+                      manuellement sur WhatsApp.
+                    </p>
+                  )}
                 </div>
               </div>
             ) : (
@@ -972,7 +1030,19 @@ Merci de me communiquer le montant total avec livraison.
 
             {isFixedDeliveryArea(deliveryArea) && (
               <div className="rounded-2xl bg-[#fff9cf] p-4 text-sm font-bold leading-6 text-[#c7a900]">
-                Moyen de paiement choisi : {paymentMethod}
+                Option de paiement choisie : {paymentMethod}
+                {depositAmount > 0 && (
+                  <>
+                    <br />
+                    Paiement initial : {depositAmount.toLocaleString("fr-FR")} FCFA
+                  </>
+                )}
+                {remainingAmount > 0 && depositAmount > 0 && (
+                  <>
+                    <br />
+                    Solde restant : {remainingAmount.toLocaleString("fr-FR")} FCFA
+                  </>
+                )}
               </div>
             )}
           </div>

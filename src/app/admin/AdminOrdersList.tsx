@@ -1,6 +1,11 @@
 "use client";
 
 import KidiclassSelect from "@/components/KidiclassSelect";
+import {
+  getAdminWhatsappMessage,
+  getDepositAmount,
+  getRemainingAmount,
+} from "@/lib/paymentWorkflow";
 import { supabase } from "@/lib/supabase";
 import {
   Banknote,
@@ -197,11 +202,7 @@ export default function AdminOrdersList() {
     const cleanedPhone = cleanPhoneNumber(order.customer_phone);
     if (!cleanedPhone) return "";
 
-    const text = encodeURIComponent(
-      `Bonjour ${order.customer_name || ""}, votre commande KidiClass ${
-        order.order_reference || ""
-      } est actuellement au statut : ${order.status || "En attente"}.`
-    );
+    const text = encodeURIComponent(getAdminWhatsappMessage(order));
 
     return `https://wa.me/${cleanedPhone}?text=${text}`;
   }
@@ -225,6 +226,113 @@ export default function AdminOrdersList() {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
       addressParts.join(", ")
     )}`;
+  }
+
+  function printReceipt(order: Order) {
+    const itemsTotal = Number(order.total_amount || 0) - Number(order.delivery_fee || 0);
+    const deposit = getDepositAmount(Number(order.total_amount || 0), order.payment_method);
+    const remaining = getRemainingAmount(
+      Number(order.total_amount || 0),
+      order.payment_method
+    );
+    const receiptItems = (order.order_items || [])
+      .map((item) => {
+        const image = item.products?.image_url
+          ? `<img src="${item.products.image_url}" alt="" />`
+          : `<div class="placeholder"></div>`;
+
+        return `<div class="item">
+          <div class="item-image">${image}</div>
+          <div class="item-name">${item.products?.name || "Produit"}</div>
+          <div class="item-price">${Number(item.unit_price * item.quantity).toLocaleString(
+            "fr-FR"
+          )}F</div>
+        </div>`;
+      })
+      .join("");
+
+    const receiptWindow = window.open("", "_blank", "width=720,height=900");
+    if (!receiptWindow) return;
+
+    receiptWindow.document.write(`<!doctype html>
+      <html>
+        <head>
+          <title>Reçu ${order.order_reference || ""}</title>
+          <style>
+            @page { size: A5 portrait; margin: 8mm; }
+            * { box-sizing: border-box; }
+            body { margin: 0; background: #f4efe7; font-family: Arial, sans-serif; color: #17324d; }
+            .receipt { width: 148mm; min-height: 210mm; margin: 0 auto; background: white; border: 4px solid #0f8f8d; border-radius: 18px; padding: 16px; }
+            .logo { display: block; width: 78mm; margin: 0 auto 4px; }
+            .tagline { text-align: center; color: #ff6b00; font-size: 14px; font-weight: 900; margin-bottom: 14px; }
+            .phone { display: flex; align-items: center; justify-content: center; gap: 10px; color: #0f8f8d; font-size: 22px; font-weight: 900; border-top: 2px dotted #b8e3e1; border-bottom: 2px dotted #b8e3e1; padding: 8px 0; }
+            .info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+            .box { border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.12); padding: 14px; min-height: 70px; }
+            .label { font-size: 11px; font-weight: 900; color: #17324d; text-transform: uppercase; }
+            .value { margin-top: 6px; font-size: 20px; font-weight: 900; color: #0f8f8d; }
+            .zone .value { color: #ff6b00; }
+            .section-title { margin-top: 12px; background: #0f9f9b; color: white; padding: 10px 18px; border-radius: 14px 14px 0 0; font-size: 18px; font-weight: 900; }
+            .items { border: 1px solid #d8eeed; border-radius: 0 0 14px 14px; overflow: hidden; }
+            .header, .item { display: grid; grid-template-columns: 62px 1fr 90px; gap: 10px; align-items: center; padding: 8px 14px; }
+            .header { color: #0f8f8d; font-weight: 900; border-bottom: 1px solid #d8eeed; }
+            .item { border-bottom: 1px dotted #b8e3e1; min-height: 56px; }
+            .item:last-child { border-bottom: 0; }
+            .item img, .placeholder { width: 42px; height: 48px; object-fit: cover; border-radius: 8px; background: #edf4f4; }
+            .item-name { font-size: 18px; font-weight: 900; }
+            .item-price { text-align: right; color: #0f8f8d; font-size: 18px; font-weight: 900; }
+            .totals { margin-top: 12px; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,.12); padding: 14px; }
+            .line { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid #b8e3e1; font-size: 16px; font-weight: 800; }
+            .line:last-child { border-bottom: 0; }
+            .pay { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; color: #ff6b00; font-size: 22px; font-weight: 900; }
+            .amount { background: #ff6b00; color: white; border-radius: 10px; padding: 8px 18px; font-size: 30px; }
+            .note { margin-top: 14px; border: 2px solid #7ac8c8; border-radius: 14px; padding: 14px; text-align: center; color: #0f8f8d; font-size: 18px; font-weight: 900; }
+            .thanks { color: #ff6b00; font-size: 24px; margin-top: 8px; }
+            @media print { body { background: white; } .receipt { margin: 0; } }
+          </style>
+        </head>
+        <body>
+          <div class="receipt">
+            <img class="logo" src="/logo-kidiclass.png" alt="KidiClass" />
+            <div class="tagline">Les enfants sapés comme jamais...</div>
+            <div class="phone">☎ 0779311555</div>
+            <div class="info">
+              <div class="box">
+                <div class="label">Client</div>
+                <div class="value">${order.customer_name || ""}</div>
+                <div class="label" style="margin-top:8px">Téléphone</div>
+                <div class="value">${order.customer_phone || ""}</div>
+              </div>
+              <div class="box zone">
+                <div class="label">Zone / Quartier</div>
+                <div class="value">${order.customer_city || order.delivery_area || ""}</div>
+              </div>
+            </div>
+            <div class="section-title">Détail de la commande</div>
+            <div class="items">
+              <div class="header"><div>Article</div><div></div><div>Prix</div></div>
+              ${receiptItems}
+            </div>
+            <div class="totals">
+              <div class="line"><span>Sous-total articles</span><strong>${itemsTotal.toLocaleString("fr-FR")}F</strong></div>
+              <div class="line"><span>Livraison</span><strong>${Number(order.delivery_fee || 0).toLocaleString("fr-FR")}F</strong></div>
+              <div class="line"><span>Option paiement</span><strong>${order.payment_method || ""}</strong></div>
+              ${
+                deposit > 0
+                  ? `<div class="line"><span>Payé / à payer maintenant</span><strong>${deposit.toLocaleString("fr-FR")}F</strong></div>
+                     <div class="line"><span>Solde restant</span><strong>${remaining.toLocaleString("fr-FR")}F</strong></div>`
+                  : ""
+              }
+              <div class="pay"><span>A PAYER</span><span class="amount">${Number(order.total_amount || 0).toLocaleString("fr-FR")}F</span></div>
+            </div>
+            <div class="note">
+              Vérifiez SVP votre colis avant le départ du livreur
+              <div class="thanks">Merci pour votre achat!</div>
+            </div>
+          </div>
+          <script>window.onload = () => { window.print(); };</script>
+        </body>
+      </html>`);
+    receiptWindow.document.close();
   }
 
   if (loading) {
@@ -389,6 +497,27 @@ export default function AdminOrdersList() {
                   <p className="font-black text-gray-950">
                     {order.payment_method || "Non renseigné"}
                   </p>
+
+                  {getDepositAmount(
+                    Number(order.total_amount || 0),
+                    order.payment_method
+                  ) > 0 && (
+                    <p className="mt-2 text-sm font-bold leading-6 text-gray-500">
+                      Paiement initial :{" "}
+                      {getDepositAmount(
+                        Number(order.total_amount || 0),
+                        order.payment_method
+                      ).toLocaleString("fr-FR")}{" "}
+                      FCFA
+                      <br />
+                      Solde :{" "}
+                      {getRemainingAmount(
+                        Number(order.total_amount || 0),
+                        order.payment_method
+                      ).toLocaleString("fr-FR")}{" "}
+                      FCFA
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -436,6 +565,15 @@ export default function AdminOrdersList() {
                       Ouvrir Google Maps
                     </a>
                   )}
+
+                  <button
+                    type="button"
+                    onClick={() => printReceipt(order)}
+                    className="flex items-center gap-2 rounded-full bg-[#f36f45] px-5 py-3 text-sm font-black text-white hover:bg-[#e85e33]"
+                  >
+                    <ReceiptText size={18} strokeWidth={2.5} />
+                    Imprimer reçu A5
+                  </button>
                 </div>
               </div>
 
