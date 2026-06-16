@@ -27,10 +27,10 @@ const mainLinks = [
 ];
 
 const categoryLinks = [
-  { label: "Nouveautés", href: "/catalogue" },
-  { label: "Packs scolaires", href: "/catalogue?category=Packs%20scolaires" },
-  { label: "Plage", href: "/catalogue?category=Plage" },
-  { label: "Accessoires & jeux", href: "/catalogue?category=Accessoires%20%26%20jeux" },
+  { label: "Nouveautés", href: "/nouveautes" },
+  { label: "Packs scolaires", href: "/packs-scolaires" },
+  { label: "Plage", href: "/plage" },
+  { label: "Accessoires & jeux", href: "/accessoires-jeux" },
 ];
 
 function isActiveLink(pathname: string, href: string) {

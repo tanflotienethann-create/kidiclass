@@ -37,7 +37,7 @@ const homeCategories = [
   {
     title: "Packs scolaires",
     text: "Sacs, sacs à goûter, boîtes à goûter, gourdes et trousses réunis.",
-    href: "/catalogue?category=Packs%20scolaires",
+    href: "/packs-scolaires",
     icon: School,
     bg: "bg-[#fff1f5]",
     color: "text-[#f36f45]",
@@ -45,7 +45,7 @@ const homeCategories = [
   {
     title: "Plage",
     text: "Serviettes, maillots de bain et articles pratiques pour les sorties.",
-    href: "/catalogue?category=Plage",
+    href: "/plage",
     icon: Sparkles,
     bg: "bg-[#e9fbfc]",
     color: "text-[#1db7bd]",
@@ -53,7 +53,7 @@ const homeCategories = [
   {
     title: "Accessoires & jeux",
     text: "Horloges, jeux et petites trouvailles utiles pour les enfants.",
-    href: "/catalogue?category=Accessoires%20%26%20jeux",
+    href: "/accessoires-jeux",
     icon: Star,
     bg: "bg-[#fff9cf]",
     color: "text-[#c7a900]",
@@ -103,7 +103,7 @@ const schoolSelection = [
   },
   {
     title: "Packs complets",
-    href: "/catalogue?category=Packs%20scolaires",
+    href: "/packs-scolaires",
   },
 ];
 
@@ -173,7 +173,7 @@ export default function HomePage() {
               </Link>
 
               <Link
-                href="/catalogue?category=Packs%20scolaires"
+                href="/packs-scolaires"
                 className="kidiclass-button-secondary text-center px-6 py-3.5 sm:px-7 sm:py-4"
               >
                 Spécial rentrée
@@ -477,7 +477,7 @@ export default function HomePage() {
               </p>
 
               <Link
-                href="/catalogue?category=Packs%20scolaires"
+                href="/packs-scolaires"
                 className="kidiclass-button-primary mt-7 inline-flex w-full items-center justify-center gap-2 px-6 py-3.5 text-center sm:w-fit sm:px-7 sm:py-4"
               >
                 Découvrir les packs scolaires

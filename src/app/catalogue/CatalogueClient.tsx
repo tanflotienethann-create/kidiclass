@@ -41,6 +41,19 @@ type Product = {
   is_archived: boolean | null;
 };
 
+type CatalogueTheme = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  variant: "default" | "school" | "beach" | "play" | "new";
+};
+
+type CatalogueClientProps = {
+  initialCategory?: string;
+  initialHighlight?: string;
+  theme?: CatalogueTheme;
+};
+
 const categories = [
   "Toutes",
   "Packs scolaires",
@@ -125,15 +138,138 @@ const categoryAliases: Record<string, string[]> = {
   Vêtements: ["Vêtements", "Filles", "Garçons", "Bébés"],
 };
 
-export default function CatalogueClient() {
+const defaultTheme: CatalogueTheme = {
+  eyebrow: "Catalogue KidiClass",
+  title: "Tous les essentiels kids au même endroit.",
+  description:
+    "Filtrez les packs, chaussures, accessoires et articles de plage avec une présentation plus claire et plus boutique.",
+  variant: "default",
+};
+
+const themeStyles = {
+  default: {
+    section: "bg-[#f4efe7]",
+    badge: "text-[#e85035]",
+    panel: "bg-white",
+  },
+  school: {
+    section: "bg-[#e9fbfc]",
+    badge: "text-[#0f766e]",
+    panel: "bg-[#fffdf7]",
+  },
+  beach: {
+    section: "bg-[#dff8ff]",
+    badge: "text-[#0089a7]",
+    panel: "bg-[#fff9cf]",
+  },
+  play: {
+    section: "bg-[#fff1f5]",
+    badge: "text-[#f36f45]",
+    panel: "bg-[#e9fbfc]",
+  },
+  new: {
+    section: "bg-[#fff3bf]",
+    badge: "text-[#e85035]",
+    panel: "bg-white",
+  },
+};
+
+function BeachDecor() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute right-8 top-8 h-20 w-20 rounded-full bg-[#ffc928]" />
+      <div className="absolute -bottom-10 left-0 h-28 w-full rounded-t-[50%] bg-[#66d3e5]" />
+      <div className="absolute bottom-8 right-10 hidden h-36 w-28 md:block">
+        <div className="absolute bottom-0 left-12 h-28 w-4 rotate-12 rounded-full bg-[#9a6b00]" />
+        <div className="absolute left-5 top-0 h-16 w-24 -rotate-12 rounded-full bg-[#0f766e]" />
+        <div className="absolute left-12 top-2 h-16 w-24 rotate-12 rounded-full bg-[#1db7bd]" />
+        <div className="absolute left-0 top-8 h-12 w-24 rotate-6 rounded-full bg-[#0f766e]" />
+      </div>
+    </div>
+  );
+}
+
+function SchoolDecor() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute -bottom-8 left-0 h-24 w-full bg-[#d9f4f5]" />
+      <div className="absolute bottom-12 right-20 hidden h-36 w-56 md:block">
+        <div className="absolute bottom-0 left-0 h-24 w-56 rounded-t-2xl bg-white/80 shadow-sm" />
+        <div className="absolute bottom-24 left-16 h-0 w-0 border-l-[48px] border-r-[48px] border-b-[52px] border-l-transparent border-r-transparent border-b-[#f36f45]" />
+        <div className="absolute bottom-0 left-24 h-14 w-10 rounded-t-lg bg-[#17324d]" />
+        <div className="absolute bottom-10 left-8 h-8 w-8 rounded-lg bg-[#fff3bf]" />
+        <div className="absolute bottom-10 right-8 h-8 w-8 rounded-lg bg-[#fff3bf]" />
+      </div>
+      <div className="absolute bottom-10 right-8 h-24 w-20 rotate-6 rounded-2xl bg-[#f36f45] shadow-lg md:right-80">
+        <div className="absolute -top-4 left-5 h-6 w-10 rounded-t-full border-4 border-[#17324d]" />
+        <div className="absolute left-4 top-6 h-4 w-12 rounded-full bg-white/80" />
+        <div className="absolute bottom-0 left-0 h-6 w-full rounded-b-2xl bg-[#c93f2a]" />
+      </div>
+    </div>
+  );
+}
+
+function PlayDecor() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute right-10 top-10 hidden h-32 w-32 rounded-full border-[14px] border-[#1db7bd] bg-white/70 md:block">
+        <div className="absolute left-1/2 top-1/2 h-12 w-1 -translate-x-1/2 -translate-y-full origin-bottom rounded-full bg-[#17324d]" />
+        <div className="absolute left-1/2 top-1/2 h-1 w-10 -translate-y-1/2 rounded-full bg-[#f36f45]" />
+        <div className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#17324d]" />
+      </div>
+      <div className="absolute bottom-8 right-20 hidden h-28 w-24 md:block">
+        <div className="absolute bottom-0 left-2 h-8 w-20 rounded-full bg-[#17324d]" />
+        <div className="absolute bottom-7 left-5 h-14 w-14 rounded-t-full bg-[#17324d]" />
+        <div className="absolute bottom-[4.5rem] left-8 h-8 w-8 rounded-full bg-[#17324d]" />
+        <div className="absolute bottom-20 left-2 h-3 w-20 rounded-full bg-[#17324d]" />
+      </div>
+      <div className="absolute -bottom-12 -right-12 h-48 w-48 rounded-full bg-[#f36f45]/20" />
+    </div>
+  );
+}
+
+function NewDecor() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute right-4 top-8 hidden rotate-6 rounded-[2rem] bg-[#f36f45] px-10 py-6 text-6xl font-black text-white shadow-xl md:block">
+        NEW
+      </div>
+      <div className="absolute bottom-10 right-20 hidden h-24 w-24 rounded-full bg-[#1db7bd]/25 md:block" />
+      <div className="absolute bottom-16 right-40 hidden h-12 w-12 rotate-12 rounded-xl bg-white/70 md:block" />
+      <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/50" />
+    </div>
+  );
+}
+
+function GenericDecor({ variant }: { variant: CatalogueTheme["variant"] }) {
+  if (variant === "beach") return <BeachDecor />;
+  if (variant === "school") return <SchoolDecor />;
+  if (variant === "play") return <PlayDecor />;
+  if (variant === "new") return <NewDecor />;
+
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/55" />
+      <div className="absolute bottom-8 right-10 hidden h-24 w-24 rotate-12 rounded-3xl bg-white/60 md:block" />
+      <div className="absolute bottom-10 right-36 hidden h-14 w-14 rounded-full bg-[#f36f45]/20 md:block" />
+    </div>
+  );
+}
+
+export default function CatalogueClient({
+  initialCategory = "Toutes",
+  initialHighlight = "Tous",
+  theme = defaultTheme,
+}: CatalogueClientProps) {
   const searchParams = useSearchParams();
+  const themeStyle = themeStyles[theme.variant];
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState(searchParams.get("q") || "");
   const [category, setCategory] = useState(
-    searchParams.get("category") || "Toutes"
+    searchParams.get("category") || initialCategory
   );
   const [productType, setProductType] = useState(
     searchParams.get("productType") || "Tous"
@@ -142,7 +278,7 @@ export default function CatalogueClient() {
   const [schoolLevel, setSchoolLevel] = useState("Tous");
   const [gender, setGender] = useState("Tous");
   const [highlight, setHighlight] = useState(
-    searchParams.get("highlight") || "Tous"
+    searchParams.get("highlight") || initialHighlight
   );
   const [sortBy, setSortBy] = useState("Plus récents");
   const [brandSearch, setBrandSearch] = useState("");
@@ -297,12 +433,12 @@ export default function CatalogueClient() {
 
   function resetFilters() {
     setSearch("");
-    setCategory("Toutes");
+    setCategory(initialCategory);
     setProductType("Tous");
     setCharacterTheme("Tous");
     setSchoolLevel("Tous");
     setGender("Tous");
-    setHighlight("Tous");
+    setHighlight(initialHighlight);
     setSortBy("Plus récents");
     setBrandSearch("");
     setColorSearch("");
@@ -311,12 +447,12 @@ export default function CatalogueClient() {
 
   const activeFiltersCount = [
     search.trim(),
-    category !== "Toutes",
+    category !== initialCategory,
     productType !== "Tous",
     characterTheme !== "Tous",
     schoolLevel !== "Tous",
     gender !== "Tous",
-    highlight !== "Tous",
+    highlight !== initialHighlight,
     brandSearch.trim(),
     colorSearch.trim(),
     ageSearch.trim(),
@@ -332,20 +468,25 @@ export default function CatalogueClient() {
 
   return (
     <main className="min-h-screen bg-[#faf8f4]">
-      <section className="retail-band px-4 py-8 sm:px-5 sm:py-14">
-        <div className="mx-auto max-w-7xl">
-          <p className="text-sm font-black uppercase text-[#e85035]">
-            Catalogue KidiClass
-          </p>
+      <section
+        className={`relative overflow-hidden px-4 py-8 sm:px-5 sm:py-14 ${themeStyle.section}`}
+      >
+        <GenericDecor variant={theme.variant} />
 
-          <h1 className="mt-4 max-w-4xl text-4xl font-black leading-tight text-[#111827] sm:text-5xl md:text-7xl">
-            Tous les essentiels kids au même endroit.
-          </h1>
+        <div className="relative mx-auto max-w-7xl">
+          <div className={`max-w-4xl rounded-[2rem] p-0 md:p-8 ${themeStyle.panel}`}>
+            <p className={`text-sm font-black uppercase ${themeStyle.badge}`}>
+              {theme.eyebrow}
+            </p>
 
-          <p className="mt-4 max-w-2xl text-base font-bold leading-7 text-gray-700 sm:mt-5 sm:text-lg sm:leading-8">
-            Filtrez les packs, chaussures, accessoires et articles de plage
-            avec une présentation plus claire et plus boutique.
-          </p>
+            <h1 className="mt-4 text-4xl font-black leading-tight text-[#111827] sm:text-5xl md:text-7xl">
+              {theme.title}
+            </h1>
+
+            <p className="mt-4 max-w-2xl text-base font-bold leading-7 text-gray-700 sm:mt-5 sm:text-lg sm:leading-8">
+              {theme.description}
+            </p>
+          </div>
         </div>
       </section>
 
