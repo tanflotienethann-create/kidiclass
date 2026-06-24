@@ -159,7 +159,7 @@ export default function Navbar() {
 
           <Link
             href="/"
-            className="relative h-12 w-32 shrink-0 justify-self-center overflow-hidden sm:h-14 sm:w-40 lg:h-20 lg:w-52 lg:justify-self-start"
+            className="relative h-14 w-36 shrink-0 justify-self-center overflow-hidden sm:h-16 sm:w-48 lg:h-24 lg:w-64 lg:justify-self-start"
             aria-label="Accueil KidiClass"
           >
             <Image

@@ -123,6 +123,7 @@ export default function AdminOrdersList() {
 
   async function updateOrderStatus(orderId: number, newStatus: string) {
     setMessage("");
+    const selectedOrder = orders.find((order) => order.id === orderId);
 
     const deliveredAt =
       newStatus === "Livrée" ? new Date().toISOString() : null;
@@ -152,10 +153,47 @@ export default function AdminOrdersList() {
       })
     );
 
+    let smsMessage = "";
+
+    if (selectedOrder?.customer_phone) {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+
+      if (accessToken) {
+        try {
+          const response = await fetch("/api/notifications/order-status", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({
+              customerName: selectedOrder.customer_name,
+              customerPhone: selectedOrder.customer_phone,
+              orderReference: selectedOrder.order_reference,
+              status: newStatus,
+            }),
+          });
+          const result = (await response.json()) as { error?: string };
+          smsMessage = response.ok
+            ? " SMS envoyé au client."
+            : ` ${result.error || "Le SMS n’a pas pu être envoyé."}`;
+        } catch {
+          smsMessage = " Le service SMS est momentanément indisponible.";
+        }
+      } else {
+        smsMessage = " SMS non envoyé : session administrateur introuvable.";
+      }
+    } else {
+      smsMessage = " SMS non envoyé : numéro du client manquant.";
+    }
+
     setMessage(
-      newStatus === "Livrée"
-        ? "Commande déplacée dans l’historique."
-        : "Statut de la commande mis à jour."
+      `${
+        newStatus === "Livrée"
+          ? "Commande déplacée dans l’historique."
+          : "Statut de la commande mis à jour."
+      }${smsMessage}`,
     );
   }
 

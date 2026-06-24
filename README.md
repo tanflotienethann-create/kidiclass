@@ -16,6 +16,20 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Notifications Brevo
+
+Les emails de codes promo et les SMS de suivi utilisent des variables serveur :
+
+```env
+BREVO_API_KEY=
+BREVO_SENDER_EMAIL=
+BREVO_SENDER_NAME=KidiClass
+BREVO_SMS_SENDER=KidiClass
+```
+
+Ajoutez-les dans les variables d'environnement Vercel. L'adresse email doit
+être un expéditeur validé dans Brevo.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

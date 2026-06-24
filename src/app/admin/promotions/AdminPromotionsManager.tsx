@@ -112,18 +112,51 @@ export default function AdminPromotionsManager() {
       },
     ]);
 
-    setSaving(false);
-
     if (error) {
+      setSaving(false);
       setMessageType("error");
       setMessage(`Impossible de créer le code promo : ${error.message}`);
       return;
     }
 
+    let notificationMessage = "";
+    const { data: sessionData } = await supabase.auth.getSession();
+    const accessToken = sessionData.session?.access_token;
+
+    if (accessToken) {
+      try {
+        const response = await fetch("/api/notifications/promo-code", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({
+            code: normalizedCode,
+            percentage: numericPercentage,
+          }),
+        });
+        const result = (await response.json()) as {
+          error?: string;
+          recipientCount?: number;
+        };
+
+        notificationMessage = response.ok
+          ? ` Email envoyé à ${result.recipientCount || 0} client(s).`
+          : ` ${result.error || "L’email n’a pas pu être envoyé."}`;
+      } catch {
+        notificationMessage = " Le service email est momentanément indisponible.";
+      }
+    } else {
+      notificationMessage = " Email non envoyé : session administrateur introuvable.";
+    }
+
+    setSaving(false);
+
     setCode("");
     setPercentage("");
     setMessageType("success");
-    setMessage(`Le code ${normalizedCode} a été créé.`);
+    setMessage(`Le code ${normalizedCode} a été créé.${notificationMessage}`);
     await loadPromotions();
   }
 
