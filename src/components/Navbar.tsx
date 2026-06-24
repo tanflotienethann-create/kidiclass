@@ -131,7 +131,21 @@ export default function Navbar() {
 
       <div className="bg-white">
         <div className="mx-auto grid max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 md:gap-5 md:px-5 md:py-3">
-          <Link href="/" className="shrink-0" aria-label="Accueil KidiClass">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(true)}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-900 hover:border-[#1db7bd] hover:text-[#087f83] sm:h-11 sm:w-11 lg:hidden"
+            aria-label="Ouvrir le menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            <Menu size={22} strokeWidth={2.5} />
+          </button>
+
+          <Link
+            href="/"
+            className="shrink-0 justify-self-center lg:justify-self-start"
+            aria-label="Accueil KidiClass"
+          >
             <Image
               src="/logo-kidiclass.png"
               alt="KidiClass"
@@ -214,19 +228,6 @@ export default function Navbar() {
               )}
             </Link>
 
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-900 hover:border-[#1db7bd] hover:text-[#1db7bd] sm:h-11 sm:w-11 lg:hidden"
-              aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? (
-                <X size={22} strokeWidth={2.5} />
-              ) : (
-                <Menu size={22} strokeWidth={2.5} />
-              )}
-            </button>
           </div>
         </div>
 
@@ -243,7 +244,7 @@ export default function Navbar() {
               href={department.href}
               className={`whitespace-nowrap rounded-lg px-4 py-2.5 transition ${
                 isActiveLink(pathname, department.href)
-                  ? "bg-[#17324d] text-white"
+                  ? "border border-[#1db7bd] bg-[#e9fbfc] text-[#075e62] shadow-sm"
                   : "bg-[#fffdf7] hover:bg-[#e9fbfc] hover:text-[#087f83]"
               }`}
             >
@@ -254,8 +255,33 @@ export default function Navbar() {
       </nav>
 
       {mobileMenuOpen && (
-        <div className="max-h-[calc(100vh-8rem)] overflow-y-auto border-t border-gray-100 bg-white px-3 pb-5 pt-4 shadow-lg sm:px-4 lg:hidden">
-          <div className="mx-auto max-w-7xl space-y-4">
+        <div className="fixed inset-0 z-[10000] lg:hidden">
+          <button
+            type="button"
+            className="absolute inset-0 bg-gray-950/45"
+            aria-label="Fermer le menu"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+
+          <aside className="absolute left-0 top-0 flex h-full w-[min(88vw,380px)] flex-col bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4">
+              <div>
+                <p className="text-xs font-black uppercase text-[#087f83]">
+                  KidiClass
+                </p>
+                <p className="text-xl font-black text-gray-950">Menu</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-gray-800"
+                aria-label="Fermer le menu"
+              >
+                <X size={22} strokeWidth={2.5} />
+              </button>
+            </div>
+
+            <div className="flex-1 space-y-5 overflow-y-auto px-4 py-5">
             <div className="grid grid-cols-1 gap-2 min-[380px]:grid-cols-2">
               {mainLinks.map((link) => (
                 <Link
@@ -343,7 +369,8 @@ export default function Navbar() {
                 ))}
               </div>
             </div>
-          </div>
+            </div>
+          </aside>
         </div>
       )}
     </header>

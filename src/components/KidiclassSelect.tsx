@@ -88,7 +88,7 @@ export default function KidiclassSelect({
                   }}
                   className={`flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-left text-sm font-black transition sm:rounded-2xl ${
                     isSelected
-                      ? "bg-[#1db7bd] text-white"
+                      ? "border border-[#1db7bd] bg-[#e9fbfc] text-[#075e62]"
                       : "text-gray-800 hover:bg-[#e9fbfc] hover:text-[#1db7bd]"
                   }`}
                 >
