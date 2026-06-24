@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { getDeliveryFee, isRollingBagProduct } from "@/lib/delivery";
+import {
+  getActivePromoCode,
+  getPromoDiscount,
+  normalizePromoCode,
+} from "@/lib/promoCodes";
 import { supabase } from "@/lib/supabase";
 import {
   ArrowLeft,
@@ -52,6 +57,8 @@ export default function PanierPage() {
 
     return localStorage.getItem("kidiclass_promo_code") || "";
   });
+  const [appliedPromoPercentage, setAppliedPromoPercentage] = useState(0);
+  const [promoLoading, setPromoLoading] = useState(false);
 
   const fetchProductStocks = useCallback(async (items: CartItem[]) => {
     const productIds = items.map((item) => item.productId);
@@ -77,6 +84,34 @@ export default function PanierPage() {
 
     return () => window.clearTimeout(timeoutId);
   }, [cart, fetchProductStocks]);
+
+  useEffect(() => {
+    if (!appliedPromoCode) return;
+
+    let active = true;
+
+    async function validateSavedPromoCode() {
+      const promotion = await getActivePromoCode(appliedPromoCode);
+      if (!active) return;
+
+      if (!promotion) {
+        setAppliedPromoCode("");
+        setAppliedPromoPercentage(0);
+        localStorage.removeItem("kidiclass_promo_code");
+        return;
+      }
+
+      setAppliedPromoCode(promotion.code);
+      setPromoCode(promotion.code);
+      setAppliedPromoPercentage(promotion.percentage);
+    }
+
+    void validateSavedPromoCode();
+
+    return () => {
+      active = false;
+    };
+  }, [appliedPromoCode]);
 
   function saveCart(updatedCart: CartItem[]) {
     setCart(updatedCart);
@@ -158,28 +193,36 @@ export default function PanierPage() {
     window.dispatchEvent(new Event("kidiclass-cart-updated"));
   }
 
-  function applyPromoCode() {
-    const normalizedCode = promoCode.trim().toUpperCase();
+  async function applyPromoCode() {
+    const normalizedCode = normalizePromoCode(promoCode);
 
     if (!normalizedCode) {
       setMessage("Veuillez renseigner un code promo.");
       return;
     }
 
-    if (normalizedCode !== "KIDI10") {
-      setMessage("Code promo invalide. Essayez KIDI10.");
+    setPromoLoading(true);
+    const promotion = await getActivePromoCode(normalizedCode);
+    setPromoLoading(false);
+
+    if (!promotion) {
+      setMessage("Ce code promo est invalide ou n’est plus actif.");
       setAppliedPromoCode("");
+      setAppliedPromoPercentage(0);
       localStorage.removeItem("kidiclass_promo_code");
       return;
     }
 
     setMessage("");
-    setAppliedPromoCode(normalizedCode);
-    localStorage.setItem("kidiclass_promo_code", normalizedCode);
+    setPromoCode(promotion.code);
+    setAppliedPromoCode(promotion.code);
+    setAppliedPromoPercentage(promotion.percentage);
+    localStorage.setItem("kidiclass_promo_code", promotion.code);
   }
 
   function removePromoCode() {
     setAppliedPromoCode("");
+    setAppliedPromoPercentage(0);
     setPromoCode("");
     localStorage.removeItem("kidiclass_promo_code");
   }
@@ -214,8 +257,10 @@ export default function PanierPage() {
     return isRollingBagProduct(product || { name: item.productName });
   });
   const estimatedDeliveryFee = getDeliveryFee("Abidjan", hasRollingBag);
-  const promoDiscount =
-    appliedPromoCode === "KIDI10" ? Math.min(Math.round(subtotal * 0.1), 5000) : 0;
+  const promoDiscount = getPromoDiscount(
+    subtotal,
+    appliedPromoPercentage,
+  );
   const estimatedTotal = Math.max(subtotal - promoDiscount, 0) + estimatedDeliveryFee;
 
   if (loading) {
@@ -489,7 +534,7 @@ export default function PanierPage() {
               <div className="mt-3 flex gap-2">
                 <input
                   type="text"
-                  placeholder="KIDI10"
+                  placeholder="Votre code"
                   className="min-w-0 flex-1 rounded-full border-2 border-[#bfedf0] px-4 py-3 text-sm font-black uppercase outline-none focus:border-[#1db7bd]"
                   value={promoCode}
                   onChange={(event) => setPromoCode(event.target.value)}
@@ -497,10 +542,11 @@ export default function PanierPage() {
 
                 <button
                   type="button"
-                  onClick={applyPromoCode}
+                  onClick={() => void applyPromoCode()}
+                  disabled={promoLoading}
                   className="rounded-full bg-[#1db7bd] px-5 py-3 text-sm font-black text-white hover:bg-[#159ca1]"
                 >
-                  Appliquer
+                  {promoLoading ? "Vérification..." : "Appliquer"}
                 </button>
               </div>
 
@@ -510,7 +556,7 @@ export default function PanierPage() {
                   onClick={removePromoCode}
                   className="mt-3 text-sm font-black text-[#f36f45]"
                 >
-                  Retirer le code {appliedPromoCode}
+                  Retirer le code {appliedPromoCode} (-{appliedPromoPercentage}%)
                 </button>
               )}
             </div>

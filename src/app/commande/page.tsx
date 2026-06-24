@@ -17,6 +17,7 @@ import {
   getRemainingAmount,
   isPreorderAvailability,
 } from "@/lib/paymentWorkflow";
+import { getActivePromoCode, getPromoDiscount } from "@/lib/promoCodes";
 import { supabase } from "@/lib/supabase";
 import { CheckCircle2, ShoppingCart } from "lucide-react";
 
@@ -143,11 +144,12 @@ export default function CommandePage() {
   const [message, setMessage] = useState("");
   const [orderReference, setOrderReference] = useState("");
   const [loading, setLoading] = useState(false);
-  const [promoCode] = useState(() => {
+  const [promoCode, setPromoCode] = useState(() => {
     if (typeof window === "undefined") return "";
 
     return localStorage.getItem("kidiclass_promo_code") || "";
   });
+  const [promoPercentage, setPromoPercentage] = useState(0);
   const [hasRollingBag, setHasRollingBag] = useState(false);
   const [hasPreorderProduct, setHasPreorderProduct] = useState(false);
 
@@ -163,8 +165,7 @@ export default function CommandePage() {
     0
   );
 
-  const promoDiscount =
-    promoCode === "KIDI10" ? Math.min(Math.round(subtotal * 0.1), 5000) : 0;
+  const promoDiscount = getPromoDiscount(subtotal, promoPercentage);
   const deliveryFee = getDeliveryFee(deliveryArea, hasRollingBag);
   const total = Math.max(subtotal - promoDiscount, 0) + deliveryFee;
   const paymentOptions = getPaymentOptions(hasPreorderProduct);
@@ -214,6 +215,34 @@ export default function CommandePage() {
 
     return () => window.clearTimeout(timeoutId);
   }, [fetchCartDeliveryInfo]);
+
+  useEffect(() => {
+    if (!promoCode) return;
+
+    let active = true;
+
+    async function validatePromoCode() {
+      const promotion = await getActivePromoCode(promoCode);
+      if (!active) return;
+
+      if (!promotion) {
+        setPromoCode("");
+        setPromoPercentage(0);
+        localStorage.removeItem("kidiclass_promo_code");
+        setMessage("Le code promo enregistré n’est plus actif.");
+        return;
+      }
+
+      setPromoCode(promotion.code);
+      setPromoPercentage(promotion.percentage);
+    }
+
+    void validatePromoCode();
+
+    return () => {
+      active = false;
+    };
+  }, [promoCode]);
 
   useEffect(() => {
     if (!isFixedDeliveryArea(deliveryArea)) return;
@@ -534,6 +563,30 @@ Merci de me communiquer le montant total avec livraison.
       setMessage("Veuillez renseigner l’adresse de livraison.");
       setLoading(false);
       return;
+    }
+
+    if (promoCode) {
+      const promotion = await getActivePromoCode(promoCode);
+
+      if (!promotion) {
+        setPromoCode("");
+        setPromoPercentage(0);
+        localStorage.removeItem("kidiclass_promo_code");
+        setMessage(
+          "Ce code promo n’est plus actif. Le total a été recalculé.",
+        );
+        setLoading(false);
+        return;
+      }
+
+      if (promotion.percentage !== promoPercentage) {
+        setPromoPercentage(promotion.percentage);
+        setMessage(
+          "La remise de ce code promo a changé. Vérifiez le nouveau total avant de valider.",
+        );
+        setLoading(false);
+        return;
+      }
     }
 
     const stockCheck = await checkStockBeforeOrder();
@@ -1037,7 +1090,9 @@ Merci de me communiquer le montant total avec livraison.
 
             {promoDiscount > 0 && (
               <div className="flex justify-between text-green-700">
-                <span>Remise {promoCode}</span>
+                <span>
+                  Remise {promoCode} (-{promoPercentage}%)
+                </span>
                 <span className="font-bold">
                   -{promoDiscount.toLocaleString("fr-FR")} FCFA
                 </span>

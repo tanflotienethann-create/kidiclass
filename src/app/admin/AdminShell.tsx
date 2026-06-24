@@ -7,12 +7,14 @@ import { checkAdminAccess, clearAdminAccessCache } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import {
   BarChart3,
+  BadgePercent,
   History,
   LogOut,
   Menu,
   PackageCheck,
   ShoppingBag,
   Store,
+  Users,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -27,6 +29,8 @@ const menuItems = [
   { label: "Tableau de bord", href: "/admin", icon: BarChart3 },
   { label: "Produits", href: "/admin/produits", icon: ShoppingBag },
   { label: "Commandes", href: "/admin/commandes", icon: PackageCheck },
+  { label: "Clients", href: "/admin/clients", icon: Users },
+  { label: "Promotions", href: "/admin/promotions", icon: BadgePercent },
   { label: "Historique", href: "/admin/historique", icon: History },
 ];
 
@@ -136,7 +140,7 @@ export default function AdminShell({
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-2 lg:flex">
+          <nav className="hidden items-center gap-1 xl:flex">
             {menuItems.map((item) => {
               const Icon = item.icon;
               const active = isActiveLink(item.href);
@@ -145,7 +149,7 @@ export default function AdminShell({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2 rounded-full px-5 py-3 text-sm font-black transition ${
+                  className={`flex items-center gap-2 rounded-full px-4 py-3 text-sm font-black transition ${
                     active
                       ? "bg-[#1db7bd] text-white shadow-sm"
                       : "text-gray-700 hover:bg-[#e9fbfc] hover:text-[#1db7bd]"
@@ -158,7 +162,7 @@ export default function AdminShell({
             })}
           </nav>
 
-          <div className="hidden shrink-0 items-center gap-3 lg:flex">
+          <div className="hidden shrink-0 items-center gap-3 xl:flex">
             <Link
               href="/"
               className="flex items-center gap-2 rounded-full border-2 border-[#1db7bd] px-5 py-3 text-sm font-black text-[#1db7bd] transition hover:bg-[#1db7bd] hover:text-white"
@@ -180,7 +184,7 @@ export default function AdminShell({
           <button
             type="button"
             onClick={() => setMobileMenuOpen((current) => !current)}
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] lg:hidden"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] xl:hidden"
           >
             {mobileMenuOpen ? (
               <X size={24} strokeWidth={2.5} />
@@ -191,7 +195,7 @@ export default function AdminShell({
         </div>
 
         {mobileMenuOpen && (
-          <div className="border-t border-gray-100 bg-white px-5 py-4 lg:hidden">
+          <div className="border-t border-gray-100 bg-white px-5 py-4 xl:hidden">
             <div className="grid gap-2">
               {menuItems.map((item) => {
                 const Icon = item.icon;
