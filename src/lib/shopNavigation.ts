@@ -73,7 +73,7 @@ export const shopDepartments: ShopDepartment[] = [
     description:
       "Retrouvez les offres scolaires par niveau, les packs, les sacs et les essentiels pour les sorties.",
     variant: "school",
-    palette: { accent: "#1db7bd", soft: "#e9fbfc", ink: "#075e62" },
+    palette: { accent: "#e0a800", soft: "#fff3bf", ink: "#6f4e00" },
     categories: [...educationCategories, ...outingCategories],
   },
   {

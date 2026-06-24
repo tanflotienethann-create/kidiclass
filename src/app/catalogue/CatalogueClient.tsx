@@ -9,6 +9,8 @@ import {
 import { shopCategoryLabels, shopProductTypes } from "@/lib/shopNavigation";
 import { supabase } from "@/lib/supabase";
 import {
+  Backpack,
+  Gamepad2,
   Heart,
   PackageCheck,
   RotateCcw,
@@ -16,6 +18,8 @@ import {
   SlidersHorizontal,
   Sparkles,
   Tag,
+  Utensils,
+  Waves,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -109,28 +113,28 @@ const categoryAliases: Record<string, string[]> = {
 
 const defaultTheme: CatalogueTheme = {
   eyebrow: "Catalogue KidiClass",
-  title: "Tous les essentiels kids au même endroit.",
+  title: "Toute la boutique, pour tous leurs moments.",
   description:
-    "Filtrez les packs, chaussures, accessoires et articles de plage avec une présentation plus claire et plus boutique.",
+    "École, goûters, plage, jeux et personnages : retrouvez toutes les collections KidiClass au même endroit.",
   variant: "default",
 };
 
 const themeStyles = {
   default: {
-    section: "bg-[#f4efe7]",
+    section: "bg-[#f4fbfa]",
     badge: "text-[#e85035]",
-    panel: "bg-white",
-    accent: "#1db7bd",
+    panel: "bg-transparent",
+    accent: "#17324d",
     soft: "#e9fbfc",
-    ink: "#075e62",
+    ink: "#17324d",
   },
   school: {
-    section: "bg-[#e9fbfc]",
-    badge: "text-[#0f766e]",
+    section: "bg-[#fff3bf]",
+    badge: "text-[#7a5200]",
     panel: "bg-[#fffdf7]",
-    accent: "#1db7bd",
-    soft: "#e9fbfc",
-    ink: "#075e62",
+    accent: "#e0a800",
+    soft: "#fff3bf",
+    ink: "#6f4e00",
   },
   meal: {
     section: "bg-[#fff0e8]",
@@ -192,19 +196,44 @@ function BeachDecor() {
 function SchoolDecor() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="absolute -bottom-8 left-0 h-24 w-full bg-[#d9f4f5]" />
+      <div className="absolute -bottom-8 left-0 h-24 w-full bg-[#ffe28a]" />
       <div className="absolute bottom-12 right-20 hidden h-36 w-56 md:block">
         <div className="absolute bottom-0 left-0 h-24 w-56 rounded-t-2xl bg-white/80 shadow-sm" />
         <div className="absolute bottom-24 left-16 h-0 w-0 border-l-[48px] border-r-[48px] border-b-[52px] border-l-transparent border-r-transparent border-b-[#f36f45]" />
         <div className="absolute bottom-0 left-24 h-14 w-10 rounded-t-lg bg-[#17324d]" />
-        <div className="absolute bottom-10 left-8 h-8 w-8 rounded-lg bg-[#fff3bf]" />
-        <div className="absolute bottom-10 right-8 h-8 w-8 rounded-lg bg-[#fff3bf]" />
+        <div className="absolute bottom-10 left-8 h-8 w-8 rounded-lg bg-[#8edbe0]" />
+        <div className="absolute bottom-10 right-8 h-8 w-8 rounded-lg bg-[#8edbe0]" />
       </div>
       <div className="absolute bottom-10 right-8 h-24 w-20 rotate-6 rounded-2xl bg-[#f36f45] shadow-lg md:right-80">
         <div className="absolute -top-4 left-5 h-6 w-10 rounded-t-full border-4 border-[#17324d]" />
         <div className="absolute left-4 top-6 h-4 w-12 rounded-full bg-white/80" />
         <div className="absolute bottom-0 left-0 h-6 w-full rounded-b-2xl bg-[#c93f2a]" />
       </div>
+    </div>
+  );
+}
+
+function CatalogueDecor() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute inset-y-0 right-0 hidden w-[42%] bg-[#17324d] lg:block" />
+      <div className="absolute right-12 top-1/2 hidden -translate-y-1/2 grid-cols-2 gap-3 lg:grid">
+        {[
+          { label: "École", Icon: Backpack, color: "bg-[#fff3bf] text-[#6f4e00]" },
+          { label: "Goûter", Icon: Utensils, color: "bg-[#fff0e8] text-[#9a3412]" },
+          { label: "Plage", Icon: Waves, color: "bg-[#dff8ff] text-[#075985]" },
+          { label: "Jeux", Icon: Gamepad2, color: "bg-[#fff1f5] text-[#9d174d]" },
+        ].map(({ label, Icon, color }) => (
+          <div
+            key={label}
+            className={`flex h-28 w-36 flex-col justify-between rounded-lg p-4 shadow-lg ${color}`}
+          >
+            <Icon size={30} strokeWidth={2.4} />
+            <span className="text-lg font-black">{label}</span>
+          </div>
+        ))}
+      </div>
+      <div className="absolute bottom-0 left-0 h-3 w-full bg-[#f36f45]" />
     </div>
   );
 }
@@ -287,6 +316,7 @@ function NewDecor() {
 }
 
 function GenericDecor({ variant }: { variant: CatalogueTheme["variant"] }) {
+  if (variant === "default") return <CatalogueDecor />;
   if (variant === "beach") return <BeachDecor />;
   if (variant === "school") return <SchoolDecor />;
   if (variant === "meal") return <MealDecor />;
@@ -539,7 +569,11 @@ export default function CatalogueClient({
         <GenericDecor variant={theme.variant} />
 
         <div className="relative mx-auto max-w-7xl">
-          <div className={`max-w-4xl rounded-[2rem] p-0 md:p-8 ${themeStyle.panel}`}>
+          <div
+            className={`max-w-4xl rounded-[2rem] p-0 md:p-8 ${themeStyle.panel} ${
+              theme.variant === "default" ? "lg:max-w-[56%]" : ""
+            }`}
+          >
             <p className={`text-sm font-black uppercase ${themeStyle.badge}`}>
               {theme.eyebrow}
             </p>

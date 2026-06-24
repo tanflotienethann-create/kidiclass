@@ -1,9 +1,9 @@
 "use client";
 
-import { Menu, X } from "lucide-react";
+import { ChevronDown, LayoutGrid } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { type CSSProperties, useState } from "react";
+import { type CSSProperties, useId, useState } from "react";
 
 type DepartmentNavProps = {
   title: string;
@@ -19,6 +19,7 @@ export default function DepartmentNav({
   palette,
 }: DepartmentNavProps) {
   const [open, setOpen] = useState(false);
+  const categoriesId = useId();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const hasSelection =
@@ -48,6 +49,9 @@ export default function DepartmentNav({
         : "border-gray-200 bg-white text-gray-800 hover:border-[var(--department-accent)] hover:bg-[var(--department-soft)] hover:text-[var(--department-ink)]"
     }`;
 
+  const selectedLabel =
+    items.find((item) => isActive(item.href))?.label || "Tout voir";
+
   return (
     <nav
       className="border-b border-gray-100 bg-[#fffdf7]"
@@ -55,90 +59,66 @@ export default function DepartmentNav({
       style={themedStyle}
     >
       <div className="mx-auto max-w-7xl px-4 py-3 sm:px-5">
-        <div className="hidden flex-wrap items-center justify-center gap-2 md:flex">
-          <Link
-            href={homeHref}
-            className={`${linkClass(!hasSelection)} px-4 py-2`}
-          >
-            Tout voir
-          </Link>
-          {items.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`${linkClass(isActive(item.href))} px-4 py-2`}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </div>
-
         <button
           type="button"
-          onClick={() => setOpen(true)}
-          className="flex w-full items-center justify-between rounded-lg border border-[var(--department-accent)] bg-white px-4 py-3 text-left text-sm font-black text-[var(--department-ink)] md:hidden"
-          aria-label={`Ouvrir les catégories de ${title}`}
+          onClick={() => setOpen((current) => !current)}
+          className="flex w-full items-center justify-between gap-4 rounded-lg border border-[var(--department-accent)] bg-white px-4 py-3 text-left text-[var(--department-ink)] shadow-sm transition hover:bg-[var(--department-soft)] sm:px-5"
+          aria-label={`${open ? "Fermer" : "Voir"} les catégories de ${title}`}
           aria-expanded={open}
+          aria-controls={categoriesId}
         >
-          <span className="flex items-center gap-3">
-            <Menu size={21} strokeWidth={2.5} />
-            Catégories de {title}
+          <span className="flex min-w-0 items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--department-soft)] text-[var(--department-ink)]">
+              <LayoutGrid size={20} strokeWidth={2.5} />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-xs font-black uppercase text-[var(--department-accent)]">
+                {title}
+              </span>
+              <span className="block text-sm font-black text-gray-950 sm:text-base">
+                Voir les catégories
+              </span>
+            </span>
           </span>
-          <span className="text-xs font-black text-[var(--department-accent)]">Voir</span>
+          <span className="flex min-w-0 items-center gap-3">
+            <span className="hidden max-w-56 truncate text-sm font-black text-[var(--department-ink)] sm:block">
+              {selectedLabel}
+            </span>
+            <ChevronDown
+              size={22}
+              strokeWidth={2.5}
+              className={`shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
+            />
+          </span>
         </button>
-      </div>
 
-      {open && (
-        <div className="fixed inset-0 z-[10001] md:hidden">
-          <button
-            type="button"
-            className="absolute inset-0 bg-gray-950/45"
-            aria-label="Fermer les catégories"
-            onClick={() => setOpen(false)}
-          />
-
-          <aside className="absolute left-0 top-0 flex h-full w-[min(88vw,380px)] flex-col bg-white shadow-2xl">
-            <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4">
-              <div>
-                <p className="text-xs font-black uppercase text-[var(--department-accent)]">
-                  Rayon
-                </p>
-                <p className="text-xl font-black text-gray-950">{title}</p>
-              </div>
-              <button
-                type="button"
+        {open && (
+          <div
+            id={categoriesId}
+            className="mt-3 max-h-80 overflow-y-auto rounded-lg border border-[var(--department-accent)] bg-white p-3 shadow-lg sm:p-4"
+          >
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+              <Link
+                href={homeHref}
                 onClick={() => setOpen(false)}
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-gray-800"
-                aria-label="Fermer les catégories"
+                className={`${linkClass(!hasSelection)} px-3 py-3`}
               >
-                <X size={22} strokeWidth={2.5} />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-4">
-              <div className="grid grid-cols-2 gap-2">
+                Tout voir
+              </Link>
+              {items.map((item) => (
                 <Link
-                  href={homeHref}
+                  key={item.href}
+                  href={item.href}
                   onClick={() => setOpen(false)}
-                  className={`${linkClass(!hasSelection)} px-3 py-3`}
+                  className={`${linkClass(isActive(item.href))} px-3 py-3`}
                 >
-                  Tout voir
+                  {item.label}
                 </Link>
-                {items.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    className={`${linkClass(isActive(item.href))} px-3 py-3`}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
+              ))}
             </div>
-          </aside>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </nav>
   );
 }
