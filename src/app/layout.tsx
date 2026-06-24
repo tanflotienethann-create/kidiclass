@@ -1,10 +1,23 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "KidiClass",
   description: "Boutique en ligne pour enfants",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "KidiClass",
+    description: "Les enfants sapés comme jamais.",
+    url: SITE_URL,
+    siteName: "KidiClass",
+    locale: "fr_CI",
+    type: "website",
+  },
   icons: {
     icon: [
       { url: "/favicon.ico?v=4", sizes: "any" },

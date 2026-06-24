@@ -25,6 +25,7 @@ BREVO_API_KEY=
 BREVO_SENDER_EMAIL=
 BREVO_SENDER_NAME=KidiClass
 BREVO_SMS_SENDER=KidiClass
+NEXT_PUBLIC_SITE_URL=https://kidiclass.com
 ```
 
 Ajoutez-les dans les variables d'environnement Vercel. L'adresse email doit

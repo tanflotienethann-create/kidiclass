@@ -4,6 +4,7 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { SITE_URL } from "@/lib/site";
 import {
   Eye,
   EyeOff,
@@ -86,6 +87,9 @@ export default function RegisterPage() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${SITE_URL}/login`,
+      },
     });
 
     if (error) {

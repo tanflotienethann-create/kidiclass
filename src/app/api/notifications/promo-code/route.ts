@@ -4,6 +4,7 @@ import {
   sendBrevoEmail,
   verifyAdminRequest,
 } from "@/lib/server/notifications";
+import { SITE_URL } from "@/lib/site";
 
 type PromoNotificationBody = {
   code?: string;
@@ -62,7 +63,7 @@ export async function POST(request: Request) {
     }));
   const safeCode = escapeHtml(code);
   const safePercentage = escapeHtml(String(percentage));
-  const catalogueUrl = `${new URL(request.url).origin}/catalogue`;
+  const catalogueUrl = `${SITE_URL}/catalogue`;
 
   const htmlContent = `<!doctype html>
   <html lang="fr">
