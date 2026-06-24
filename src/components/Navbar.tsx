@@ -252,32 +252,30 @@ export default function Navbar() {
         </div>
       </div>
 
-      {pathname !== "/" && (
-        <nav className="hidden border-t border-gray-100 bg-white lg:block">
-          <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-2 px-5 py-3 text-sm font-black text-gray-800">
-            {shopDepartments.map((department) => (
-              <Link
-                key={department.id}
-                href={department.href}
-                style={
-                  {
-                    "--dept-accent": department.palette.accent,
-                    "--dept-soft": department.palette.soft,
-                    "--dept-ink": department.palette.ink,
-                  } as CSSProperties
-                }
-                className={`whitespace-nowrap rounded-lg px-4 py-2.5 transition ${
-                  isActiveLink(pathname, department.href)
-                    ? "border border-[var(--dept-accent)] bg-[var(--dept-soft)] text-[var(--dept-ink)] shadow-sm"
-                    : "bg-[#fffdf7] hover:bg-[var(--dept-soft)] hover:text-[var(--dept-ink)]"
-                }`}
-              >
-                {department.label}
-              </Link>
-            ))}
-          </div>
-        </nav>
-      )}
+      <nav className="hidden border-t border-gray-100 bg-white lg:block">
+        <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-2 px-5 py-3 text-sm font-black text-gray-800">
+          {shopDepartments.map((department) => (
+            <Link
+              key={department.id}
+              href={department.href}
+              style={
+                {
+                  "--dept-accent": department.palette.accent,
+                  "--dept-soft": department.palette.soft,
+                  "--dept-ink": department.palette.ink,
+                } as CSSProperties
+              }
+              className={`whitespace-nowrap rounded-lg px-4 py-2.5 transition ${
+                isActiveLink(pathname, department.href)
+                  ? "border border-[var(--dept-accent)] bg-[var(--dept-soft)] text-[var(--dept-ink)] shadow-sm"
+                  : "bg-[#fffdf7] hover:bg-[var(--dept-soft)] hover:text-[var(--dept-ink)]"
+              }`}
+            >
+              {department.label}
+            </Link>
+          ))}
+        </div>
+      </nav>
 
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-[10000] lg:hidden">
