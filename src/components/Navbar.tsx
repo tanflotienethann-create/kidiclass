@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import ProductSearch from "./ProductSearch";
-import { useEffect, useState } from "react";
+import { type CSSProperties, useEffect, useState } from "react";
 import { shopDepartments } from "@/lib/shopNavigation";
 import {
   checkAdminAccess,
@@ -258,10 +258,17 @@ export default function Navbar() {
             <Link
               key={department.id}
               href={department.href}
+              style={
+                {
+                  "--dept-accent": department.palette.accent,
+                  "--dept-soft": department.palette.soft,
+                  "--dept-ink": department.palette.ink,
+                } as CSSProperties
+              }
               className={`whitespace-nowrap rounded-lg px-4 py-2.5 transition ${
                 isActiveLink(pathname, department.href)
-                  ? "border border-[#1db7bd] bg-[#e9fbfc] text-[#075e62] shadow-sm"
-                  : "bg-[#fffdf7] hover:bg-[#e9fbfc] hover:text-[#087f83]"
+                  ? "border border-[var(--dept-accent)] bg-[var(--dept-soft)] text-[var(--dept-ink)] shadow-sm"
+                  : "bg-[#fffdf7] hover:bg-[var(--dept-soft)] hover:text-[var(--dept-ink)]"
               }`}
             >
               {department.label}
@@ -378,7 +385,18 @@ export default function Navbar() {
                     key={department.id}
                     href={department.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="rounded-lg border border-gray-100 bg-white px-4 py-3 text-sm font-black text-gray-800 shadow-sm hover:border-[#1db7bd] hover:text-[#087f83]"
+                    style={
+                      {
+                        "--dept-accent": department.palette.accent,
+                        "--dept-soft": department.palette.soft,
+                        "--dept-ink": department.palette.ink,
+                      } as CSSProperties
+                    }
+                    className={`rounded-lg border bg-white px-4 py-3 text-sm font-black shadow-sm ${
+                      isActiveLink(pathname, department.href)
+                        ? "border-[var(--dept-accent)] bg-[var(--dept-soft)] text-[var(--dept-ink)]"
+                        : "border-gray-100 text-gray-800 hover:border-[var(--dept-accent)] hover:bg-[var(--dept-soft)] hover:text-[var(--dept-ink)]"
+                    }`}
                   >
                     {department.label}
                   </Link>

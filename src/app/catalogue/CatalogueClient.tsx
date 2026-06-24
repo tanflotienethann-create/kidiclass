@@ -20,7 +20,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  type CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 type Product = {
   id: number;
@@ -50,7 +56,14 @@ type CatalogueTheme = {
   eyebrow: string;
   title: string;
   description: string;
-  variant: "default" | "school" | "beach" | "play" | "new";
+  variant:
+    | "default"
+    | "school"
+    | "meal"
+    | "beach"
+    | "play"
+    | "characters"
+    | "new";
 };
 
 type CatalogueClientProps = {
@@ -107,26 +120,57 @@ const themeStyles = {
     section: "bg-[#f4efe7]",
     badge: "text-[#e85035]",
     panel: "bg-white",
+    accent: "#1db7bd",
+    soft: "#e9fbfc",
+    ink: "#075e62",
   },
   school: {
     section: "bg-[#e9fbfc]",
     badge: "text-[#0f766e]",
     panel: "bg-[#fffdf7]",
+    accent: "#1db7bd",
+    soft: "#e9fbfc",
+    ink: "#075e62",
+  },
+  meal: {
+    section: "bg-[#fff0e8]",
+    badge: "text-[#9a3412]",
+    panel: "bg-[#e9fbfc]",
+    accent: "#f36f45",
+    soft: "#fff0e8",
+    ink: "#9a3412",
   },
   beach: {
     section: "bg-[#dff8ff]",
     badge: "text-[#0089a7]",
     panel: "bg-[#fff9cf]",
+    accent: "#0089a7",
+    soft: "#dff8ff",
+    ink: "#075985",
   },
   play: {
     section: "bg-[#fff1f5]",
     badge: "text-[#f36f45]",
     panel: "bg-[#e9fbfc]",
+    accent: "#e84a77",
+    soft: "#fff1f5",
+    ink: "#9d174d",
+  },
+  characters: {
+    section: "bg-[#f2edff]",
+    badge: "text-[#5b21b6]",
+    panel: "bg-white",
+    accent: "#7c3aed",
+    soft: "#f2edff",
+    ink: "#5b21b6",
   },
   new: {
     section: "bg-[#fff3bf]",
     badge: "text-[#e85035]",
     panel: "bg-white",
+    accent: "#e85035",
+    soft: "#fff3bf",
+    ink: "#9a3412",
   },
 };
 
@@ -161,6 +205,51 @@ function SchoolDecor() {
         <div className="absolute left-4 top-6 h-4 w-12 rounded-full bg-white/80" />
         <div className="absolute bottom-0 left-0 h-6 w-full rounded-b-2xl bg-[#c93f2a]" />
       </div>
+    </div>
+  );
+}
+
+function MealDecor() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute -bottom-10 left-0 h-24 w-full bg-[#ffd96a]/55" />
+      <div className="absolute bottom-10 right-16 hidden h-32 w-44 rounded-lg bg-[#f36f45] shadow-xl md:block">
+        <div className="absolute -top-5 left-12 h-8 w-20 rounded-t-full border-8 border-[#17324d] border-b-0" />
+        <div className="absolute left-5 top-5 h-5 w-32 rounded-full bg-white/85" />
+        <div className="absolute bottom-5 left-5 h-16 w-16 rounded-full bg-[#ffe773]" />
+        <div className="absolute bottom-8 right-6 h-12 w-12 rounded-lg bg-[#e9fbfc]" />
+      </div>
+      <div className="absolute bottom-8 right-64 hidden h-36 w-14 rounded-[1.5rem] bg-[#1db7bd] shadow-lg md:block">
+        <div className="absolute -top-3 left-3 h-6 w-8 rounded-lg bg-[#17324d]" />
+        <div className="absolute left-2 top-10 h-10 w-10 rounded-full bg-white/80" />
+      </div>
+      <div className="absolute right-8 top-8 h-16 w-16 rounded-full bg-[#ffe773] md:right-80" />
+    </div>
+  );
+}
+
+function CharactersDecor() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute right-8 top-8 hidden rotate-3 rounded-lg border-4 border-white bg-[#7c3aed] px-8 py-5 text-4xl font-black text-white shadow-xl md:block">
+        HÉROS
+      </div>
+      <div className="absolute bottom-8 right-12 hidden max-w-xs flex-wrap justify-end gap-2 md:flex">
+        {['STITCH', 'SONIC', 'BARBIE', 'MARIO'].map((name, index) => (
+          <span
+            key={name}
+            className={`rounded-full px-4 py-2 text-sm font-black shadow-sm ${
+              index % 2 === 0
+                ? "bg-[#ffe773] text-[#5b21b6]"
+                : "bg-white text-[#7c3aed]"
+            }`}
+          >
+            {name}
+          </span>
+        ))}
+      </div>
+      <div className="absolute -bottom-10 right-72 h-36 w-36 rotate-12 rounded-lg bg-[#e84a77]/25" />
+      <div className="absolute right-4 top-4 h-24 w-24 rounded-full bg-white/50 md:hidden" />
     </div>
   );
 }
@@ -200,7 +289,9 @@ function NewDecor() {
 function GenericDecor({ variant }: { variant: CatalogueTheme["variant"] }) {
   if (variant === "beach") return <BeachDecor />;
   if (variant === "school") return <SchoolDecor />;
+  if (variant === "meal") return <MealDecor />;
   if (variant === "play") return <PlayDecor />;
+  if (variant === "characters") return <CharactersDecor />;
   if (variant === "new") return <NewDecor />;
 
   return (
@@ -222,6 +313,11 @@ export default function CatalogueClient({
 }: CatalogueClientProps) {
   const searchParams = useSearchParams();
   const themeStyle = themeStyles[theme.variant];
+  const themeVariables = {
+    "--kc-accent": themeStyle.accent,
+    "--kc-soft": themeStyle.soft,
+    "--kc-ink": themeStyle.ink,
+  } as CSSProperties;
   const visibleCategories = categoryOptions
     ? ["Toutes", ...categoryOptions]
     : categories;
@@ -436,7 +532,7 @@ export default function CatalogueClient({
   }
 
   return (
-    <main className="min-h-screen bg-[#faf8f4]">
+    <main className="min-h-screen bg-[#faf8f4]" style={themeVariables}>
       <section
         className={`relative overflow-hidden px-4 py-8 sm:px-5 sm:py-14 ${themeStyle.section}`}
       >
@@ -471,7 +567,7 @@ export default function CatalogueClient({
           <aside className="absolute left-0 top-0 flex h-full w-[min(92vw,420px)] flex-col bg-white shadow-2xl">
             <div className="flex items-center justify-between border-b border-[#e4ded4] px-4 py-4 sm:px-5">
               <div>
-                <p className="text-xs font-black uppercase text-[#e85035]">
+                <p className="text-xs font-black uppercase text-[var(--kc-accent)]">
                   Catalogue
                 </p>
                 <h2 className="text-2xl font-black text-gray-950">Filtres</h2>
@@ -556,7 +652,7 @@ export default function CatalogueClient({
                 <button
                   type="button"
                   onClick={() => setFiltersOpen(false)}
-                  className="kidiclass-button-primary flex items-center justify-center px-5 py-3"
+                  className="flex items-center justify-center rounded-lg bg-[var(--kc-accent)] px-5 py-3 font-black text-white hover:bg-[var(--kc-ink)]"
                 >
                   Voir les articles
                 </button>
@@ -701,12 +797,12 @@ export default function CatalogueClient({
             <button
               type="button"
               onClick={() => setFiltersOpen(true)}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#17324d] px-5 py-3.5 text-sm font-black text-white shadow-sm transition hover:bg-[#111827] sm:w-fit"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--kc-accent)] px-5 py-3.5 text-sm font-black text-white shadow-sm transition hover:bg-[var(--kc-ink)] sm:w-fit"
             >
               <SlidersHorizontal size={18} strokeWidth={2.5} />
               Filtres
               {activeFiltersCount > 0 && (
-                <span className="rounded-full bg-white px-2 py-0.5 text-xs font-black text-[#17324d]">
+                <span className="rounded-full bg-white px-2 py-0.5 text-xs font-black text-[var(--kc-ink)]">
                   {activeFiltersCount}
                 </span>
               )}
@@ -722,7 +818,7 @@ export default function CatalogueClient({
           </div>
 
           {loading ? (
-            <div className="retail-card mt-8 p-10 text-center font-black text-[#17324d]">
+            <div className="retail-card mt-8 p-10 text-center font-black text-[var(--kc-ink)]">
               Chargement des produits...
             </div>
           ) : filteredProducts.length === 0 ? (
@@ -741,7 +837,7 @@ export default function CatalogueClient({
                 <Link
                   key={product.id}
                   href={`/produit/${product.id}`}
-                  className="group overflow-hidden rounded-xl border border-[#e4ded4] bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+                  className="group overflow-hidden rounded-xl border border-[#e4ded4] bg-white shadow-sm transition hover:-translate-y-1 hover:border-[var(--kc-accent)] hover:shadow-xl"
                 >
                   <div className="relative h-44 overflow-hidden bg-[#f4efe7] sm:h-64 lg:h-80">
                     {getProductImage(product) ? (
@@ -801,7 +897,7 @@ export default function CatalogueClient({
                   </div>
 
                   <div className="p-3 sm:p-5">
-                    <p className="text-xs font-black uppercase text-[#1db7bd]">
+                    <p className="text-xs font-black uppercase text-[var(--kc-accent)]">
                       {product.category}
                     </p>
 
@@ -827,7 +923,7 @@ export default function CatalogueClient({
                       <span
                         className={`w-fit rounded-full px-2 py-1 text-[10px] font-black sm:px-3 sm:text-xs ${
                           Number(product.stock || 0) > 0
-                            ? "bg-[#e9fbfc] text-[#0f766e]"
+                            ? "bg-[var(--kc-soft)] text-[var(--kc-ink)]"
                             : "bg-red-50 text-red-500"
                         }`}
                       >

@@ -12,7 +12,12 @@ export type ShopDepartment = {
   eyebrow: string;
   title: string;
   description: string;
-  variant: "school" | "beach" | "play" | "default";
+  variant: "school" | "meal" | "beach" | "play" | "characters";
+  palette: {
+    accent: string;
+    soft: string;
+    ink: string;
+  };
   categories: string[];
 };
 
@@ -68,6 +73,7 @@ export const shopDepartments: ShopDepartment[] = [
     description:
       "Retrouvez les offres scolaires par niveau, les packs, les sacs et les essentiels pour les sorties.",
     variant: "school",
+    palette: { accent: "#1db7bd", soft: "#e9fbfc", ink: "#075e62" },
     categories: [...educationCategories, ...outingCategories],
   },
   {
@@ -78,7 +84,8 @@ export const shopDepartments: ShopDepartment[] = [
     title: "Des pauses bien préparées, partout.",
     description:
       "Gourdes, boîtes, sacs à goûter et sets assortis pour l'école comme pour les sorties.",
-    variant: "default",
+    variant: "meal",
+    palette: { accent: "#f36f45", soft: "#fff0e8", ink: "#9a3412" },
     categories: mealCategories,
   },
   {
@@ -90,6 +97,7 @@ export const shopDepartments: ShopDepartment[] = [
     description:
       "Maillots de bain, serviettes et accessoires pratiques pour la piscine et la plage.",
     variant: "beach",
+    palette: { accent: "#0089a7", soft: "#dff8ff", ink: "#075985" },
     categories: beachCategories,
   },
   {
@@ -101,6 +109,7 @@ export const shopDepartments: ShopDepartment[] = [
     description:
       "Sacs à main pour filles, horloges et jeux pour compléter le quotidien des enfants.",
     variant: "play",
+    palette: { accent: "#e84a77", soft: "#fff1f5", ink: "#9d174d" },
     categories: playCategories,
   },
   {
@@ -111,7 +120,8 @@ export const shopDepartments: ShopDepartment[] = [
     title: "Leurs héros préférés réunis ici.",
     description:
       "Choisissez un personnage et découvrez tous les articles disponibles dans son univers.",
-    variant: "play",
+    variant: "characters",
+    palette: { accent: "#7c3aed", soft: "#f2edff", ink: "#5b21b6" },
     categories: [],
   },
 ];

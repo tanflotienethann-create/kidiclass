@@ -2,28 +2,63 @@
 
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { type CSSProperties, useState } from "react";
 
 type DepartmentNavProps = {
   title: string;
   homeHref: string;
   items: Array<{ label: string; href: string }>;
+  palette: { accent: string; soft: string; ink: string };
 };
 
 export default function DepartmentNav({
   title,
   homeHref,
   items,
+  palette,
 }: DepartmentNavProps) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const hasSelection =
+    searchParams.has("category") || searchParams.has("character");
+
+  function isActive(href: string) {
+    const url = new URL(href, "https://kidiclass.local");
+    const category = url.searchParams.get("category");
+    const character = url.searchParams.get("character");
+
+    if (category) return searchParams.get("category") === category;
+    if (character) return searchParams.get("character") === character;
+
+    return pathname === homeHref && !hasSelection;
+  }
+
+  const themedStyle = {
+    "--department-accent": palette.accent,
+    "--department-soft": palette.soft,
+    "--department-ink": palette.ink,
+  } as CSSProperties;
+
+  const linkClass = (active: boolean) =>
+    `rounded-lg border text-sm font-black transition ${
+      active
+        ? "border-[var(--department-accent)] bg-[var(--department-soft)] text-[var(--department-ink)] shadow-sm"
+        : "border-gray-200 bg-white text-gray-800 hover:border-[var(--department-accent)] hover:bg-[var(--department-soft)] hover:text-[var(--department-ink)]"
+    }`;
 
   return (
-    <nav className="border-b border-gray-100 bg-[#fffdf7]" aria-label={title}>
+    <nav
+      className="border-b border-gray-100 bg-[#fffdf7]"
+      aria-label={title}
+      style={themedStyle}
+    >
       <div className="mx-auto max-w-7xl px-4 py-3 sm:px-5">
         <div className="hidden flex-wrap items-center justify-center gap-2 md:flex">
           <Link
             href={homeHref}
-            className="rounded-lg border border-[#1db7bd] bg-[#e9fbfc] px-4 py-2 text-sm font-black text-[#075e62]"
+            className={`${linkClass(!hasSelection)} px-4 py-2`}
           >
             Tout voir
           </Link>
@@ -31,7 +66,7 @@ export default function DepartmentNav({
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-black text-gray-800 hover:border-[#1db7bd] hover:bg-[#e9fbfc] hover:text-[#075e62]"
+              className={`${linkClass(isActive(item.href))} px-4 py-2`}
             >
               {item.label}
             </Link>
@@ -41,7 +76,7 @@ export default function DepartmentNav({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex w-full items-center justify-between rounded-lg border border-[#bfedf0] bg-white px-4 py-3 text-left text-sm font-black text-[#17324d] md:hidden"
+          className="flex w-full items-center justify-between rounded-lg border border-[var(--department-accent)] bg-white px-4 py-3 text-left text-sm font-black text-[var(--department-ink)] md:hidden"
           aria-label={`Ouvrir les catégories de ${title}`}
           aria-expanded={open}
         >
@@ -49,7 +84,7 @@ export default function DepartmentNav({
             <Menu size={21} strokeWidth={2.5} />
             Catégories de {title}
           </span>
-          <span className="text-xs font-black text-[#087f83]">Voir</span>
+          <span className="text-xs font-black text-[var(--department-accent)]">Voir</span>
         </button>
       </div>
 
@@ -65,7 +100,7 @@ export default function DepartmentNav({
           <aside className="absolute left-0 top-0 flex h-full w-[min(88vw,380px)] flex-col bg-white shadow-2xl">
             <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4">
               <div>
-                <p className="text-xs font-black uppercase text-[#087f83]">
+                <p className="text-xs font-black uppercase text-[var(--department-accent)]">
                   Rayon
                 </p>
                 <p className="text-xl font-black text-gray-950">{title}</p>
@@ -85,7 +120,7 @@ export default function DepartmentNav({
                 <Link
                   href={homeHref}
                   onClick={() => setOpen(false)}
-                  className="rounded-lg border border-[#1db7bd] bg-[#e9fbfc] px-3 py-3 text-sm font-black text-[#075e62]"
+                  className={`${linkClass(!hasSelection)} px-3 py-3`}
                 >
                   Tout voir
                 </Link>
@@ -94,7 +129,7 @@ export default function DepartmentNav({
                     key={item.href}
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="rounded-lg border border-gray-200 bg-white px-3 py-3 text-sm font-black text-gray-800"
+                    className={`${linkClass(isActive(item.href))} px-3 py-3`}
                   >
                     {item.label}
                   </Link>

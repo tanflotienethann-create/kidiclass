@@ -21,11 +21,16 @@ export default function DepartmentCatalogue({
 
   return (
     <>
-      <DepartmentNav
-        title={department.label}
-        homeHref={department.href}
-        items={getDepartmentNavigationItems(department.id)}
-      />
+      <Suspense
+        fallback={<div className="h-16 border-b border-gray-100 bg-[#fffdf7]" />}
+      >
+        <DepartmentNav
+          title={department.label}
+          homeHref={department.href}
+          items={getDepartmentNavigationItems(department.id)}
+          palette={department.palette}
+        />
+      </Suspense>
       <Suspense fallback={<main className="min-h-screen bg-[#faf8f4]" />}>
         <CatalogueClient
           allowedCategories={

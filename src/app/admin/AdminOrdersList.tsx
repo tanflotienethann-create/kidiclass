@@ -229,6 +229,7 @@ export default function AdminOrdersList() {
   }
 
   function printReceipt(order: Order) {
+    setMessage("");
     const totalAmount = Number(order.total_amount || 0);
     const itemsTotal = totalAmount - Number(order.delivery_fee || 0);
     const deposit = getDepositAmount(totalAmount, order.payment_method);
@@ -258,22 +259,25 @@ export default function AdminOrdersList() {
       return;
     }
 
+    const logoUrl = `${window.location.origin}/logo-kidiclass.png`;
+
     receiptWindow.document.write(`<!doctype html>
       <html>
         <head>
+          <base href="${window.location.origin}/" />
           <title>Reçu ${order.order_reference || ""}</title>
           <style>
             @page { size: A4 portrait; margin: 0; }
             * { box-sizing: border-box; }
-            html, body { margin: 0; min-height: 100%; background: #f4efe7; font-family: Arial, sans-serif; color: #17324d; }
+            html, body { margin: 0; min-height: 100%; background: white; font-family: Arial, sans-serif; color: #17324d; }
             body { padding: 14px; }
-            .print-help { max-width: 148mm; margin: 0 auto 12px; border-radius: 14px; background: #17324d; color: white; padding: 12px 16px; font-size: 14px; font-weight: 800; line-height: 1.5; }
+            .print-help { max-width: 146mm; margin: 0 auto 10px; border-bottom: 1px solid #d8eeed; background: white; color: #43566a; padding: 10px 2px; font-size: 12px; font-weight: 800; line-height: 1.5; text-align: center; }
             .print-actions { display: flex; justify-content: center; margin: 0 auto 12px; }
             .print-button { border: 0; border-radius: 999px; background: #f36f45; color: white; cursor: pointer; padding: 12px 22px; font-size: 14px; font-weight: 900; }
             .receipt { width: 146mm; height: 208mm; margin: 0 auto; background: white; border: 2px solid #0f8f8d; border-radius: 12px; padding: 5mm; overflow: hidden; display: flex; flex-direction: column; }
-            .logo-frame { height: 22mm; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-            .logo { display: block; width: 90mm; height: auto; transform: scale(1.45); transform-origin: center; }
-            .tagline { text-align: center; color: #ff6b00; font-size: 11px; font-weight: 900; margin-bottom: 2.5mm; }
+            .logo-frame { position: relative; height: 30mm; overflow: hidden; flex-shrink: 0; }
+            .logo { position: absolute; left: 50%; top: 50%; display: block; width: 105mm; max-width: none; height: auto; transform: translate(-50%, -47%); }
+            .logo-fallback { display: none; height: 30mm; align-items: center; justify-content: center; color: #0f8f8d; font-size: 28px; font-weight: 900; }
             .phone { display: flex; align-items: center; justify-content: center; gap: 6px; color: #0f8f8d; font-size: 16px; font-weight: 900; border-top: 2px dotted #b8e3e1; border-bottom: 2px dotted #b8e3e1; padding: 1.5mm 0; }
             .info { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin: 3mm 0; }
             .box { border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.12); padding: 3mm; min-height: 19mm; }
@@ -314,9 +318,9 @@ export default function AdminOrdersList() {
           </div>
           <div class="receipt">
             <div class="logo-frame">
-              <img class="logo" src="/logo-kidiclass.png" alt="KidiClass" />
+              <img class="logo" src="${logoUrl}" alt="KidiClass" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+              <div class="logo-fallback">KidiClass</div>
             </div>
-            <div class="tagline">Les enfants sapés comme jamais...</div>
             <div class="phone">☎ 0779311555</div>
             <div class="info">
               <div class="box">
@@ -352,17 +356,6 @@ export default function AdminOrdersList() {
               <div class="thanks">Merci pour votre achat!</div>
             </div>
           </div>
-          <script>
-            let printStarted = false;
-            function launchPrint() {
-              if (printStarted) return;
-              printStarted = true;
-              window.focus();
-              window.print();
-            }
-            window.addEventListener("load", () => window.setTimeout(launchPrint, 400));
-            window.setTimeout(launchPrint, 2500);
-          </script>
         </body>
       </html>`);
     receiptWindow.document.close();
