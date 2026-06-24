@@ -971,17 +971,6 @@ Merci de me communiquer le montant total avec livraison.
                     {getPaymentInstruction(total, paymentMethod)}
                   </p>
 
-                  {(paymentMethod.includes("Mobile Money") ||
-                    paymentMethod.includes("deux fois") ||
-                    paymentMethod.includes("acompte")) && (
-                    <p>
-                      Aucun paiement en ligne n’est intégré au site pour le
-                      moment. Vous avez choisi{" "}
-                      <span className="font-black">{mobileMoneyMethod}</span>.
-                      L’administrateur vous enverra le lien de paiement
-                      manuellement sur WhatsApp.
-                    </p>
-                  )}
                 </div>
               </div>
             ) : (
