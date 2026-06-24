@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { checkAdminAccess, clearAdminAccessCache } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import {
   BarChart3,
@@ -41,24 +43,19 @@ export default function AdminShell({
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    async function checkAdminAccess() {
-      const { data: userData } = await supabase.auth.getUser();
+    async function verifyAdminAccess() {
+      const access = await checkAdminAccess();
 
-      if (!userData.user) {
+      if (!access.user) {
         setIsAdmin(false);
         setCheckingAdmin(false);
         router.replace("/admin/login");
         return;
       }
 
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", userData.user.id)
-        .single();
-
-      if (error || !profile || profile.role !== "admin") {
+      if (!access.isAdmin) {
         await supabase.auth.signOut();
+        clearAdminAccessCache();
         setIsAdmin(false);
         setCheckingAdmin(false);
         router.replace("/admin/login");
@@ -69,11 +66,12 @@ export default function AdminShell({
       setCheckingAdmin(false);
     }
 
-    checkAdminAccess();
+    void verifyAdminAccess();
   }, [router]);
 
   async function handleLogout() {
     await supabase.auth.signOut();
+    clearAdminAccessCache();
     router.push("/admin/login");
     router.refresh();
   }
@@ -87,9 +85,12 @@ export default function AdminShell({
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#fffdf7] px-5">
         <div className="max-w-md rounded-[2.5rem] border border-gray-100 bg-white p-10 text-center shadow-sm">
-          <img
+          <Image
             src="/logo-kidiclass.png"
             alt="KidiClass"
+            width={240}
+            height={96}
+            priority
             className="mx-auto h-20 w-auto object-contain"
           />
 
@@ -118,9 +119,12 @@ export default function AdminShell({
       <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur">
         <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between gap-5 px-5 py-4">
           <Link href="/admin" className="flex shrink-0 items-center gap-3">
-            <img
+            <Image
               src="/logo-kidiclass.png"
               alt="KidiClass"
+              width={180}
+              height={72}
+              priority
               className="h-14 w-auto object-contain"
             />
 

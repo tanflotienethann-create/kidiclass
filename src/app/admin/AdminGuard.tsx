@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { checkAdminAccess, clearAdminAccessCache } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
@@ -11,21 +12,16 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
 
   useEffect(() => {
     async function checkAdmin() {
-      const { data, error } = await supabase.auth.getUser();
+      const access = await checkAdminAccess();
 
-      if (error || !data.user) {
+      if (!access.user) {
         router.replace("/admin/login");
         return;
       }
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", data.user.id)
-        .single();
-
-      if (profile?.role !== "admin") {
+      if (!access.isAdmin) {
         await supabase.auth.signOut();
+        clearAdminAccessCache();
         router.replace("/admin/login");
         return;
       }

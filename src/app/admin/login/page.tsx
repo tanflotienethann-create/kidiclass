@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  checkAdminAccess,
+  clearAdminAccessCache,
+} from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { ShieldCheck, Mail, LockKeyhole } from "lucide-react";
 
 export default function AdminLoginPage() {
@@ -13,22 +18,39 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
 
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    router.prefetch("/admin");
+  }, [router]);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setMessage("");
+    setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) {
-      setMessage("Erreur : " + error.message);
+    if (error || !data.user) {
+      setMessage("Email ou mot de passe administrateur incorrect.");
+      setLoading(false);
       return;
     }
 
-    router.push("/admin");
+    const { isAdmin } = await checkAdminAccess(data.user);
+
+    if (!isAdmin) {
+      await supabase.auth.signOut();
+      clearAdminAccessCache();
+      setMessage("Ce compte ne possède pas les droits administrateur.");
+      setLoading(false);
+      return;
+    }
+
+    router.replace("/admin");
   }
 
   return (
@@ -40,9 +62,12 @@ export default function AdminLoginPage() {
 
           <div className="relative flex h-full flex-col justify-between p-12">
             <Link href="/" className="inline-block w-fit">
-              <img
+              <Image
                 src="/logo-kidiclass.png"
                 alt="KidiClass"
+                width={240}
+                height={96}
+                priority
                 className="h-20 w-auto object-contain"
               />
             </Link>
@@ -81,9 +106,12 @@ export default function AdminLoginPage() {
           >
             <div className="mb-8 text-center">
               <Link href="/" className="inline-block lg:hidden">
-                <img
+                <Image
                   src="/logo-kidiclass.png"
                   alt="KidiClass"
+                  width={240}
+                  height={96}
+                  priority
                   className="mx-auto h-20 w-auto object-contain"
                 />
               </Link>
@@ -116,6 +144,7 @@ export default function AdminLoginPage() {
 
                   <input
                     type="email"
+                    autoComplete="email"
                     placeholder="admin@email.com"
                     className="w-full bg-transparent py-4 text-black outline-none"
                     value={email}
@@ -139,6 +168,7 @@ export default function AdminLoginPage() {
 
                   <input
                     type="password"
+                    autoComplete="current-password"
                     placeholder="Mot de passe admin"
                     className="w-full bg-transparent py-4 text-black outline-none"
                     value={password}
@@ -151,9 +181,10 @@ export default function AdminLoginPage() {
 
             <button
               type="submit"
-              className="mt-6 w-full rounded-full bg-[#f36f45] px-6 py-4 font-black text-white shadow-sm hover:bg-[#e85e33]"
+              disabled={loading}
+              className="mt-6 w-full rounded-full bg-[#f36f45] px-6 py-4 font-black text-white shadow-sm hover:bg-[#e85e33] disabled:cursor-wait disabled:opacity-60"
             >
-              Se connecter à l’admin
+              {loading ? "Connexion..." : "Se connecter à l’admin"}
             </button>
 
             {message && (

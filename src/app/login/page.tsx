@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Eye, EyeOff, LockKeyhole, LogIn, Mail } from "lucide-react";
 
 export default function LoginPage() {
@@ -16,6 +17,10 @@ export default function LoginPage() {
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    router.prefetch("/compte");
+  }, [router]);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -33,9 +38,7 @@ export default function LoginPage() {
       return;
     }
 
-    setLoading(false);
-    router.push("/compte");
-    router.refresh();
+    router.replace("/compte");
   }
 
   return (
@@ -47,9 +50,12 @@ export default function LoginPage() {
 
           <div className="relative flex h-full flex-col justify-between p-12">
             <Link href="/" className="inline-block w-fit">
-              <img
+              <Image
                 src="/logo-kidiclass.png"
                 alt="KidiClass"
+                width={240}
+                height={96}
+                priority
                 className="h-20 w-auto object-contain"
               />
             </Link>
@@ -101,9 +107,12 @@ export default function LoginPage() {
           >
             <div className="mb-8 text-center">
               <Link href="/" className="inline-block lg:hidden">
-                <img
+                <Image
                   src="/logo-kidiclass.png"
                   alt="KidiClass"
+                  width={240}
+                  height={96}
+                  priority
                   className="mx-auto h-20 w-auto object-contain"
                 />
               </Link>
@@ -140,6 +149,7 @@ export default function LoginPage() {
 
                   <input
                     type="email"
+                    autoComplete="email"
                     placeholder="votre@email.com"
                     className="w-full bg-transparent py-4 text-black outline-none"
                     value={email}
@@ -163,6 +173,7 @@ export default function LoginPage() {
 
                   <input
                     type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
                     placeholder="Votre mot de passe"
                     className="w-full bg-transparent py-4 text-black outline-none"
                     value={password}

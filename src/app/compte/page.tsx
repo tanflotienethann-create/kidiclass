@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getSessionUser } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import {
   BadgeCheck,
@@ -62,33 +63,32 @@ export default function ComptePage() {
     async function loadAccount() {
       setLoading(true);
 
-      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const user = await getSessionUser();
 
-      if (userError || !userData.user) {
-        router.push("/login");
+      if (!user) {
+        router.replace("/login");
         return;
       }
 
-      const user = userData.user;
+      const [profileResult, ordersResult] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("full_name,email,phone,role")
+          .eq("id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("orders")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false }),
+      ]);
 
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("full_name,email,phone,role")
-        .eq("id", user.id)
-        .single();
+      setProfile((profileResult.data as Profile) || null);
 
-      setProfile((profileData as Profile) || null);
-
-      const { data: ordersData, error: ordersError } = await supabase
-        .from("orders")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
-
-      if (ordersError) {
+      if (ordersResult.error) {
         setMessage("Impossible de charger vos commandes.");
       } else {
-        setOrders((ordersData as Order[]) || []);
+        setOrders((ordersResult.data as Order[]) || []);
       }
 
       setLoading(false);

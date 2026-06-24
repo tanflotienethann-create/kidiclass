@@ -28,15 +28,13 @@ export default function AdminStats() {
   });
 
   const fetchStats = useCallback(async () => {
-    const { count: productsCount } = await supabase
-      .from("products")
-      .select("*", { count: "exact", head: true });
+    const [productsResult, ordersResult] = await Promise.all([
+      supabase.from("products").select("*", { count: "exact", head: true }),
+      supabase.from("orders").select("status,total_amount"),
+    ]);
 
-    const { data: orders } = await supabase
-      .from("orders")
-      .select("status,total_amount");
-
-    const ordersList = orders || [];
+    const productsCount = productsResult.count;
+    const ordersList = ordersResult.data || [];
 
     const ordersCount = ordersList.length;
 

@@ -6,6 +6,11 @@ import { usePathname, useRouter } from "next/navigation";
 import ProductSearch from "./ProductSearch";
 import { useEffect, useState } from "react";
 import { shopDepartments } from "@/lib/shopNavigation";
+import {
+  checkAdminAccess,
+  clearAdminAccessCache,
+  getSessionUser,
+} from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import {
   Heart,
@@ -41,47 +46,57 @@ export default function Navbar() {
   const [checkingUser, setCheckingUser] = useState(true);
   const [cartCount, setCartCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const hideNavbar =
+    pathname.startsWith("/admin") ||
+    pathname === "/login" ||
+    pathname === "/register";
 
   useEffect(() => {
-    async function updateAdminStatus(userId?: string) {
-      if (!userId) {
-        setIsAdmin(false);
-        return;
-      }
+    if (hideNavbar) {
+      return;
+    }
 
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", userId)
-        .single();
+    let active = true;
 
-      setIsAdmin(profile?.role === "admin");
+    async function updateAdminStatus(
+      user: Awaited<ReturnType<typeof getSessionUser>>,
+    ) {
+      const { isAdmin: nextIsAdmin } = await checkAdminAccess(user);
+      if (active) setIsAdmin(nextIsAdmin);
     }
 
     async function checkUser() {
-      const { data } = await supabase.auth.getUser();
+      const user = await getSessionUser();
 
-      setIsConnected(Boolean(data.user));
-      await updateAdminStatus(data.user?.id);
+      if (!active) return;
+      setIsConnected(Boolean(user));
       setCheckingUser(false);
+
+      void updateAdminStatus(user);
     }
 
-    checkUser();
+    void checkUser();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsConnected(Boolean(session?.user));
-      await updateAdminStatus(session?.user?.id);
       setCheckingUser(false);
+
+      window.setTimeout(() => {
+        void updateAdminStatus(session?.user || null);
+      }, 0);
     });
 
     return () => {
+      active = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [hideNavbar]);
 
   useEffect(() => {
+    if (hideNavbar) return;
+
     function updateCartCount() {
       try {
         const storedCart = localStorage.getItem("kidiclass_cart");
@@ -106,10 +121,11 @@ export default function Navbar() {
       window.removeEventListener("storage", updateCartCount);
       window.removeEventListener("kidiclass-cart-updated", updateCartCount);
     };
-  }, []);
+  }, [hideNavbar]);
 
   async function handleLogout() {
     await supabase.auth.signOut();
+    clearAdminAccessCache();
 
     setIsConnected(false);
     setIsAdmin(false);
@@ -118,7 +134,7 @@ export default function Navbar() {
     router.refresh();
   }
 
-  if (pathname.startsWith("/admin")) {
+  if (hideNavbar) {
     return null;
   }
 
