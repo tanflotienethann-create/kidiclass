@@ -229,12 +229,11 @@ export default function AdminOrdersList() {
   }
 
   function printReceipt(order: Order) {
-    const itemsTotal = Number(order.total_amount || 0) - Number(order.delivery_fee || 0);
-    const deposit = getDepositAmount(Number(order.total_amount || 0), order.payment_method);
-    const remaining = getRemainingAmount(
-      Number(order.total_amount || 0),
-      order.payment_method
-    );
+    const totalAmount = Number(order.total_amount || 0);
+    const itemsTotal = totalAmount - Number(order.delivery_fee || 0);
+    const deposit = getDepositAmount(totalAmount, order.payment_method);
+    const remaining = getRemainingAmount(totalAmount, order.payment_method);
+    const amountToPayNow = deposit > 0 ? deposit : totalAmount;
     const receiptItems = (order.order_items || [])
       .map((item) => {
         const image = item.products?.image_url
@@ -264,7 +263,7 @@ export default function AdminOrdersList() {
             html, body { margin: 0; min-height: 100%; background: #f4efe7; font-family: Arial, sans-serif; color: #17324d; }
             body { padding: 14px; }
             .print-help { max-width: 148mm; margin: 0 auto 12px; border-radius: 14px; background: #17324d; color: white; padding: 12px 16px; font-size: 14px; font-weight: 800; line-height: 1.5; }
-            .receipt { width: 148mm; height: 210mm; margin: 0 auto; background: white; border: 2px solid #0f8f8d; border-radius: 12px; padding: 5mm; overflow: hidden; display: flex; flex-direction: column; }
+            .receipt { width: 146mm; height: 208mm; margin: 0 auto; background: white; border: 2px solid #0f8f8d; border-radius: 12px; padding: 5mm; overflow: hidden; display: flex; flex-direction: column; }
             .logo-frame { height: 22mm; overflow: hidden; display: flex; align-items: center; justify-content: center; }
             .logo { display: block; width: 90mm; height: auto; transform: scale(1.45); transform-origin: center; }
             .tagline { text-align: center; color: #ff6b00; font-size: 11px; font-weight: 900; margin-bottom: 2.5mm; }
@@ -295,7 +294,7 @@ export default function AdminOrdersList() {
             @media print {
               html, body { width: 148mm; height: 210mm; background: white; padding: 0; }
               .print-help { display: none; }
-              .receipt { width: 148mm; height: 210mm; margin: 0; border-radius: 0; box-shadow: none; page-break-after: avoid; page-break-inside: avoid; break-inside: avoid; }
+              .receipt { width: 146mm; height: 208mm; margin: 1mm; border-radius: 0; box-shadow: none; page-break-after: avoid; page-break-inside: avoid; break-inside: avoid; }
             }
           </style>
         </head>
@@ -337,7 +336,7 @@ export default function AdminOrdersList() {
                      <div class="line"><span>Solde restant</span><strong>${remaining.toLocaleString("fr-FR")}F</strong></div>`
                   : ""
               }
-              <div class="pay"><span>A PAYER</span><span class="amount">${Number(order.total_amount || 0).toLocaleString("fr-FR")}F</span></div>
+              <div class="pay"><span>A PAYER</span><span class="amount">${amountToPayNow.toLocaleString("fr-FR")}F</span></div>
             </div>
             <div class="note">
               Vérifiez SVP votre colis avant le départ du livreur

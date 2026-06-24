@@ -4,8 +4,11 @@ import { getProductAvailabilityLabel } from "@/lib/productAvailability";
 import { supabase } from "@/lib/supabase";
 import {
   ArrowRight,
+  Backpack,
+  GraduationCap,
   Heart,
   PackageCheck,
+  Sandwich,
   School,
   ShieldCheck,
   ShoppingBag,
@@ -35,75 +38,67 @@ type Product = {
 
 const homeCategories = [
   {
+    title: "Par niveau",
+    text: "De la petite section au lycée, trouvez un format adapté à chaque classe.",
+    href: "/offre-scolaire#levels",
+    icon: GraduationCap,
+    bg: "bg-[#e9fbfc]",
+    color: "text-[#087f83]",
+  },
+  {
     title: "Packs scolaires",
-    text: "Sacs, sacs à goûter, boîtes à goûter, gourdes et trousses réunis.",
-    href: "/packs-scolaires",
+    text: "Les ensembles coordonnés pour préparer toute la rentrée en une fois.",
+    href: "/offre-scolaire/packs-scolaires",
     icon: School,
     bg: "bg-[#fff1f5]",
-    color: "text-[#f36f45]",
+    color: "text-[#e85035]",
   },
   {
-    title: "Plage",
-    text: "Serviettes, maillots de bain et articles pratiques pour les sorties.",
-    href: "/plage",
-    icon: Sparkles,
-    bg: "bg-[#e9fbfc]",
-    color: "text-[#1db7bd]",
-  },
-  {
-    title: "Accessoires & jeux",
-    text: "Horloges, jeux et petites trouvailles utiles pour les enfants.",
-    href: "/accessoires-jeux",
-    icon: Star,
+    title: "Sacs & trousses",
+    text: "Sacs à dos, sacs à goûter et trousses pour bien s'organiser.",
+    href: "/offre-scolaire#bags",
+    icon: Backpack,
     bg: "bg-[#fff9cf]",
-    color: "text-[#c7a900]",
+    color: "text-[#8b7100]",
   },
   {
-    title: "Chaussures",
-    text: "Des modèles confortables pour accompagner les enfants.",
-    href: "/catalogue?category=Chaussures",
-    icon: ShoppingBag,
-    bg: "bg-[#e9fbfc]",
-    color: "text-[#1db7bd]",
-  },
-  {
-    title: "Vêtements",
-    text: "Une catégorie prête si la boutique ajoute des habits plus tard.",
-    href: "/catalogue?category=V%C3%AAtements",
-    icon: Heart,
-    bg: "bg-[#fff1f5]",
-    color: "text-[#f36f45]",
+    title: "Goûter & gourdes",
+    text: "Gourdes, boîtes et sets assortis pour les pauses de la journée.",
+    href: "/offre-scolaire#snacks",
+    icon: Sandwich,
+    bg: "bg-[#edf5ff]",
+    color: "text-[#315ea8]",
   },
 ];
 
 const schoolSelection = [
   {
-    title: "Sacs",
-    href: "/catalogue?productType=Sac",
+    title: "Spécial PS/MS",
+    href: "/offre-scolaire/special-ps-ms",
   },
   {
-    title: "Sacs à roulette",
-    href: "/catalogue?productType=Sac%20%C3%A0%20roulette",
+    title: "Maternelle",
+    href: "/offre-scolaire/maternelle-taille-standard",
   },
   {
-    title: "Sacs à goûter",
-    href: "/catalogue?productType=Sac%20%C3%A0%20go%C3%BBter",
+    title: "Primaire",
+    href: "/offre-scolaire/ce-cm",
   },
   {
-    title: "Boîtes à goûter",
-    href: "/catalogue?productType=Bo%C3%AEte%20%C3%A0%20go%C3%BBter",
+    title: "Collège / Lycée",
+    href: "/offre-scolaire/college-lycee",
   },
   {
-    title: "Trousses",
-    href: "/catalogue?productType=Trousse",
+    title: "Sacs à dos",
+    href: "/offre-scolaire/sacs-a-dos",
   },
   {
     title: "Gourdes",
-    href: "/catalogue?productType=Gourde",
+    href: "/offre-scolaire/gourdes",
   },
   {
     title: "Packs complets",
-    href: "/packs-scolaires",
+    href: "/offre-scolaire/packs-scolaires",
   },
 ];
 

@@ -5,8 +5,10 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import ProductSearch from "./ProductSearch";
 import { useEffect, useState } from "react";
+import { schoolOfferCategories, schoolOfferGroups } from "@/lib/schoolOffer";
 import { supabase } from "@/lib/supabase";
 import {
+  ChevronDown,
   Heart,
   LogOut,
   Menu,
@@ -24,13 +26,6 @@ const mainLinks = [
   { label: "Accueil", href: "/" },
   { label: "Catalogue", href: "/catalogue" },
   { label: "Suivi", href: "/suivi" },
-];
-
-const categoryLinks = [
-  { label: "Nouveautés", href: "/nouveautes" },
-  { label: "Packs scolaires", href: "/packs-scolaires" },
-  { label: "Plage", href: "/plage" },
-  { label: "Accessoires & jeux", href: "/accessoires-jeux" },
 ];
 
 function isActiveLink(pathname: string, href: string) {
@@ -242,16 +237,41 @@ export default function Navbar() {
       </div>
 
       <nav className="hidden border-t border-gray-100 bg-white lg:block">
-        <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-2 px-5 py-3 text-sm font-black text-gray-800">
-          {categoryLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="whitespace-nowrap rounded-full bg-[#fffdf7] px-4 py-2 transition hover:bg-[#e9fbfc] hover:text-[#1db7bd]"
-            >
-              {link.label}
-            </Link>
-          ))}
+        <div className="mx-auto flex max-w-7xl justify-center gap-3 px-5 py-3 text-sm font-black text-gray-800">
+          {schoolOfferGroups.map((group) => {
+            const groupCategories = schoolOfferCategories.filter(
+              (category) => category.group === group.id,
+            );
+
+            return (
+              <div key={group.id} className="group relative">
+                <Link
+                  href={`/offre-scolaire#${group.id}`}
+                  className="flex items-center gap-2 whitespace-nowrap rounded-full bg-[#fffdf7] px-5 py-2.5 transition hover:bg-[#e9fbfc] hover:text-[#1db7bd]"
+                >
+                  {group.label}
+                  <ChevronDown size={16} strokeWidth={2.5} />
+                </Link>
+
+                <div className="invisible absolute left-1/2 top-full z-50 w-72 -translate-x-1/2 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                  <div className="rounded-2xl border border-gray-100 bg-white p-2 shadow-xl">
+                    {groupCategories.map((category) => (
+                      <Link
+                        key={category.slug}
+                        href={`/offre-scolaire/${category.slug}`}
+                        className="block rounded-xl px-4 py-3 hover:bg-[#e9fbfc] hover:text-[#1db7bd]"
+                      >
+                        <span className="block">{category.label}</span>
+                        <span className="mt-1 block text-xs font-bold text-gray-500">
+                          {category.description}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </nav>
 
@@ -329,19 +349,30 @@ export default function Navbar() {
             <div>
               <div className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-gray-500">
                 <Search size={15} strokeWidth={2.5} />
-                Rayons
+                Offre scolaire 2026
               </div>
 
-              <div className="grid grid-cols-1 gap-2 min-[380px]:grid-cols-2">
-                {categoryLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="rounded-xl border border-gray-100 bg-white px-4 py-3 text-sm font-black text-gray-800 shadow-sm hover:border-[#1db7bd] hover:text-[#1db7bd]"
-                  >
-                    {link.label}
-                  </Link>
+              <div className="space-y-4">
+                {schoolOfferGroups.map((group) => (
+                  <div key={group.id}>
+                    <p className="mb-2 text-sm font-black text-[#17324d]">
+                      {group.label}
+                    </p>
+                    <div className="grid grid-cols-1 gap-2 min-[380px]:grid-cols-2">
+                      {schoolOfferCategories
+                        .filter((category) => category.group === group.id)
+                        .map((category) => (
+                          <Link
+                            key={category.slug}
+                            href={`/offre-scolaire/${category.slug}`}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="rounded-xl border border-gray-100 bg-white px-4 py-3 text-sm font-black text-gray-800 shadow-sm hover:border-[#1db7bd] hover:text-[#1db7bd]"
+                          >
+                            {category.label}
+                          </Link>
+                        ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>

@@ -297,6 +297,20 @@ export default function AdminProductsList() {
                           {product.gender || "Non défini"}
                         </p>
                       </div>
+
+                      <div className="rounded-2xl bg-[#fff1f5] p-3">
+                        <p className="font-black text-[#e85035]">Personnage</p>
+                        <p className="font-bold text-gray-700">
+                          {product.character_theme || "Non défini"}
+                        </p>
+                      </div>
+
+                      <div className="rounded-2xl bg-[#edf5ff] p-3">
+                        <p className="font-black text-[#315ea8]">Niveau</p>
+                        <p className="font-bold text-gray-700">
+                          {product.school_level || "Non concerné"}
+                        </p>
+                      </div>
                     </div>
 
                     <div className="mt-5 grid gap-3 sm:grid-cols-2">

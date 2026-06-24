@@ -4,6 +4,13 @@ import KidiclassSelect from "@/components/KidiclassSelect";
 import {
   availabilityOptions,
 } from "@/lib/productAvailability";
+import {
+  characterThemes,
+  getSchoolOfferCategory,
+  schoolLevels,
+  schoolOfferCategoryLabels,
+  schoolProductTypes,
+} from "@/lib/schoolOffer";
 import { supabase } from "@/lib/supabase";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import {
@@ -32,42 +39,14 @@ type PackItem = {
   requiredQuantity: string;
 };
 
-const categories = [
-  "Packs scolaires",
-  "Plage",
-  "Accessoires & jeux",
-  "Chaussures",
-  "Vêtements",
-];
-
-const productTypes = [
-  "Sac",
-  "Sac à roulette",
-  "Sac à goûter",
-  "Boîte à goûter",
-  "Gourde",
-  "Trousse",
-  "Pack scolaire",
-  "Serviette de plage",
-  "Maillot de bain",
-  "Horloge",
-  "Jeu",
-  "Chaussure",
-  "Vêtement",
-  "Robe",
-  "Ensemble",
-  "T-shirt",
-  "Pantalon",
-  "Short",
-  "Jupe",
-  "Accessoire",
-  "Autre",
-];
+const categories = schoolOfferCategoryLabels;
+const productTypes = schoolProductTypes;
 
 const packComponentOptions = [
-  "Sac",
+  "Sac à dos",
   "Sac à roulette",
   "Sac à goûter",
+  "Set gourde et boîte à goûter",
   "Boîte à goûter",
   "Gourde",
   "Trousse",
@@ -75,30 +54,6 @@ const packComponentOptions = [
 ];
 
 const genderOptions = ["Fille", "Garçon", "Mixte"];
-
-const characterThemes = [
-  "Barbie",
-  "Mickey",
-  "Minnie",
-  "Spiderman",
-  "Princesse",
-  "Pat Patrouille",
-  "Licorne",
-  "Cars",
-  "Hello Kitty",
-  "Sans thème",
-];
-
-const schoolLevels = [
-  "Non concerné",
-  "Maternelle",
-  "CP",
-  "CE1",
-  "CE2",
-  "CM1",
-  "CM2",
-  "Collège",
-];
 
 function getPackComponentName(item: PackItem) {
   if (item.componentType === "Autre") {
@@ -814,10 +769,11 @@ export default function AddProductForm() {
                   placeholder="Choisir une catégorie"
                   onChange={(value) => {
                     setCategory(value);
-
-                    if (value === "Packs scolaires" || value === "PACK") {
-                      setProductType("Pack scolaire");
-                    }
+                    const offerCategory = getSchoolOfferCategory(value);
+                    setProductType(offerCategory?.productType || "");
+                    setSchoolLevel(
+                      offerCategory?.schoolLevel || "Non concerné",
+                    );
                   }}
                 />
 

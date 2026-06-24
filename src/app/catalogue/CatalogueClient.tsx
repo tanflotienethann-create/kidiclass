@@ -2,6 +2,12 @@
 
 import KidiclassSelect from "@/components/KidiclassSelect";
 import { getProductAvailabilityLabel } from "@/lib/productAvailability";
+import {
+  characterThemes as offerCharacterThemes,
+  schoolLevels as offerSchoolLevels,
+  schoolOfferCategoryLabels,
+  schoolProductTypes,
+} from "@/lib/schoolOffer";
 import { supabase } from "@/lib/supabase";
 import {
   Heart,
@@ -54,65 +60,13 @@ type CatalogueClientProps = {
   theme?: CatalogueTheme;
 };
 
-const categories = [
-  "Toutes",
-  "Packs scolaires",
-  "Plage",
-  "Accessoires & jeux",
-  "Chaussures",
-  "Vêtements",
-];
+const categories = ["Toutes", ...schoolOfferCategoryLabels];
 
-const productTypes = [
-  "Tous",
-  "Sac",
-  "Sac à roulette",
-  "Sac à goûter",
-  "Boîte à goûter",
-  "Gourde",
-  "Trousse",
-  "Pack scolaire",
-  "Serviette de plage",
-  "Maillot de bain",
-  "Horloge",
-  "Jeu",
-  "Chaussure",
-  "Vêtement",
-  "Robe",
-  "Ensemble",
-  "T-shirt",
-  "Pantalon",
-  "Short",
-  "Jupe",
-  "Accessoire",
-  "Autre",
-];
+const productTypes = ["Tous", ...schoolProductTypes];
 
-const characterThemes = [
-  "Tous",
-  "Barbie",
-  "Mickey",
-  "Minnie",
-  "Spiderman",
-  "Princesse",
-  "Pat Patrouille",
-  "Licorne",
-  "Cars",
-  "Hello Kitty",
-  "Sans thème",
-];
+const characterThemes = ["Tous", ...offerCharacterThemes];
 
-const schoolLevels = [
-  "Tous",
-  "Non concerné",
-  "Maternelle",
-  "CP",
-  "CE1",
-  "CE2",
-  "CM1",
-  "CM2",
-  "Collège",
-];
+const schoolLevels = ["Tous", ...offerSchoolLevels];
 
 const genders = ["Tous", "Fille", "Garçon", "Mixte"];
 
@@ -133,7 +87,7 @@ const sortOptions = [
 ];
 
 const categoryAliases: Record<string, string[]> = {
-  "Packs scolaires": ["Packs scolaires", "PACK", "Scolaire"],
+  "Packs scolaires": ["Packs scolaires", "Pack scolaires", "PACK", "Scolaire"],
   "Accessoires & jeux": ["Accessoires & jeux", "Accessoires"],
   Vêtements: ["Vêtements", "Filles", "Garçons", "Bébés"],
 };
