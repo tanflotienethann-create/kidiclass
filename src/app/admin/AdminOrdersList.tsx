@@ -251,17 +251,29 @@ export default function AdminOrdersList() {
       })
       .join("");
 
-    const receiptWindow = window.open("", "_blank", "width=900,height=1100");
-    if (!receiptWindow) {
-      setMessage(
-        "La fenêtre d’impression a été bloquée. Autorisez les fenêtres pop-up pour KidiClass puis réessayez.",
-      );
+    const printFrame = document.createElement("iframe");
+    printFrame.setAttribute("aria-hidden", "true");
+    printFrame.style.position = "fixed";
+    printFrame.style.right = "0";
+    printFrame.style.bottom = "0";
+    printFrame.style.width = "0";
+    printFrame.style.height = "0";
+    printFrame.style.border = "0";
+    printFrame.style.opacity = "0";
+    document.body.appendChild(printFrame);
+
+    const receiptWindow = printFrame.contentWindow;
+    const receiptDocument = printFrame.contentDocument;
+    if (!receiptWindow || !receiptDocument) {
+      printFrame.remove();
+      setMessage("Impossible de préparer le reçu pour l’impression.");
       return;
     }
 
     const logoUrl = `${window.location.origin}/logo-kidiclass.png`;
 
-    receiptWindow.document.write(`<!doctype html>
+    receiptDocument.open();
+    receiptDocument.write(`<!doctype html>
       <html>
         <head>
           <base href="${window.location.origin}/" />
@@ -270,10 +282,7 @@ export default function AdminOrdersList() {
             @page { size: A4 portrait; margin: 0; }
             * { box-sizing: border-box; }
             html, body { margin: 0; min-height: 100%; background: white; font-family: Arial, sans-serif; color: #17324d; }
-            body { padding: 14px; }
-            .print-help { max-width: 146mm; margin: 0 auto 10px; border-bottom: 1px solid #d8eeed; background: white; color: #43566a; padding: 10px 2px; font-size: 12px; font-weight: 800; line-height: 1.5; text-align: center; }
-            .print-actions { display: flex; justify-content: center; margin: 0 auto 12px; }
-            .print-button { border: 0; border-radius: 999px; background: #f36f45; color: white; cursor: pointer; padding: 12px 22px; font-size: 14px; font-weight: 900; }
+            body { padding: 0; }
             .receipt { width: 146mm; height: 208mm; margin: 0 auto; background: white; border: 2px solid #0f8f8d; border-radius: 12px; padding: 5mm; overflow: hidden; display: flex; flex-direction: column; }
             .logo-frame { position: relative; height: 30mm; overflow: hidden; flex-shrink: 0; }
             .logo { position: absolute; left: 50%; top: 50%; display: block; width: 105mm; max-width: none; height: auto; transform: translate(-50%, -47%); }
@@ -304,18 +313,11 @@ export default function AdminOrdersList() {
             .thanks { color: #ff6b00; font-size: 17px; margin-top: 2mm; }
             @media print {
               html, body { width: auto; height: auto; min-height: 0; background: white; padding: 0; }
-              .print-help, .print-actions { display: none; }
               .receipt { width: 146mm; height: 208mm; margin: 1mm auto; border-radius: 0; box-shadow: none; page-break-after: avoid; page-break-inside: avoid; break-inside: avoid; }
             }
           </style>
         </head>
         <body>
-          <div class="print-help">
-            L’aperçu s’ouvre en A4. Dans les paramètres d’impression, choisissez ensuite le format papier A5, orientation portrait, marges aucune/minimales et échelle 100%.
-          </div>
-          <div class="print-actions">
-            <button class="print-button" type="button" onclick="window.print()">Imprimer le reçu</button>
-          </div>
           <div class="receipt">
             <div class="logo-frame">
               <img class="logo" src="${logoUrl}" alt="KidiClass" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
@@ -358,7 +360,35 @@ export default function AdminOrdersList() {
           </div>
         </body>
       </html>`);
-    receiptWindow.document.close();
+    receiptDocument.close();
+
+    const cleanup = () => printFrame.remove();
+    receiptWindow.addEventListener("afterprint", cleanup, { once: true });
+
+    const images = Array.from(receiptDocument.images);
+    const imagesReady = Promise.all(
+      images.map(
+        (image) =>
+          new Promise<void>((resolve) => {
+            if (image.complete) {
+              resolve();
+              return;
+            }
+
+            image.addEventListener("load", () => resolve(), { once: true });
+            image.addEventListener("error", () => resolve(), { once: true });
+          }),
+      ),
+    );
+
+    void Promise.race([
+      imagesReady,
+      new Promise<void>((resolve) => window.setTimeout(resolve, 3000)),
+    ]).then(() => {
+      receiptWindow.focus();
+      receiptWindow.print();
+      window.setTimeout(cleanup, 120000);
+    });
   }
 
   if (loading) {
