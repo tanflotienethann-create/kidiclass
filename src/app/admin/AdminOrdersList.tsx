@@ -251,18 +251,25 @@ export default function AdminOrdersList() {
       .join("");
 
     const receiptWindow = window.open("", "_blank", "width=900,height=1100");
-    if (!receiptWindow) return;
+    if (!receiptWindow) {
+      setMessage(
+        "La fenêtre d’impression a été bloquée. Autorisez les fenêtres pop-up pour KidiClass puis réessayez.",
+      );
+      return;
+    }
 
     receiptWindow.document.write(`<!doctype html>
       <html>
         <head>
           <title>Reçu ${order.order_reference || ""}</title>
           <style>
-            @page { size: 148mm 210mm; margin: 0; }
+            @page { size: A4 portrait; margin: 0; }
             * { box-sizing: border-box; }
             html, body { margin: 0; min-height: 100%; background: #f4efe7; font-family: Arial, sans-serif; color: #17324d; }
             body { padding: 14px; }
             .print-help { max-width: 148mm; margin: 0 auto 12px; border-radius: 14px; background: #17324d; color: white; padding: 12px 16px; font-size: 14px; font-weight: 800; line-height: 1.5; }
+            .print-actions { display: flex; justify-content: center; margin: 0 auto 12px; }
+            .print-button { border: 0; border-radius: 999px; background: #f36f45; color: white; cursor: pointer; padding: 12px 22px; font-size: 14px; font-weight: 900; }
             .receipt { width: 146mm; height: 208mm; margin: 0 auto; background: white; border: 2px solid #0f8f8d; border-radius: 12px; padding: 5mm; overflow: hidden; display: flex; flex-direction: column; }
             .logo-frame { height: 22mm; overflow: hidden; display: flex; align-items: center; justify-content: center; }
             .logo { display: block; width: 90mm; height: auto; transform: scale(1.45); transform-origin: center; }
@@ -292,16 +299,18 @@ export default function AdminOrdersList() {
             .note { margin-top: 3mm; border: 1.5px solid #7ac8c8; border-radius: 10px; padding: 3mm; text-align: center; color: #0f8f8d; font-size: 12px; font-weight: 900; flex-shrink: 0; }
             .thanks { color: #ff6b00; font-size: 17px; margin-top: 2mm; }
             @media print {
-              html, body { width: 148mm; height: 210mm; background: white; padding: 0; }
-              .print-help { display: none; }
-              .receipt { width: 146mm; height: 208mm; margin: 1mm; border-radius: 0; box-shadow: none; page-break-after: avoid; page-break-inside: avoid; break-inside: avoid; }
+              html, body { width: auto; height: auto; min-height: 0; background: white; padding: 0; }
+              .print-help, .print-actions { display: none; }
+              .receipt { width: 146mm; height: 208mm; margin: 1mm auto; border-radius: 0; box-shadow: none; page-break-after: avoid; page-break-inside: avoid; break-inside: avoid; }
             }
           </style>
         </head>
         <body>
           <div class="print-help">
-            Pour imprimer correctement : choisir le format papier A5, orientation portrait, marges aucune/minimales, échelle 100%.
-            Si l’imprimante reste en A4, le reçu apparaîtra comme une demi-page A4.
+            L’aperçu s’ouvre en A4. Dans les paramètres d’impression, choisissez ensuite le format papier A5, orientation portrait, marges aucune/minimales et échelle 100%.
+          </div>
+          <div class="print-actions">
+            <button class="print-button" type="button" onclick="window.print()">Imprimer le reçu</button>
           </div>
           <div class="receipt">
             <div class="logo-frame">
@@ -343,7 +352,17 @@ export default function AdminOrdersList() {
               <div class="thanks">Merci pour votre achat!</div>
             </div>
           </div>
-          <script>window.onload = () => { window.print(); };</script>
+          <script>
+            let printStarted = false;
+            function launchPrint() {
+              if (printStarted) return;
+              printStarted = true;
+              window.focus();
+              window.print();
+            }
+            window.addEventListener("load", () => window.setTimeout(launchPrint, 400));
+            window.setTimeout(launchPrint, 2500);
+          </script>
         </body>
       </html>`);
     receiptWindow.document.close();
