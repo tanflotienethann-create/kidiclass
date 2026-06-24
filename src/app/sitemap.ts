@@ -8,6 +8,7 @@ export const revalidate = 3600;
 const publicPages = [
   { path: "", priority: 1, changeFrequency: "daily" as const },
   { path: "/catalogue", priority: 0.9, changeFrequency: "daily" as const },
+  { path: "/promotions", priority: 0.9, changeFrequency: "daily" as const },
   { path: "/nouveautes", priority: 0.8, changeFrequency: "daily" as const },
   { path: "/ecole-sorties", priority: 0.9, changeFrequency: "weekly" as const },
   { path: "/repas-gouters", priority: 0.9, changeFrequency: "weekly" as const },

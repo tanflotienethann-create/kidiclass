@@ -1,7 +1,9 @@
 "use client";
 
 import { getProductAvailabilityLabel } from "@/lib/productAvailability";
+import { shopDepartments } from "@/lib/shopNavigation";
 import { supabase } from "@/lib/supabase";
+import KidiclassSelect from "@/components/KidiclassSelect";
 import {
   ArrowRight,
   Gamepad2,
@@ -31,6 +33,7 @@ type Product = {
   images: string[] | null;
   category: string;
   product_type: string | null;
+  character_theme: string | null;
   is_new: boolean | null;
   is_favorite: boolean | null;
   is_promo: boolean | null;
@@ -118,17 +121,26 @@ const schoolSelection = [
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [productFilter, setProductFilter] = useState("Tous les articles");
+
+  const productFilterOptions = [
+    "Tous les articles",
+    "Promotions",
+    "Nouveautés",
+    "Coups de cœur",
+    ...shopDepartments.map((department) => department.label),
+  ];
 
   useEffect(() => {
     async function fetchProducts() {
       const { data, error } = await supabase
         .from("products")
         .select(
-          "id,name,price,old_price,stock,availability_status,image_url,images,category,product_type,is_new,is_favorite,is_promo,is_archived"
+          "id,name,price,old_price,stock,availability_status,image_url,images,category,product_type,character_theme,is_new,is_favorite,is_promo,is_archived"
         )
         .or("is_archived.is.false,is_archived.is.null")
         .order("created_at", { ascending: false })
-        .limit(8);
+        .limit(40);
 
       if (error) {
         console.error("Erreur chargement produits accueil :", error);
@@ -154,6 +166,30 @@ export default function HomePage() {
     return "";
   }
 
+  const displayedProducts = products
+    .filter((product) => {
+      if (productFilter === "Tous les articles") return true;
+      if (productFilter === "Promotions") return Boolean(product.is_promo);
+      if (productFilter === "Nouveautés") return Boolean(product.is_new);
+      if (productFilter === "Coups de cœur") {
+        return Boolean(product.is_favorite);
+      }
+
+      const department = shopDepartments.find(
+        (item) => item.label === productFilter
+      );
+
+      if (!department) return true;
+      if (department.id === "personnages") {
+        return Boolean(
+          product.character_theme && product.character_theme !== "Sans thème"
+        );
+      }
+
+      return department.categories.includes(product.category);
+    })
+    .slice(0, 8);
+
   return (
     <main className="min-h-screen bg-[#faf8f4]">
       <section className="retail-band overflow-hidden px-4 py-7 sm:px-5 md:py-12">
@@ -164,7 +200,7 @@ export default function HomePage() {
             </p>
 
             <h1 className="mt-4 max-w-3xl text-4xl font-black leading-tight text-[#111827] sm:text-5xl md:text-7xl">
-              La rentrée, la plage et les looks kids réunis.
+              La rentrée, la plage et les looks kids réunis
             </h1>
 
             <p className="mt-4 max-w-2xl text-base font-bold leading-7 text-gray-700 sm:text-lg sm:leading-8">
@@ -174,10 +210,10 @@ export default function HomePage() {
 
             <div className="mt-6 grid gap-3 min-[420px]:flex min-[420px]:flex-wrap sm:mt-8 sm:gap-4">
               <Link
-                href="/catalogue"
+                href="/promotions"
                 className="kidiclass-button-primary flex items-center justify-center gap-2 px-6 py-3.5 sm:px-7 sm:py-4"
               >
-                Voir le catalogue
+                Voir les promotions
                 <ArrowRight size={20} strokeWidth={2.5} />
               </Link>
 
@@ -201,11 +237,11 @@ export default function HomePage() {
                 Collection kids
               </div>
               <div className="relative max-w-lg">
-                <ShoppingBag size={38} />
-                <h2 className="mt-5 text-4xl font-black leading-tight">
+                <ShoppingBag className="text-white" size={38} />
+                <h2 className="mt-5 text-4xl font-black leading-tight text-white">
                   Packs scolaires
                 </h2>
-                <p className="mt-3 text-sm font-bold leading-6 text-white/80">
+                <p className="mt-3 text-sm font-bold leading-6 text-white/90">
                   Sacs, gourdes, trousses et articles utiles pour une rentrée
                   nette et stylée.
                 </p>
@@ -235,20 +271,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-b border-[#e4ded4] bg-white px-4 py-4 sm:px-5 sm:py-5">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-3">
-          {homeCategories.map((category) => (
-            <Link
-              key={category.title}
-              href={category.href}
-              className="rounded-xl border border-[#ddd6cc] bg-white px-3 py-3 text-center text-sm font-black text-gray-950 transition hover:border-[#111827] hover:bg-[#faf8f4] sm:rounded-full sm:px-5"
-            >
-              {category.title}
-            </Link>
-          ))}
-        </div>
-      </section>
-
       <section className="px-4 py-8 sm:px-5 sm:py-10">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
@@ -262,16 +284,17 @@ export default function HomePage() {
               </h2>
             </div>
 
-            <Link
-              href="/catalogue"
-              className="kidiclass-button-secondary flex w-fit items-center gap-2 px-6 py-3"
-            >
-              Voir tout
-              <ArrowRight size={20} strokeWidth={2.5} />
-            </Link>
+            <div className="w-full md:max-w-xs">
+              <KidiclassSelect
+                label="Filtrer les articles"
+                value={productFilter}
+                options={productFilterOptions}
+                onChange={setProductFilter}
+              />
+            </div>
           </div>
 
-          {products.length === 0 ? (
+          {displayedProducts.length === 0 ? (
             <div className="kidiclass-card mt-8 p-10 text-center">
               <PackageCheck
                 className="mx-auto text-[#1db7bd]"
@@ -280,22 +303,22 @@ export default function HomePage() {
               />
 
               <h3 className="mt-4 text-2xl font-black text-gray-950">
-                Aucun produit pour le moment
+                Aucun article dans cette sélection
               </h3>
 
               <p className="mt-2 font-bold text-gray-500">
-                Ajoutez des produits depuis l’espace admin.
+                Choisissez un autre filtre pour découvrir les articles disponibles
               </p>
             </div>
           ) : (
-            <div className="mt-6 grid gap-4 sm:mt-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-              {products.map((product) => (
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-6 lg:grid-cols-4">
+              {displayedProducts.map((product) => (
                 <Link
                   key={product.id}
                   href={`/produit/${product.id}`}
                   className="kidiclass-card group overflow-hidden"
                 >
-                  <div className="relative h-64 overflow-hidden bg-[#f4efe7] sm:h-72">
+                  <div className="relative h-44 overflow-hidden bg-[#f4efe7] sm:h-72">
                     {getProductImage(product) ? (
                       <img
                         src={getProductImage(product)}
@@ -329,18 +352,18 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  <div className="p-4 sm:p-5">
-                    <p className="text-xs font-black uppercase text-[#1db7bd]">
+                  <div className="p-3 sm:p-5">
+                    <p className="text-[10px] font-black uppercase text-[#1db7bd] sm:text-xs">
                       {product.category}
                     </p>
 
-                    <h3 className="mt-2 line-clamp-2 text-xl font-black text-gray-950">
+                    <h3 className="mt-2 line-clamp-2 text-sm font-black text-gray-950 sm:text-xl">
                       {product.name}
                     </h3>
 
                     <div className="mt-4 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-end min-[420px]:justify-between">
                       <div>
-                        <p className="text-xl font-black text-[#f36f45]">
+                        <p className="text-sm font-black text-[#f36f45] sm:text-xl">
                           {Number(product.price || 0).toLocaleString("fr-FR")}{" "}
                           FCFA
                         </p>
@@ -354,7 +377,7 @@ export default function HomePage() {
                       </div>
 
                       <span
-                        className={`rounded-full px-3 py-1 text-xs font-black ${
+                        className={`w-fit rounded-full px-2 py-1 text-[10px] font-black sm:px-3 sm:text-xs ${
                           Number(product.stock || 0) > 0
                             ? "bg-[#e9fbfc] text-[#0f766e]"
                             : "bg-red-50 text-red-500"
@@ -428,10 +451,10 @@ export default function HomePage() {
             </div>
 
             <Link
-              href="/catalogue"
+              href="/promotions"
               className="kidiclass-button-secondary flex w-fit items-center gap-2 px-6 py-3"
             >
-              Tout voir
+              Voir les promotions
               <ArrowRight size={20} strokeWidth={2.5} />
             </Link>
           </div>
@@ -480,7 +503,7 @@ export default function HomePage() {
               </p>
 
               <h2 className="mt-3 text-3xl font-black text-gray-950 sm:text-4xl md:text-5xl">
-                La rentrée avec style.
+                La rentrée avec style
               </h2>
 
               <p className="mt-4 text-base font-bold leading-7 text-gray-600">

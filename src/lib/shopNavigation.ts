@@ -69,7 +69,7 @@ export const shopDepartments: ShopDepartment[] = [
     label: "École et sorties",
     href: "/ecole-sorties",
     eyebrow: "École et sorties",
-    title: "Bien équipé pour apprendre et découvrir le monde.",
+    title: "Bien équipé pour apprendre et découvrir le monde",
     description:
       "Retrouvez les offres scolaires par niveau, les packs, les sacs et les essentiels pour les sorties.",
     variant: "school",
@@ -81,7 +81,7 @@ export const shopDepartments: ShopDepartment[] = [
     label: "Repas et goûters",
     href: "/repas-gouters",
     eyebrow: "Repas et goûters",
-    title: "Des pauses bien préparées, partout.",
+    title: "Des pauses bien préparées, partout",
     description:
       "Gourdes, boîtes, sacs à goûter et sets assortis pour l'école comme pour les sorties.",
     variant: "meal",
@@ -93,7 +93,7 @@ export const shopDepartments: ShopDepartment[] = [
     label: "Piscine et plage",
     href: "/piscine-plage",
     eyebrow: "Piscine et plage",
-    title: "Prêts pour l'eau et le soleil.",
+    title: "Prêts pour l'eau et le soleil",
     description:
       "Maillots de bain, serviettes et accessoires pratiques pour la piscine et la plage.",
     variant: "beach",
@@ -105,7 +105,7 @@ export const shopDepartments: ShopDepartment[] = [
     label: "Accessoires et jeux",
     href: "/accessoires-jeux",
     eyebrow: "Accessoires et jeux",
-    title: "Des détails utiles et beaucoup de fun.",
+    title: "Des détails utiles et beaucoup de fun",
     description:
       "Sacs à main pour filles, horloges et jeux pour compléter le quotidien des enfants.",
     variant: "play",
@@ -117,7 +117,7 @@ export const shopDepartments: ShopDepartment[] = [
     label: "Personnages",
     href: "/personnages",
     eyebrow: "Personnages",
-    title: "Leurs héros préférés réunis ici.",
+    title: "Leurs héros préférés réunis ici",
     description:
       "Choisissez un personnage et découvrez tous les articles disponibles dans son univers.",
     variant: "characters",

@@ -10,6 +10,7 @@ import { shopCategoryLabels, shopProductTypes } from "@/lib/shopNavigation";
 import { supabase } from "@/lib/supabase";
 import {
   Backpack,
+  BadgePercent,
   Gamepad2,
   Heart,
   PackageCheck,
@@ -67,7 +68,8 @@ type CatalogueTheme = {
     | "beach"
     | "play"
     | "characters"
-    | "new";
+    | "new"
+    | "promotion";
 };
 
 type CatalogueClientProps = {
@@ -113,7 +115,7 @@ const categoryAliases: Record<string, string[]> = {
 
 const defaultTheme: CatalogueTheme = {
   eyebrow: "Catalogue KidiClass",
-  title: "Toute la boutique, pour tous leurs moments.",
+  title: "Toute la boutique, pour tous leurs moments",
   description:
     "École, goûters, plage, jeux et personnages : retrouvez toutes les collections KidiClass au même endroit.",
   variant: "default",
@@ -174,6 +176,14 @@ const themeStyles = {
     panel: "bg-white",
     accent: "#e85035",
     soft: "#fff3bf",
+    ink: "#9a3412",
+  },
+  promotion: {
+    section: "bg-[#fff0e8]",
+    badge: "text-[#9a3412]",
+    panel: "bg-white/55",
+    accent: "#d9472d",
+    soft: "#fff0e8",
     ink: "#9a3412",
   },
 };
@@ -315,6 +325,21 @@ function NewDecor() {
   );
 }
 
+function PromotionDecor() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute -bottom-12 left-0 h-24 w-full bg-[#ffe773]/65" />
+      <div className="absolute right-8 top-8 hidden rotate-6 items-center gap-4 rounded-lg bg-[#d9472d] px-8 py-6 text-white shadow-xl md:flex">
+        <BadgePercent size={52} strokeWidth={2.8} />
+        <span className="text-4xl font-black">PROMO</span>
+      </div>
+      <div className="absolute bottom-8 right-72 hidden h-24 w-24 rotate-12 rounded-lg bg-[#087f83] md:block" />
+      <div className="absolute bottom-14 right-80 hidden h-12 w-12 -rotate-6 rounded-lg bg-white md:block" />
+      <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-[#ffe773]/75" />
+    </div>
+  );
+}
+
 function GenericDecor({ variant }: { variant: CatalogueTheme["variant"] }) {
   if (variant === "default") return <CatalogueDecor />;
   if (variant === "beach") return <BeachDecor />;
@@ -323,6 +348,7 @@ function GenericDecor({ variant }: { variant: CatalogueTheme["variant"] }) {
   if (variant === "play") return <PlayDecor />;
   if (variant === "characters") return <CharactersDecor />;
   if (variant === "new") return <NewDecor />;
+  if (variant === "promotion") return <PromotionDecor />;
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -610,7 +636,7 @@ export default function CatalogueClient({
               <button
                 type="button"
                 onClick={() => setFiltersOpen(false)}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-[#ddd6cc] text-gray-950 hover:border-[#17324d]"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-[#ddd6cc] text-gray-950 hover:border-[var(--kc-accent)] hover:bg-[var(--kc-soft)] hover:text-[var(--kc-ink)]"
                 aria-label="Fermer"
               >
                 <X size={22} strokeWidth={2.5} />
@@ -634,7 +660,7 @@ export default function CatalogueClient({
                     <input
                       type="text"
                       placeholder="Rechercher un produit..."
-                      className="w-full rounded-xl border border-[#ddd6cc] bg-white py-3.5 pl-12 pr-4 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                      className="w-full rounded-xl border border-[#ddd6cc] bg-white py-3.5 pl-12 pr-4 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[var(--kc-accent)] focus:ring-4 focus:ring-[var(--kc-soft)]"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                     />
@@ -652,7 +678,7 @@ export default function CatalogueClient({
                 <input
                   type="text"
                   placeholder="Marque : Disney, Barbie..."
-                  className="w-full rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                  className="w-full rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[var(--kc-accent)] focus:ring-4 focus:ring-[var(--kc-soft)]"
                   value={brandSearch}
                   onChange={(e) => setBrandSearch(e.target.value)}
                 />
@@ -660,7 +686,7 @@ export default function CatalogueClient({
                 <input
                   type="text"
                   placeholder="Couleur : rose, bleu..."
-                  className="w-full rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                  className="w-full rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[var(--kc-accent)] focus:ring-4 focus:ring-[var(--kc-soft)]"
                   value={colorSearch}
                   onChange={(e) => setColorSearch(e.target.value)}
                 />
@@ -668,7 +694,7 @@ export default function CatalogueClient({
                 <input
                   type="text"
                   placeholder="Âge : 3-6 ans..."
-                  className="w-full rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                  className="w-full rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[var(--kc-accent)] focus:ring-4 focus:ring-[var(--kc-soft)]"
                   value={ageSearch}
                   onChange={(e) => setAgeSearch(e.target.value)}
                 />
@@ -724,7 +750,7 @@ export default function CatalogueClient({
                   <input
                     type="text"
                     placeholder="Rechercher un produit..."
-                    className="w-full rounded-xl border border-[#ddd6cc] bg-white py-3.5 pl-12 pr-4 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10 sm:py-4 sm:pl-14 sm:pr-5"
+                    className="w-full rounded-xl border border-[#ddd6cc] bg-white py-3.5 pl-12 pr-4 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[var(--kc-accent)] focus:ring-4 focus:ring-[var(--kc-soft)] sm:py-4 sm:pl-14 sm:pr-5"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
@@ -787,7 +813,7 @@ export default function CatalogueClient({
               <input
                 type="text"
                 placeholder="Marque : Disney, Barbie..."
-                className="rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10 sm:p-4"
+                className="rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[var(--kc-accent)] focus:ring-4 focus:ring-[var(--kc-soft)] sm:p-4"
                 value={brandSearch}
                 onChange={(e) => setBrandSearch(e.target.value)}
               />
@@ -795,7 +821,7 @@ export default function CatalogueClient({
               <input
                 type="text"
                 placeholder="Couleur : rose, bleu..."
-                className="rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10 sm:p-4"
+                className="rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[var(--kc-accent)] focus:ring-4 focus:ring-[var(--kc-soft)] sm:p-4"
                 value={colorSearch}
                 onChange={(e) => setColorSearch(e.target.value)}
               />
@@ -803,7 +829,7 @@ export default function CatalogueClient({
               <input
                 type="text"
                 placeholder="Âge : 3-6 ans..."
-                className="rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10 sm:p-4"
+                className="rounded-xl border border-[#ddd6cc] bg-white p-3.5 text-base font-bold text-gray-950 outline-none placeholder:text-gray-400 focus:border-[var(--kc-accent)] focus:ring-4 focus:ring-[var(--kc-soft)] sm:p-4"
                 value={ageSearch}
                 onChange={(e) => setAgeSearch(e.target.value)}
               />

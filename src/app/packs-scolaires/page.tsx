@@ -8,7 +8,7 @@ export default function PacksScolairesPage() {
         initialCategory="Packs scolaires"
         theme={{
           eyebrow: "Packs scolaires",
-          title: "Tout pour une rentrée bien équipée.",
+          title: "Tout pour une rentrée bien équipée",
           description:
             "Sacs, trousses, gourdes, boîtes à goûter et packs pratiques pour préparer l’école avec style.",
           variant: "school",

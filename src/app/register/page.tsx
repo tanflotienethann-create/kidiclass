@@ -149,7 +149,7 @@ export default function RegisterPage() {
               </p>
 
               <h1 className="max-w-xl text-6xl font-black leading-tight text-gray-950">
-                Créez votre espace KidiClass.
+                Créez votre espace KidiClass
               </h1>
 
               <p className="mt-6 max-w-lg text-lg leading-8 text-gray-700">

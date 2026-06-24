@@ -8,7 +8,7 @@ export default function NouveautesPage() {
         initialHighlight="Nouveautés"
         theme={{
           eyebrow: "Nouveautés",
-          title: "Les derniers arrivages pour les kids.",
+          title: "Les derniers arrivages pour les kids",
           description:
             "Une sélection fraîche avec les nouveaux produits ajoutés à la boutique.",
           variant: "new",
