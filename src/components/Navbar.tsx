@@ -159,16 +159,16 @@ export default function Navbar() {
 
           <Link
             href="/"
-            className="shrink-0 justify-self-center lg:justify-self-start"
+            className="relative h-12 w-32 shrink-0 justify-self-center overflow-hidden sm:h-14 sm:w-40 lg:h-20 lg:w-52 lg:justify-self-start"
             aria-label="Accueil KidiClass"
           >
             <Image
               src="/logo-kidiclass.png"
               alt="KidiClass"
-              width={180}
-              height={72}
+              width={1024}
+              height={1024}
               priority
-              className="h-10 w-auto object-contain sm:h-12 md:h-16"
+              className="absolute left-1/2 top-1/2 h-auto w-full max-w-none -translate-x-1/2 -translate-y-[46%] object-contain"
             />
           </Link>
 

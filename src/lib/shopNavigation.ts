@@ -69,7 +69,7 @@ export const shopDepartments: ShopDepartment[] = [
     label: "École et sorties",
     href: "/ecole-sorties",
     eyebrow: "École et sorties",
-    title: "Bien équipés pour apprendre et sortir.",
+    title: "Bien équipé pour apprendre et découvrir le monde.",
     description:
       "Retrouvez les offres scolaires par niveau, les packs, les sacs et les essentiels pour les sorties.",
     variant: "school",
