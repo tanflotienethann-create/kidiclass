@@ -225,7 +225,7 @@ export default function SuiviPage() {
               <input
                 type="tel"
                 placeholder="Ex : 07 79 31 15 55"
-                className="w-full rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold text-black outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                className="w-full rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold text-black outline-none placeholder:text-gray-400 focus:border-[#0a9ba2] focus:ring-4 focus:ring-[#0a9ba2]/10"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
@@ -239,7 +239,7 @@ export default function SuiviPage() {
               <input
                 type="text"
                 placeholder="Ex : KDC-2026-1234"
-                className="w-full rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold uppercase text-black outline-none placeholder:text-gray-400 focus:border-[#17324d] focus:ring-4 focus:ring-[#17324d]/10"
+                className="w-full rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold uppercase text-black outline-none placeholder:text-gray-400 focus:border-[#0a9ba2] focus:ring-4 focus:ring-[#0a9ba2]/10"
                 value={reference}
                 onChange={(e) => setReference(e.target.value)}
               />
@@ -248,7 +248,7 @@ export default function SuiviPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex h-[58px] items-center justify-center gap-2 rounded-xl bg-[#111827] px-7 font-black text-white shadow-sm hover:bg-[#e85035] disabled:opacity-50"
+              className="flex h-[58px] items-center justify-center gap-2 rounded-xl bg-[#d9472d] px-7 font-black text-white shadow-sm hover:bg-[#087f83] disabled:opacity-50"
             >
               <Search size={20} strokeWidth={2.5} />
               {loading ? "Recherche..." : "Suivre"}

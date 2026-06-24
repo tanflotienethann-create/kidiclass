@@ -124,9 +124,9 @@ const themeStyles = {
     section: "bg-[#f4fbfa]",
     badge: "text-[#e85035]",
     panel: "bg-transparent",
-    accent: "#17324d",
-    soft: "#e9fbfc",
-    ink: "#17324d",
+    accent: "#d9472d",
+    soft: "#fff0e8",
+    ink: "#9a3412",
   },
   school: {
     section: "bg-[#fff3bf]",
@@ -216,7 +216,7 @@ function SchoolDecor() {
 function CatalogueDecor() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="absolute inset-y-0 right-0 hidden w-[42%] bg-[#17324d] lg:block" />
+      <div className="absolute inset-y-0 right-0 hidden w-[42%] bg-[#087f83] lg:block" />
       <div className="absolute right-12 top-1/2 hidden -translate-y-1/2 grid-cols-2 gap-3 lg:grid">
         {[
           { label: "École", Icon: Backpack, color: "bg-[#fff3bf] text-[#6f4e00]" },
@@ -694,7 +694,7 @@ export default function CatalogueClient({
                 <button
                   type="button"
                   onClick={resetFilters}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#111827] px-5 py-3 text-sm font-black text-[#111827] hover:bg-[#111827] hover:text-white"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#087f83] px-5 py-3 text-sm font-black text-[#087f83] hover:bg-[#087f83] hover:text-white"
                 >
                   <RotateCcw size={17} strokeWidth={2.5} />
                   Réinitialiser
@@ -819,7 +819,7 @@ export default function CatalogueClient({
               <button
                 type="button"
                 onClick={resetFilters}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#111827] px-5 py-3 text-sm font-black text-[#111827] hover:bg-[#111827] hover:text-white sm:w-fit"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#087f83] px-5 py-3 text-sm font-black text-[#087f83] hover:bg-[#087f83] hover:text-white sm:w-fit"
               >
                 <RotateCcw size={17} strokeWidth={2.5} />
                 Réinitialiser

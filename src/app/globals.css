@@ -4,9 +4,9 @@
   --background: #faf8f4;
   --foreground: #111827;
 
-  --kidiclass-turquoise: #0f766e;
-  --kidiclass-turquoise-dark: #0f5f59;
-  --kidiclass-turquoise-light: #e6f4f1;
+  --kidiclass-turquoise: #0a9ba2;
+  --kidiclass-turquoise-dark: #087f83;
+  --kidiclass-turquoise-light: #e9fbfc;
 
   --kidiclass-orange: #e85035;
   --kidiclass-orange-dark: #c93f2a;
@@ -115,7 +115,7 @@ a:focus-visible {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #17324d;
+  background: #d9472d;
 }
 
 /* ============================= */
@@ -166,13 +166,13 @@ select {
 }
 
 select:hover {
-  border-color: #17324d;
+  border-color: #0a9ba2;
   background-color: #fbfaf7;
 }
 
 select:focus {
-  border-color: #17324d;
-  box-shadow: 0 0 0 4px rgba(23, 50, 77, 0.1);
+  border-color: #0a9ba2;
+  box-shadow: 0 0 0 4px rgba(10, 155, 162, 0.14);
   background-color: #ffffff;
 }
 
@@ -204,12 +204,12 @@ select option {
 
 .kidiclass-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(23, 50, 77, 0.25);
+  border-color: rgba(217, 71, 45, 0.38);
   box-shadow: 0 16px 38px rgba(31, 41, 51, 0.12);
 }
 
 .kidiclass-button-primary {
-  background: #111827;
+  background: #d9472d;
   color: #ffffff;
   border-radius: 0.65rem;
   font-weight: 900;
@@ -218,14 +218,14 @@ select option {
 }
 
 .kidiclass-button-primary:hover {
-  background: #e85035;
+  background: #087f83;
   transform: translateY(-1px);
   box-shadow: 0 10px 25px rgba(243, 111, 69, 0.25);
 }
 
 .kidiclass-button-secondary {
-  border: 1px solid #111827;
-  color: #111827;
+  border: 1px solid #087f83;
+  color: #087f83;
   background: #ffffff;
   border-radius: 0.65rem;
   font-weight: 900;
@@ -234,24 +234,21 @@ select option {
 }
 
 .kidiclass-button-secondary:hover {
-  background: #111827;
+  background: #087f83;
   color: #ffffff;
   transform: translateY(-1px);
   box-shadow: 0 10px 25px rgba(29, 183, 189, 0.2);
 }
 
 .retail-band {
-  background:
-    linear-gradient(135deg, rgba(255, 243, 191, 0.92), rgba(250, 248, 244, 0.8)),
-    radial-gradient(circle at top right, rgba(232, 80, 53, 0.18), transparent 34%),
-    #faf8f4;
+  background: #fff6cf;
 }
 
 .retail-chip {
-  border: 1px solid #ddd6cc;
+  border: 1px solid #f0aa94;
   border-radius: 999px;
   background: #ffffff;
-  color: #17324d;
+  color: #087f83;
   font-weight: 900;
 }
 

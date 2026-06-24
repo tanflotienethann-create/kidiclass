@@ -43,32 +43,36 @@ const homeCategories = [
     text: "Offres scolaires, sacs, trousses et essentiels pour toutes leurs journées.",
     href: "/ecole-sorties",
     icon: School,
-    bg: "bg-[#e9fbfc]",
-    color: "text-[#087f83]",
+    bg: "bg-[#fff3bf]",
+    color: "text-[#6f4e00]",
+    border: "border-t-[#e0a800]",
   },
   {
     title: "Repas et goûters",
     text: "Gourdes, boîtes et sacs à goûter pour les pauses de la journée.",
     href: "/repas-gouters",
     icon: Sandwich,
-    bg: "bg-[#fff1f5]",
-    color: "text-[#e85035]",
+    bg: "bg-[#fff0e8]",
+    color: "text-[#c2411f]",
+    border: "border-t-[#f36f45]",
   },
   {
     title: "Piscine et plage",
     text: "Maillots, serviettes et accessoires pour profiter de l'eau et du soleil.",
     href: "/piscine-plage",
     icon: Waves,
-    bg: "bg-[#fff9cf]",
-    color: "text-[#8b7100]",
+    bg: "bg-[#dff8ff]",
+    color: "text-[#075985]",
+    border: "border-t-[#0089a7]",
   },
   {
     title: "Accessoires et jeux",
     text: "Sacs à main, horloges et jeux pour compléter leur univers.",
     href: "/accessoires-jeux",
     icon: Gamepad2,
-    bg: "bg-[#edf5ff]",
-    color: "text-[#315ea8]",
+    bg: "bg-[#fff1f5]",
+    color: "text-[#9d174d]",
+    border: "border-t-[#e84a77]",
   },
   {
     title: "Personnages",
@@ -77,6 +81,7 @@ const homeCategories = [
     icon: UsersRound,
     bg: "bg-[#f2edff]",
     color: "text-[#6941a5]",
+    border: "border-t-[#7c3aed]",
   },
 ];
 
@@ -186,9 +191,13 @@ export default function HomePage() {
           </div>
 
           <div className="hidden gap-4 md:grid sm:grid-cols-2">
-            <div className="relative min-h-72 overflow-hidden rounded-xl bg-[#17324d] p-7 text-white shadow-xl sm:col-span-2">
-              <div className="absolute bottom-0 right-0 hidden h-32 w-32 rounded-full bg-[#fff3bf] md:block" />
-              <div className="absolute right-8 top-8 hidden rounded-full bg-white/10 px-5 py-2 text-sm font-black md:block">
+            <Link
+              href="/packs-scolaires"
+              className="relative min-h-72 overflow-hidden rounded-xl bg-[#087f83] p-7 text-white shadow-xl transition hover:-translate-y-1 hover:shadow-2xl sm:col-span-2"
+            >
+              <div className="absolute -bottom-16 -right-12 hidden h-44 w-52 rotate-12 bg-[#fff3bf] md:block" />
+              <div className="absolute right-0 top-0 h-full w-3 bg-[#f36f45]" />
+              <div className="absolute right-8 top-8 hidden rounded-full bg-[#f36f45] px-5 py-2 text-sm font-black text-white md:block">
                 Collection kids
               </div>
               <div className="relative max-w-lg">
@@ -201,9 +210,9 @@ export default function HomePage() {
                   nette et stylée.
                 </p>
               </div>
-            </div>
+            </Link>
 
-            <div className="retail-card p-6 text-gray-950">
+            <div className="rounded-xl border border-[#f4b7a5] bg-[#fff0e8] p-6 text-gray-950 shadow-sm">
               <Sparkles className="text-[#e85035]" size={30} />
               <h2 className="mt-4 text-2xl font-black text-gray-950">
                 Nouveautés
@@ -213,8 +222,8 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="retail-card p-6 text-gray-950">
-              <Heart className="text-[#0f766e]" size={30} />
+            <div className="rounded-xl border border-[#a9e1e4] bg-[#e9fbfc] p-6 text-gray-950 shadow-sm">
+              <Heart className="text-[#087f83]" size={30} />
               <h2 className="mt-4 text-2xl font-black text-gray-950">
                 Coups de cœur
               </h2>
@@ -381,7 +390,7 @@ export default function HomePage() {
 
           <div className="kidiclass-card p-6">
             <ShieldCheck
-              className="text-[#1db7bd]"
+              className="text-[#f36f45]"
               size={32}
               strokeWidth={2.5}
             />
@@ -394,7 +403,7 @@ export default function HomePage() {
           </div>
 
           <div className="kidiclass-card p-6">
-            <Star className="text-[#1db7bd]" size={32} strokeWidth={2.5} />
+            <Star className="text-[#c28b00]" size={32} strokeWidth={2.5} />
             <h3 className="mt-4 text-xl font-black text-gray-950">
               Sélection tendance
             </h3>
@@ -409,7 +418,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.3em] text-[#1db7bd]">
+              <p className="text-sm font-black uppercase tracking-[0.3em] text-[#f36f45]">
                 Catégories
               </p>
 
@@ -435,7 +444,7 @@ export default function HomePage() {
                 <Link
                   key={category.title}
                   href={category.href}
-                  className="kidiclass-card group p-5 sm:p-6"
+                  className={`kidiclass-card group border-t-4 p-5 sm:p-6 ${category.border}`}
                 >
                   <div
                     className={`flex h-16 w-16 items-center justify-center rounded-2xl ${category.bg} ${category.color}`}
@@ -463,10 +472,10 @@ export default function HomePage() {
       </section>
 
       <section className="px-4 py-8 sm:px-5 sm:py-12">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-2xl bg-[#e9fbfc] p-5 sm:rounded-[3rem] sm:p-8 md:p-12">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-2xl bg-[#fff3bf] p-5 sm:rounded-[3rem] sm:p-8 md:p-12">
           <div className="grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-center">
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.3em] text-[#1db7bd]">
+              <p className="text-sm font-black uppercase tracking-[0.3em] text-[#9a6b00]">
                 Sélection spéciale
               </p>
 
@@ -494,7 +503,7 @@ export default function HomePage() {
                 <Link
                   key={item.title}
                   href={item.href}
-                  className="rounded-2xl bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl sm:rounded-[2rem] sm:p-6"
+                  className="rounded-2xl border-t-4 border-[#f36f45] bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl sm:rounded-[2rem] sm:p-6"
                 >
                   <h3 className="text-xl font-black text-gray-950 sm:text-2xl">
                     {item.title}

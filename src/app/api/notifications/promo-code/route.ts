@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     <body style="margin:0;background:#f7fbfb;font-family:Arial,sans-serif;color:#17324d">
       <div style="max-width:620px;margin:0 auto;padding:28px 16px">
         <div style="overflow:hidden;border:1px solid #d7eeee;border-radius:18px;background:#ffffff">
-          <div style="padding:28px;text-align:center;background:#17324d">
+          <div style="padding:28px;text-align:center;background:#087f83;border-bottom:6px solid #f36f45">
             <div style="font-size:38px;font-weight:900;line-height:1">
               <span style="color:#12a7ae">Kidi</span><span style="color:#ff6b00">Class</span>
             </div>
