@@ -10,9 +10,12 @@ import {
   characterThemes,
   getSchoolOfferCategory,
   schoolLevels,
-  schoolOfferCategoryLabels,
-  schoolProductTypes,
 } from "@/lib/schoolOffer";
+import {
+  getDefaultProductType,
+  shopCategoryLabels,
+  shopProductTypes,
+} from "@/lib/shopNavigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -89,8 +92,8 @@ type ProductPackItemRow = {
   required_quantity: number | null;
 };
 
-const categories = schoolOfferCategoryLabels;
-const productTypes = schoolProductTypes;
+const categories = shopCategoryLabels;
+const productTypes = shopProductTypes;
 
 const packComponentOptions = [
   "Sac à dos",
@@ -962,7 +965,9 @@ export default function EditProductPage() {
                   onChange={(value) => {
                     setCategory(value);
                     const offerCategory = getSchoolOfferCategory(value);
-                    setProductType(offerCategory?.productType || "");
+                    setProductType(
+                      offerCategory?.productType || getDefaultProductType(value),
+                    );
                     setSchoolLevel(
                       offerCategory?.schoolLevel || "Non concerné",
                     );

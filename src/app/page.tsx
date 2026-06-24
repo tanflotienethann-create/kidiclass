@@ -4,8 +4,7 @@ import { getProductAvailabilityLabel } from "@/lib/productAvailability";
 import { supabase } from "@/lib/supabase";
 import {
   ArrowRight,
-  Backpack,
-  GraduationCap,
+  Gamepad2,
   Heart,
   PackageCheck,
   Sandwich,
@@ -15,6 +14,8 @@ import {
   Sparkles,
   Star,
   Truck,
+  UsersRound,
+  Waves,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -38,67 +39,75 @@ type Product = {
 
 const homeCategories = [
   {
-    title: "Par niveau",
-    text: "De la petite section au lycée, trouvez un format adapté à chaque classe.",
-    href: "/offre-scolaire#levels",
-    icon: GraduationCap,
+    title: "École et sorties",
+    text: "Offres scolaires, sacs, trousses et essentiels pour toutes leurs journées.",
+    href: "/ecole-sorties",
+    icon: School,
     bg: "bg-[#e9fbfc]",
     color: "text-[#087f83]",
   },
   {
-    title: "Packs scolaires",
-    text: "Les ensembles coordonnés pour préparer toute la rentrée en une fois.",
-    href: "/offre-scolaire/packs-scolaires",
-    icon: School,
+    title: "Repas et goûters",
+    text: "Gourdes, boîtes et sacs à goûter pour les pauses de la journée.",
+    href: "/repas-gouters",
+    icon: Sandwich,
     bg: "bg-[#fff1f5]",
     color: "text-[#e85035]",
   },
   {
-    title: "Sacs & trousses",
-    text: "Sacs à dos, sacs à goûter et trousses pour bien s'organiser.",
-    href: "/offre-scolaire#bags",
-    icon: Backpack,
+    title: "Piscine et plage",
+    text: "Maillots, serviettes et accessoires pour profiter de l'eau et du soleil.",
+    href: "/piscine-plage",
+    icon: Waves,
     bg: "bg-[#fff9cf]",
     color: "text-[#8b7100]",
   },
   {
-    title: "Goûter & gourdes",
-    text: "Gourdes, boîtes et sets assortis pour les pauses de la journée.",
-    href: "/offre-scolaire#snacks",
-    icon: Sandwich,
+    title: "Accessoires et jeux",
+    text: "Sacs à main, horloges et jeux pour compléter leur univers.",
+    href: "/accessoires-jeux",
+    icon: Gamepad2,
     bg: "bg-[#edf5ff]",
     color: "text-[#315ea8]",
+  },
+  {
+    title: "Personnages",
+    text: "Tous les articles classés selon les héros préférés des enfants.",
+    href: "/personnages",
+    icon: UsersRound,
+    bg: "bg-[#f2edff]",
+    color: "text-[#6941a5]",
   },
 ];
 
 const schoolSelection = [
   {
     title: "Spécial PS/MS",
-    href: "/offre-scolaire/special-ps-ms",
+    href: "/ecole-sorties?category=Sp%C3%A9cial%20PS%2FMS",
   },
   {
     title: "Maternelle",
-    href: "/offre-scolaire/maternelle-taille-standard",
+    href: "/ecole-sorties?category=Maternelle%20taille%20standard",
   },
   {
     title: "Primaire",
-    href: "/offre-scolaire/ce-cm",
+    href: "/ecole-sorties?category=CE%20%2F%20CM",
   },
   {
     title: "Collège / Lycée",
-    href: "/offre-scolaire/college-lycee",
+    href: "/ecole-sorties?category=Coll%C3%A8ge%20%2F%20Lyc%C3%A9e",
   },
   {
     title: "Sacs à dos",
-    href: "/offre-scolaire/sacs-a-dos",
+    href: "/ecole-sorties?category=Sacs%20%C3%A0%20dos",
   },
   {
     title: "Gourdes",
-    href: "/offre-scolaire/gourdes",
+    href: "/repas-gouters?category=Gourdes",
   },
   {
     title: "Packs complets",
-    href: "/offre-scolaire/packs-scolaires",
+    href: "/ecole-sorties?category=Packs%20scolaires",
   },
 ];
 

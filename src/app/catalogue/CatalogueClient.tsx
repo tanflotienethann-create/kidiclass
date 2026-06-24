@@ -5,9 +5,8 @@ import { getProductAvailabilityLabel } from "@/lib/productAvailability";
 import {
   characterThemes as offerCharacterThemes,
   schoolLevels as offerSchoolLevels,
-  schoolOfferCategoryLabels,
-  schoolProductTypes,
 } from "@/lib/schoolOffer";
+import { shopCategoryLabels, shopProductTypes } from "@/lib/shopNavigation";
 import { supabase } from "@/lib/supabase";
 import {
   Heart,
@@ -56,13 +55,16 @@ type CatalogueTheme = {
 
 type CatalogueClientProps = {
   initialCategory?: string;
+  initialCharacterTheme?: string;
   initialHighlight?: string;
+  allowedCategories?: string[];
+  categoryOptions?: string[];
   theme?: CatalogueTheme;
 };
 
-const categories = ["Toutes", ...schoolOfferCategoryLabels];
+const categories = ["Toutes", ...shopCategoryLabels];
 
-const productTypes = ["Tous", ...schoolProductTypes];
+const productTypes = ["Tous", ...shopProductTypes];
 
 const characterThemes = ["Tous", ...offerCharacterThemes];
 
@@ -212,11 +214,17 @@ function GenericDecor({ variant }: { variant: CatalogueTheme["variant"] }) {
 
 export default function CatalogueClient({
   initialCategory = "Toutes",
+  initialCharacterTheme = "Tous",
   initialHighlight = "Tous",
+  allowedCategories,
+  categoryOptions,
   theme = defaultTheme,
 }: CatalogueClientProps) {
   const searchParams = useSearchParams();
   const themeStyle = themeStyles[theme.variant];
+  const visibleCategories = categoryOptions
+    ? ["Toutes", ...categoryOptions]
+    : categories;
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -228,7 +236,9 @@ export default function CatalogueClient({
   const [productType, setProductType] = useState(
     searchParams.get("productType") || "Tous"
   );
-  const [characterTheme, setCharacterTheme] = useState("Tous");
+  const [characterTheme, setCharacterTheme] = useState(
+    searchParams.get("character") || initialCharacterTheme,
+  );
   const [schoolLevel, setSchoolLevel] = useState("Tous");
   const [gender, setGender] = useState("Tous");
   const [highlight, setHighlight] = useState(
@@ -290,6 +300,9 @@ export default function CatalogueClient({
       const matchesCategory =
         category === "Toutes" || categoryValues.includes(product.category);
 
+      const matchesDepartment =
+        !allowedCategories || allowedCategories.includes(product.category);
+
       const matchesType =
         productType === "Tous" || product.product_type === productType;
 
@@ -329,6 +342,7 @@ export default function CatalogueClient({
 
       return (
         matchesSearch &&
+        matchesDepartment &&
         matchesCategory &&
         matchesType &&
         matchesTheme &&
@@ -374,6 +388,7 @@ export default function CatalogueClient({
     ageSearch,
     favoriteIds,
     sortBy,
+    allowedCategories,
   ]);
 
   function toggleFavorite(productId: number) {
@@ -389,7 +404,7 @@ export default function CatalogueClient({
     setSearch("");
     setCategory(initialCategory);
     setProductType("Tous");
-    setCharacterTheme("Tous");
+    setCharacterTheme(initialCharacterTheme);
     setSchoolLevel("Tous");
     setGender("Tous");
     setHighlight(initialHighlight);
@@ -403,7 +418,7 @@ export default function CatalogueClient({
     search.trim(),
     category !== initialCategory,
     productType !== "Tous",
-    characterTheme !== "Tous",
+    characterTheme !== initialCharacterTheme,
     schoolLevel !== "Tous",
     gender !== "Tous",
     highlight !== initialHighlight,
@@ -496,7 +511,7 @@ export default function CatalogueClient({
                   </div>
                 </div>
 
-                <KidiclassSelect label="Catégorie" value={category} options={categories} onChange={setCategory} />
+                <KidiclassSelect label="Catégorie" value={category} options={visibleCategories} onChange={setCategory} />
                 <KidiclassSelect label="Type de produit" value={productType} options={productTypes} onChange={setProductType} />
                 <KidiclassSelect label="Personnage / thème" value={characterTheme} options={characterThemes} onChange={setCharacterTheme} />
                 <KidiclassSelect label="Niveau scolaire" value={schoolLevel} options={schoolLevels} onChange={setSchoolLevel} />
@@ -589,7 +604,7 @@ export default function CatalogueClient({
               <KidiclassSelect
                 label="Catégorie"
                 value={category}
-                options={categories}
+                options={visibleCategories}
                 onChange={setCategory}
               />
 
