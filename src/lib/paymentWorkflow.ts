@@ -10,7 +10,7 @@ export const available24hPaymentOptions = [
 ];
 
 export function isPreorderAvailability(availabilityStatus?: string | null) {
-  return availabilityStatus === "Disponible en précommande";
+  return availabilityStatus?.startsWith("Disponible en précommande") || false;
 }
 
 export function getPaymentOptions(hasPreorder: boolean) {
