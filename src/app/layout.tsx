@@ -18,13 +18,17 @@ export const metadata: Metadata = {
     locale: "fr_CI",
     type: "website",
   },
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: [
-      { url: "/favicon.ico?v=4", sizes: "any" },
-      { url: "/icon.png?v=4", type: "image/png", sizes: "512x512" },
+      { url: "/favicon.ico?v=8", sizes: "any" },
+      { url: "/favicon.png?v=8", type: "image/png", sizes: "512x512" },
+      { url: "/icon-192.png?v=8", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512.png?v=8", type: "image/png", sizes: "512x512" },
+      { url: "/icon.png?v=8", type: "image/png", sizes: "512x512" },
     ],
-    shortcut: "/favicon.ico?v=4",
-    apple: "/apple-icon.png?v=4",
+    shortcut: "/favicon.ico?v=8",
+    apple: "/apple-icon.png?v=8",
   },
 };
 
