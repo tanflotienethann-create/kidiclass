@@ -116,6 +116,10 @@ function getPackComponentName(item: PackItem) {
   return item.componentType.trim();
 }
 
+function keepOnlyDigits(value: string) {
+  return value.replace(/\D/g, "");
+}
+
 function convertComponentNameToPackItem(item: ProductPackItemRow): PackItem {
   const existingOption = packComponentOptions.find((option) => {
     return option.toLowerCase() === item.component_name.toLowerCase();
@@ -912,10 +916,12 @@ export default function EditProductPage() {
                   </span>
 
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     className="w-full rounded-[1.4rem] border-2 border-[#bfedf0] bg-white p-4 font-bold text-black shadow-sm outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15"
                     value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    onChange={(e) => setPrice(keepOnlyDigits(e.target.value))}
                     required
                   />
                 </label>
@@ -926,10 +932,12 @@ export default function EditProductPage() {
                   </span>
 
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     className="w-full rounded-[1.4rem] border-2 border-[#bfedf0] bg-white p-4 font-bold text-black shadow-sm outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15"
                     value={oldPrice}
-                    onChange={(e) => setOldPrice(e.target.value)}
+                    onChange={(e) => setOldPrice(keepOnlyDigits(e.target.value))}
                   />
                 </label>
               </div>
