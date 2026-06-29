@@ -7,6 +7,7 @@ import {
   getRemainingAmount,
   needsAdminBalancePaymentLink,
 } from "@/lib/paymentWorkflow";
+import { DATA_RESET_AT } from "@/lib/dataReset";
 import { supabase } from "@/lib/supabase";
 import {
   Banknote,
@@ -110,6 +111,7 @@ export default function AdminOrdersList() {
         )
       `
       )
+      .gte("created_at", DATA_RESET_AT)
       .order("created_at", { ascending: false });
 
     if (error) {

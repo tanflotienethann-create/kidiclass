@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
+import { DATA_RESET_AT } from "@/lib/dataReset";
 import { supabase } from "@/lib/supabase";
 import {
   BadgeCheck,
@@ -80,6 +81,7 @@ export default function ComptePage() {
           .from("orders")
           .select("*")
           .eq("user_id", user.id)
+          .gte("created_at", DATA_RESET_AT)
           .order("created_at", { ascending: false }),
       ]);
 

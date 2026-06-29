@@ -11,6 +11,7 @@ import {
   Sparkles,
   UserRound,
 } from "lucide-react";
+import { DATA_RESET_AT } from "@/lib/dataReset";
 import { supabase } from "@/lib/supabase";
 
 type ClientProfile = {
@@ -67,6 +68,7 @@ export default function AdminClientsList() {
           "user_id,customer_city,status,total_amount,loyalty_points_earned,created_at",
         )
         .not("user_id", "is", null)
+        .gte("created_at", DATA_RESET_AT)
         .order("created_at", { ascending: false }),
     ]);
 

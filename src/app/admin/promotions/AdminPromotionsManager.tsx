@@ -7,6 +7,7 @@ import {
   PROMO_CATEGORY,
   PROMO_PRODUCT_TYPE,
 } from "@/lib/promoCodes";
+import { DATA_RESET_AT } from "@/lib/dataReset";
 import { supabase } from "@/lib/supabase";
 
 type PromoRecord = {
@@ -36,6 +37,7 @@ export default function AdminPromotionsManager() {
       .select("id,name,price,is_active,created_at")
       .eq("category", PROMO_CATEGORY)
       .eq("is_archived", true)
+      .gte("created_at", DATA_RESET_AT)
       .order("created_at", { ascending: false });
 
     if (error) {

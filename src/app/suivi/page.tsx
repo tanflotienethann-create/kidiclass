@@ -1,6 +1,7 @@
 "use client";
 
 import KidiclassSelect from "@/components/KidiclassSelect";
+import { DATA_RESET_AT, isAfterDataReset } from "@/lib/dataReset";
 import { supabase } from "@/lib/supabase";
 import {
   CheckCircle2,
@@ -150,6 +151,7 @@ export default function SuiviPage() {
         .select(
           "id,order_reference,customer_name,customer_phone,customer_city,customer_address,payment_method,status,total_amount,delivery_area,delivery_fee,created_at"
         )
+        .gte("created_at", DATA_RESET_AT)
         .order("created_at", { ascending: false });
 
       if (fallback.error) {
@@ -164,6 +166,8 @@ export default function SuiviPage() {
     }
 
     const matchedOrders = allOrders.filter((order) => {
+      if (!isAfterDataReset(order.created_at)) return false;
+
       const matchesPhone =
         !phone.trim() || phoneMatchesOrder(order.customer_phone, searchedPhone);
 

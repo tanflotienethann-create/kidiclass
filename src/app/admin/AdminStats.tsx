@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { DATA_RESET_AT } from "@/lib/dataReset";
 import { supabase } from "@/lib/supabase";
 import {
   Banknote,
@@ -29,8 +30,14 @@ export default function AdminStats() {
 
   const fetchStats = useCallback(async () => {
     const [productsResult, ordersResult] = await Promise.all([
-      supabase.from("products").select("*", { count: "exact", head: true }),
-      supabase.from("orders").select("status,total_amount"),
+      supabase
+        .from("products")
+        .select("*", { count: "exact", head: true })
+        .or("is_archived.is.false,is_archived.is.null"),
+      supabase
+        .from("orders")
+        .select("status,total_amount")
+        .gte("created_at", DATA_RESET_AT),
     ]);
 
     const productsCount = productsResult.count;

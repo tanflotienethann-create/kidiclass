@@ -1,6 +1,7 @@
 "use client";
 
 import KidiclassSelect from "@/components/KidiclassSelect";
+import { DATA_RESET_AT } from "@/lib/dataReset";
 import { supabase } from "@/lib/supabase";
 import {
   Banknote,
@@ -100,6 +101,7 @@ export default function AdminOrderHistoryList() {
       `
       )
       .eq("status", "Livrée")
+      .gte("created_at", DATA_RESET_AT)
       .order("delivered_at", { ascending: false, nullsFirst: false });
 
     if (error) {
