@@ -16,6 +16,7 @@ import {
   getPaymentOptions,
   getRemainingAmount,
   isPreorderAvailability,
+  needsOnlinePayment,
 } from "@/lib/paymentWorkflow";
 import { getActivePromoCode, getPromoDiscount } from "@/lib/promoCodes";
 import { supabase } from "@/lib/supabase";
@@ -139,7 +140,6 @@ export default function CommandePage() {
   const [deliveryMapAddress, setDeliveryMapAddress] = useState("");
 
   const [paymentMethod, setPaymentMethod] = useState("Paiement à la livraison");
-  const [mobileMoneyMethod, setMobileMoneyMethod] = useState("Wave");
 
   const [message, setMessage] = useState("");
   const [orderReference, setOrderReference] = useState("");
@@ -152,6 +152,7 @@ export default function CommandePage() {
   const [promoPercentage, setPromoPercentage] = useState(0);
   const [hasRollingBag, setHasRollingBag] = useState(false);
   const [hasPreorderProduct, setHasPreorderProduct] = useState(false);
+  const [paydunyaReady, setPaydunyaReady] = useState<boolean | null>(null);
 
   const adminWhatsappNumber = "2250779311555";
 
@@ -171,10 +172,9 @@ export default function CommandePage() {
   const paymentOptions = getPaymentOptions(hasPreorderProduct);
   const depositAmount = getDepositAmount(total, paymentMethod);
   const remainingAmount = getRemainingAmount(total, paymentMethod);
-  const showMobileMoneyChoice = needsManualPaymentLink();
-  const savedPaymentMethod = showMobileMoneyChoice
-    ? `${paymentMethod} (${mobileMoneyMethod})`
-    : paymentMethod;
+  const requiresOnlinePayment = needsOnlinePayment(paymentMethod);
+  const amountToPayNow = depositAmount > 0 ? depositAmount : total;
+  const savedPaymentMethod = paymentMethod;
 
   const fetchCartDeliveryInfo = useCallback(async () => {
     const productIds = cart.map((item) => item.productId);
@@ -215,6 +215,26 @@ export default function CommandePage() {
 
     return () => window.clearTimeout(timeoutId);
   }, [fetchCartDeliveryInfo]);
+
+  useEffect(() => {
+    let active = true;
+
+    async function checkPaydunyaStatus() {
+      try {
+        const response = await fetch("/api/payments/paydunya/status");
+        const data = (await response.json()) as { configured?: boolean };
+        if (active) setPaydunyaReady(Boolean(data.configured));
+      } catch {
+        if (active) setPaydunyaReady(false);
+      }
+    }
+
+    void checkPaydunyaStatus();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!promoCode) return;
@@ -267,14 +287,6 @@ export default function CommandePage() {
 
   function getLoyaltyPoints(amount: number) {
     return Math.floor(Number(amount || 0) / 1000);
-  }
-
-  function needsManualPaymentLink() {
-    return (
-      paymentMethod.includes("Mobile Money") ||
-      paymentMethod.includes("deux fois") ||
-      paymentMethod.includes("acompte")
-    );
   }
 
   function getCartSummary() {
@@ -589,6 +601,14 @@ Merci de me communiquer le montant total avec livraison.
       }
     }
 
+    if (isFixedDeliveryArea(deliveryArea) && requiresOnlinePayment && !paydunyaReady) {
+      setMessage(
+        "Le paiement en ligne PayDunya est en cours de configuration. Veuillez réessayer dans quelques instants.",
+      );
+      setLoading(false);
+      return;
+    }
+
     const stockCheck = await checkStockBeforeOrder();
 
     if (!stockCheck.valid) {
@@ -604,7 +624,7 @@ Merci de me communiquer le montant total avec livraison.
     const loyaltyPoints = getLoyaltyPoints(total);
 
       const initialStatus = isFixedDeliveryArea(deliveryArea)
-        ? needsManualPaymentLink()
+        ? requiresOnlinePayment
           ? "En attente de paiement"
           : "En attente"
         : "Expédition à confirmer";
@@ -660,6 +680,56 @@ Merci de me communiquer le montant total avec livraison.
     if (itemsError) {
       setMessage("Erreur articles commande : " + itemsError.message);
       setLoading(false);
+      return;
+    }
+
+    if (isFixedDeliveryArea(deliveryArea) && requiresOnlinePayment) {
+      const response = await fetch("/api/payments/paydunya/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderReference: reference,
+          amount: amountToPayNow,
+          totalAmount: total,
+          paymentMethod: savedPaymentMethod,
+          customerName,
+          customerPhone: `${selectedCountryCode} ${customerPhone}`,
+        }),
+      });
+
+      const paymentResult = (await response.json()) as {
+        checkoutUrl?: string;
+        error?: string;
+      };
+
+      if (!response.ok || !paymentResult.checkoutUrl) {
+        setMessage(
+          paymentResult.error ||
+            "La commande est enregistrée, mais PayDunya n'a pas pu ouvrir le paiement.",
+        );
+        setLoading(false);
+        return;
+      }
+
+      try {
+        await reduceStockAfterOrder();
+      } catch (error) {
+        setMessage(
+          error instanceof Error
+            ? "Commande créée, mais erreur stock : " + error.message
+            : "Commande créée, mais erreur lors de la mise à jour du stock."
+        );
+        setLoading(false);
+        return;
+      }
+
+      localStorage.removeItem("kidiclass_cart");
+      localStorage.removeItem("kidiclass_promo_code");
+      window.dispatchEvent(new Event("kidiclass-cart-updated"));
+      setCart([]);
+      window.location.href = paymentResult.checkoutUrl;
       return;
     }
 
@@ -951,15 +1021,6 @@ Merci de me communiquer le montant total avec livraison.
                   onChange={setPaymentMethod}
                 />
 
-                {showMobileMoneyChoice && (
-                  <KidiclassSelect
-                    label="Moyen Mobile Money"
-                    value={mobileMoneyMethod}
-                    options={["Wave", "Orange Money"]}
-                    onChange={setMobileMoneyMethod}
-                  />
-                )}
-
                 <div className="space-y-3 rounded-2xl bg-[#e9fbfc] p-5 text-sm font-bold leading-6 text-[#1db7bd]">
                   <p>
                     {hasPreorderProduct
@@ -970,6 +1031,21 @@ Merci de me communiquer le montant total avec livraison.
                   <p className="font-black text-gray-950">
                     {getPaymentInstruction(total, paymentMethod)}
                   </p>
+
+                  {requiresOnlinePayment && (
+                    <p>
+                      Après validation, vous serez redirigé vers PayDunya pour
+                      payer en ligne de façon sécurisée. La commande sera mise à
+                      jour automatiquement après confirmation du paiement.
+                    </p>
+                  )}
+
+                  {requiresOnlinePayment && paydunyaReady === false && (
+                    <p className="rounded-2xl bg-white p-4 text-[#f36f45]">
+                      Le paiement en ligne n&apos;est pas encore activé par
+                      l&apos;administrateur.
+                    </p>
+                  )}
 
                 </div>
               </div>
@@ -987,13 +1063,19 @@ Merci de me communiquer le montant total avec livraison.
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={
+              loading || (requiresOnlinePayment && paydunyaReady !== true)
+            }
             className="w-full rounded-full bg-[#f36f45] px-8 py-5 text-lg font-black text-white shadow-sm hover:bg-[#e85e33] disabled:opacity-50"
           >
             {loading
-              ? "Validation..."
+              ? requiresOnlinePayment
+                ? "Ouverture du paiement..."
+                : "Validation..."
               : isFixedDeliveryArea(deliveryArea)
-              ? "Valider la commande"
+              ? requiresOnlinePayment
+                ? "Payer avec PayDunya"
+                : "Valider la commande"
               : "Enregistrer et finaliser sur WhatsApp"}
           </button>
         </form>
@@ -1094,7 +1176,7 @@ Merci de me communiquer le montant total avec livraison.
                 {depositAmount > 0 && (
                   <>
                     <br />
-                    Paiement initial : {depositAmount.toLocaleString("fr-FR")} FCFA
+                    À payer maintenant : {amountToPayNow.toLocaleString("fr-FR")} FCFA
                   </>
                 )}
                 {remainingAmount > 0 && depositAmount > 0 && (

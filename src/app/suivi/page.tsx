@@ -266,7 +266,10 @@ export default function SuiviPage() {
           <div className="mt-8 space-y-6">
             {orders.map((order) => {
               const currentStepIndex = getStepIndex(order.status);
-              const isCancelled = order.status === "Annulée";
+              const isCancelled =
+                order.status === "Annulée" ||
+                order.status === "Paiement annulé" ||
+                order.status === "Paiement échoué";
 
               return (
                 <article

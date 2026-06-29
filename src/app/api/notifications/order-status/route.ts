@@ -30,6 +30,8 @@ function buildStatusMessage({
     Livrée: "a été livrée",
     Annulée: "a été annulée",
     "En attente de paiement": "est en attente de paiement",
+    "Paiement annulé": "a un paiement annulé",
+    "Paiement échoué": "a un paiement échoué",
     "Expédition à confirmer": "attend la confirmation des frais d’expédition",
     "Frais de livraison à confirmer":
       "attend la confirmation des frais de livraison",

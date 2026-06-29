@@ -56,6 +56,8 @@ const statusOptions = [
   "Expédition à confirmer",
   "Frais de livraison à confirmer",
   "En attente de paiement",
+  "Paiement annulé",
+  "Paiement échoué",
   "Expédiée",
   "Livrée",
   "Annulée",

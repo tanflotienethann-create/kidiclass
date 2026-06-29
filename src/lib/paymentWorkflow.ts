@@ -1,11 +1,11 @@
 export const preorderPaymentOptions = [
-  "Précommande - acompte 50%, solde avant livraison",
+  "Précommande - acompte 50%, solde en ligne avant livraison",
   "Précommande - acompte 50%, solde à la livraison",
 ];
 
 export const available24hPaymentOptions = [
   "Paiement à la livraison",
-  "Paiement Mobile Money intégral",
+  "Paiement en ligne intégral",
   "Paiement en deux fois",
 ];
 
@@ -31,7 +31,10 @@ export function getDepositAmount(total: number, paymentMethod?: string | null) {
     return Math.ceil(Number(total || 0) / 2);
   }
 
-  if (paymentMethod.includes("Paiement Mobile Money intégral")) {
+  if (
+    paymentMethod.includes("Paiement en ligne intégral") ||
+    paymentMethod.includes("Paiement Mobile Money intégral")
+  ) {
     return Number(total || 0);
   }
 
@@ -42,16 +45,49 @@ export function getRemainingAmount(total: number, paymentMethod?: string | null)
   return Math.max(Number(total || 0) - getDepositAmount(total, paymentMethod), 0);
 }
 
+export function needsOnlinePayment(paymentMethod?: string | null) {
+  if (!paymentMethod) return false;
+  if (paymentMethod.includes("Paiement à la livraison")) return false;
+  if (paymentMethod.includes("À confirmer")) return false;
+  return (
+    paymentMethod.includes("Précommande") ||
+    paymentMethod.includes("Paiement en ligne") ||
+    paymentMethod.includes("Paiement Mobile Money") ||
+    paymentMethod.includes("Paiement en deux fois")
+  );
+}
+
+export function needsAdminBalancePaymentLink(order: {
+  payment_method?: string | null;
+  status?: string | null;
+  total_amount?: number | null;
+}) {
+  const method = order.payment_method || "";
+  const remaining = getRemainingAmount(Number(order.total_amount || 0), method);
+  if (remaining <= 0) return false;
+
+  return (
+    (order.status === "Arrivée à Abidjan" &&
+      method.includes("solde en ligne avant livraison")) ||
+    method.includes("Paiement en deux fois")
+  );
+}
+
 export function getPaymentInstruction(total: number, paymentMethod?: string | null) {
   const deposit = getDepositAmount(total, paymentMethod);
   const remaining = getRemainingAmount(total, paymentMethod);
 
   if (!paymentMethod) return "Paiement à confirmer.";
 
-  if (paymentMethod.includes("solde avant livraison")) {
+  if (
+    paymentMethod.includes("solde en ligne avant livraison") ||
+    paymentMethod.includes("solde avant livraison")
+  ) {
     return `Acompte à régler : ${deposit.toLocaleString(
       "fr-FR"
-    )} FCFA. Solde avant livraison : ${remaining.toLocaleString("fr-FR")} FCFA.`;
+    )} FCFA. Le solde de ${remaining.toLocaleString(
+      "fr-FR"
+    )} FCFA sera réglé en ligne avant la livraison.`;
   }
 
   if (paymentMethod.includes("solde à la livraison")) {
@@ -62,16 +98,21 @@ export function getPaymentInstruction(total: number, paymentMethod?: string | nu
     )} FCFA.`;
   }
 
-  if (paymentMethod.includes("Paiement Mobile Money intégral")) {
-    return `Total à régler par Mobile Money : ${deposit.toLocaleString(
+  if (
+    paymentMethod.includes("Paiement en ligne intégral") ||
+    paymentMethod.includes("Paiement Mobile Money intégral")
+  ) {
+    return `Total à régler en ligne avec PayDunya : ${deposit.toLocaleString(
       "fr-FR"
     )} FCFA.`;
   }
 
   if (paymentMethod.includes("Paiement en deux fois")) {
-    return `Premier paiement pour réserver : ${deposit.toLocaleString(
+    return `Premier paiement en ligne pour réserver : ${deposit.toLocaleString(
       "fr-FR"
-    )} FCFA. Deuxième paiement : ${remaining.toLocaleString("fr-FR")} FCFA.`;
+    )} FCFA. Deuxième paiement en ligne : ${remaining.toLocaleString(
+      "fr-FR"
+    )} FCFA.`;
   }
 
   return "Paiement total à la livraison.";
@@ -83,7 +124,7 @@ export function getAdminWhatsappMessage(order: {
   payment_method?: string | null;
   total_amount?: number | null;
   status?: string | null;
-}) {
+}, paymentLink?: string) {
   const name = order.customer_name || "cher client";
   const reference = order.order_reference || "";
   const method = order.payment_method || "";
@@ -95,10 +136,18 @@ export function getAdminWhatsappMessage(order: {
   const outro =
     "\n\nMerci pour votre confiance.\nL’équipe KidiClass";
 
-  if (order.status === "Arrivée à Abidjan" && method.includes("solde avant livraison")) {
+  if (
+    order.status === "Arrivée à Abidjan" &&
+    (method.includes("solde en ligne avant livraison") ||
+      method.includes("solde avant livraison"))
+  ) {
+    const linkLine = paymentLink
+      ? `Voici votre lien de paiement sécurisé PayDunya :\n${paymentLink}`
+      : "Nous préparons votre lien de paiement sécurisé PayDunya et vous le transmettons dans un instant.";
+
     return `${intro}\n\nBonne nouvelle : votre précommande est arrivée à Abidjan.\n\nLe solde restant à régler est de ${remaining.toLocaleString(
       "fr-FR"
-    )} FCFA.\n\nCliquez sur ce lien pour effectuer votre paiement : \n\nUne fois le paiement confirmé, votre commande sera programmée pour une livraison le lendemain.${outro}`;
+    )} FCFA.\n\n${linkLine}\n\nUne fois le paiement confirmé, votre commande sera programmée pour une livraison le lendemain.${outro}`;
   }
 
   if (order.status === "Arrivée à Abidjan" && method.includes("solde à la livraison")) {
@@ -107,16 +156,23 @@ export function getAdminWhatsappMessage(order: {
     )} FCFA directement au moment de la livraison.${outro}`;
   }
 
-  if (method.includes("Paiement Mobile Money intégral")) {
+  if (
+    method.includes("Paiement en ligne intégral") ||
+    method.includes("Paiement Mobile Money intégral")
+  ) {
     return `${intro}\n\nVotre commande est prête à être confirmée. Le montant total à régler est de ${total.toLocaleString(
       "fr-FR"
-    )} FCFA via ${method.includes("Wave") ? "Wave" : method.includes("Orange") ? "Orange Money" : "Mobile Money"}.\n\nCliquez sur ce lien pour effectuer votre paiement : \n\nAprès confirmation du paiement, votre commande sera livrée sous 24h.${outro}`;
+    )} FCFA via PayDunya.\n\nAprès confirmation du paiement en ligne, votre commande sera livrée sous 24h.${outro}`;
   }
 
   if (method.includes("Paiement en deux fois")) {
+    const linkLine = paymentLink
+      ? `Voici votre lien de paiement sécurisé PayDunya pour régler le solde :\n${paymentLink}`
+      : "Nous préparons votre lien de paiement sécurisé PayDunya pour le solde et vous le transmettons dans un instant.";
+
     return `${intro}\n\nVotre commande a bien été réservée avec un premier paiement. Le solde restant est de ${remaining.toLocaleString(
       "fr-FR"
-    )} FCFA.\n\nCliquez sur ce lien pour effectuer votre paiement : \n\nAprès confirmation du deuxième paiement, votre commande sera livrée le lendemain.${outro}`;
+    )} FCFA.\n\n${linkLine}\n\nAprès confirmation du deuxième paiement, votre commande sera livrée le lendemain.${outro}`;
   }
 
   if (method.includes("Paiement à la livraison")) {

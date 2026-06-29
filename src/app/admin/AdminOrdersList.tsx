@@ -5,6 +5,7 @@ import {
   getAdminWhatsappMessage,
   getDepositAmount,
   getRemainingAmount,
+  needsAdminBalancePaymentLink,
 } from "@/lib/paymentWorkflow";
 import { supabase } from "@/lib/supabase";
 import {
@@ -61,6 +62,8 @@ const statusOptions = [
   "Expédition à confirmer",
   "Frais de livraison à confirmer",
   "En attente de paiement",
+  "Paiement annulé",
+  "Paiement échoué",
   "Expédiée",
   "Livrée",
   "Annulée",
@@ -70,6 +73,12 @@ export default function AdminOrdersList() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [paymentLinksByOrderId, setPaymentLinksByOrderId] = useState<
+    Record<number, string>
+  >({});
+  const [generatingPaymentLinkId, setGeneratingPaymentLinkId] = useState<
+    number | null
+  >(null);
 
   const activeOrders = useMemo(() => {
     return orders
@@ -208,7 +217,13 @@ export default function AdminOrdersList() {
   }
 
   function getStatusStyle(status: string | null) {
-    if (status === "Annulée") return "bg-red-50 text-red-500";
+    if (
+      status === "Annulée" ||
+      status === "Paiement annulé" ||
+      status === "Paiement échoué"
+    ) {
+      return "bg-red-50 text-red-500";
+    }
     if (status === "Livrée") return "bg-green-50 text-green-600";
 
     if (status === "En livraison" || status === "Expédiée") {
@@ -240,9 +255,60 @@ export default function AdminOrdersList() {
     const cleanedPhone = cleanPhoneNumber(order.customer_phone);
     if (!cleanedPhone) return "";
 
-    const text = encodeURIComponent(getAdminWhatsappMessage(order));
+    const text = encodeURIComponent(
+      getAdminWhatsappMessage(order, paymentLinksByOrderId[order.id])
+    );
 
     return `https://wa.me/${cleanedPhone}?text=${text}`;
+  }
+
+  async function generatePaydunyaBalanceLink(order: Order) {
+    setMessage("");
+    setGeneratingPaymentLinkId(order.id);
+
+    const { data: sessionData } = await supabase.auth.getSession();
+    const accessToken = sessionData.session?.access_token;
+
+    if (!accessToken) {
+      setMessage("Session administrateur introuvable.");
+      setGeneratingPaymentLinkId(null);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/payments/paydunya/link", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ orderId: order.id }),
+      });
+
+      const result = (await response.json()) as {
+        checkoutUrl?: string;
+        error?: string;
+      };
+
+      if (!response.ok || !result.checkoutUrl) {
+        setMessage(
+          result.error || "Impossible de générer le lien PayDunya.",
+        );
+        return;
+      }
+
+      setPaymentLinksByOrderId((currentLinks) => ({
+        ...currentLinks,
+        [order.id]: result.checkoutUrl || "",
+      }));
+      setMessage(
+        "Lien PayDunya généré. Le message WhatsApp de cette commande contient maintenant le lien.",
+      );
+    } catch {
+      setMessage("PayDunya est momentanément indisponible.");
+    } finally {
+      setGeneratingPaymentLinkId(null);
+    }
   }
 
   function getGoogleMapsLink(order: Order) {
@@ -660,6 +726,20 @@ export default function AdminOrdersList() {
                     </a>
                   )}
 
+                  {needsAdminBalancePaymentLink(order) && (
+                    <button
+                      type="button"
+                      onClick={() => generatePaydunyaBalanceLink(order)}
+                      disabled={generatingPaymentLinkId === order.id}
+                      className="flex items-center gap-2 rounded-full bg-[#1db7bd] px-5 py-3 text-sm font-black text-white hover:bg-[#159ca1] disabled:opacity-50"
+                    >
+                      <Banknote size={18} strokeWidth={2.5} />
+                      {generatingPaymentLinkId === order.id
+                        ? "Génération..."
+                        : "Générer lien PayDunya"}
+                    </button>
+                  )}
+
                   <button
                     type="button"
                     onClick={() => printReceipt(order)}
@@ -669,6 +749,12 @@ export default function AdminOrdersList() {
                     Imprimer reçu A5
                   </button>
                 </div>
+
+                {paymentLinksByOrderId[order.id] && (
+                  <div className="mt-4 rounded-2xl border border-green-100 bg-green-50 p-4 text-sm font-bold leading-6 text-green-700">
+                    Lien PayDunya prêt : {paymentLinksByOrderId[order.id]}
+                  </div>
+                )}
               </div>
 
               <div className="mt-6">
