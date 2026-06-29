@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { markSecondInstallmentPaid } from "@/lib/paymentWorkflow";
 import { getPaydunyaIpnUrl, verifyPaydunyaHash } from "@/lib/server/paydunya";
 
 type UnknownRecord = Record<string, unknown>;
@@ -110,6 +111,7 @@ export async function POST(request: Request) {
   const orderReference =
     getString(customData.order_reference) ||
     getString(customData.orderReference);
+  const paymentKind = getString(customData.payment_kind);
   const status = getString(data.status).toLowerCase();
 
   if (!orderReference) {
@@ -127,9 +129,25 @@ export async function POST(request: Request) {
     );
   }
 
+  const updatePayload: Record<string, string> = {
+    status: getNextOrderStatus(status),
+  };
+
+  if (status === "completed" && paymentKind === "second_installment") {
+    const { data: order } = await supabase
+      .from("orders")
+      .select("payment_method")
+      .eq("order_reference", orderReference)
+      .maybeSingle();
+
+    updatePayload.payment_method = markSecondInstallmentPaid(
+      getString(asRecord(order).payment_method),
+    );
+  }
+
   const { error } = await supabase
     .from("orders")
-    .update({ status: getNextOrderStatus(status) })
+    .update(updatePayload)
     .eq("order_reference", orderReference);
 
   if (error) {

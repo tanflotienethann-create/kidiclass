@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getRemainingAmount } from "@/lib/paymentWorkflow";
+import { getNextOnlinePaymentAmount } from "@/lib/paymentWorkflow";
 import { createPaydunyaInvoice } from "@/lib/server/paydunya";
 import { verifyAdminRequest } from "@/lib/server/notifications";
 
@@ -50,14 +50,14 @@ export async function POST(request: Request) {
   }
 
   const order = data as OrderForPayment;
-  const remainingAmount = getRemainingAmount(
+  const nextPaymentAmount = getNextOnlinePaymentAmount(
     Number(order.total_amount || 0),
     order.payment_method,
   );
 
-  if (remainingAmount <= 0) {
+  if (nextPaymentAmount <= 0) {
     return NextResponse.json(
-      { error: "Cette commande n'a pas de solde à régler." },
+      { error: "Cette commande n'a pas de paiement en ligne à relancer." },
       { status: 400 },
     );
   }
@@ -65,12 +65,12 @@ export async function POST(request: Request) {
   const orderReference = order.order_reference || `KDC-${order.id}`;
   const result = await createPaydunyaInvoice({
     orderReference,
-    amount: remainingAmount,
-    description: `Solde commande KidiClass ${orderReference}`,
+    amount: nextPaymentAmount,
+    description: `Paiement complémentaire commande KidiClass ${orderReference}`,
     customerName: order.customer_name || "",
     customerPhone: order.customer_phone || "",
     customData: {
-      payment_kind: "balance",
+      payment_kind: "second_installment",
       payment_method: order.payment_method || "",
       total_amount: Number(order.total_amount || 0),
     },

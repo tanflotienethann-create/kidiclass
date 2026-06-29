@@ -10,14 +10,20 @@ import {
   isRollingBagProduct,
 } from "@/lib/delivery";
 import {
+  buildOrderPaymentMethod,
   getDefaultPaymentOption,
   getDepositAmount,
   getPaymentInstruction,
   getPaymentOptions,
   getRemainingAmount,
-  isPreorderAvailability,
+  getSecondInstallmentAmount,
   needsOnlinePayment,
 } from "@/lib/paymentWorkflow";
+import {
+  availabilityOptions,
+  getLongestAvailabilityStatus,
+  parseAvailabilityStatuses,
+} from "@/lib/productAvailability";
 import { getActivePromoCode, getPromoDiscount } from "@/lib/promoCodes";
 import { supabase } from "@/lib/supabase";
 import { CheckCircle2, ShoppingCart } from "lucide-react";
@@ -151,7 +157,11 @@ export default function CommandePage() {
   });
   const [promoPercentage, setPromoPercentage] = useState(0);
   const [hasRollingBag, setHasRollingBag] = useState(false);
-  const [hasPreorderProduct, setHasPreorderProduct] = useState(false);
+  const [cartAvailabilityOptions, setCartAvailabilityOptions] = useState<
+    Record<number, string[]>
+  >({});
+  const [selectedAvailabilityByProductId, setSelectedAvailabilityByProductId] =
+    useState<Record<number, string>>({});
   const [paydunyaReady, setPaydunyaReady] = useState<boolean | null>(null);
 
   const adminWhatsappNumber = "2250779311555";
@@ -169,18 +179,34 @@ export default function CommandePage() {
   const promoDiscount = getPromoDiscount(subtotal, promoPercentage);
   const deliveryFee = getDeliveryFee(deliveryArea, hasRollingBag);
   const total = Math.max(subtotal - promoDiscount, 0) + deliveryFee;
-  const paymentOptions = getPaymentOptions(hasPreorderProduct);
+  const selectedCartAvailabilityStatuses = cart.map((item) => {
+    return (
+      selectedAvailabilityByProductId[item.productId] ||
+      cartAvailabilityOptions[item.productId]?.[0] ||
+      availabilityOptions[0]
+    );
+  });
+  const selectedOrderAvailabilityStatus = getLongestAvailabilityStatus(
+    selectedCartAvailabilityStatuses,
+  );
+  const paymentOptions = getPaymentOptions(selectedOrderAvailabilityStatus);
   const depositAmount = getDepositAmount(total, paymentMethod);
+  const secondInstallmentAmount = getSecondInstallmentAmount(total, paymentMethod);
   const remainingAmount = getRemainingAmount(total, paymentMethod);
   const requiresOnlinePayment = needsOnlinePayment(paymentMethod);
   const amountToPayNow = depositAmount > 0 ? depositAmount : total;
-  const savedPaymentMethod = paymentMethod;
+  const savedPaymentMethod = buildOrderPaymentMethod(
+    selectedOrderAvailabilityStatus,
+    paymentMethod,
+  );
 
   const fetchCartDeliveryInfo = useCallback(async () => {
     const productIds = cart.map((item) => item.productId);
 
     if (productIds.length === 0) {
       setHasRollingBag(false);
+      setCartAvailabilityOptions({});
+      setSelectedAvailabilityByProductId({});
       return;
     }
 
@@ -201,11 +227,32 @@ export default function CommandePage() {
       })
     );
 
-    setHasPreorderProduct(
-      products.some((product) =>
-        isPreorderAvailability(product.availability_status)
-      )
+    const availabilityMap = products.reduce<Record<number, string[]>>(
+      (currentMap, product) => {
+        currentMap[product.id] = parseAvailabilityStatuses(
+          product.availability_status,
+        );
+        return currentMap;
+      },
+      {},
     );
+
+    setCartAvailabilityOptions(availabilityMap);
+    setSelectedAvailabilityByProductId((currentSelections) => {
+      const nextSelections: Record<number, string> = {};
+
+      cart.forEach((item) => {
+        const productOptions =
+          availabilityMap[item.productId] || [availabilityOptions[0]];
+        const currentSelection = currentSelections[item.productId];
+
+        nextSelections[item.productId] = productOptions.includes(currentSelection)
+          ? currentSelection
+          : productOptions[0];
+      });
+
+      return nextSelections;
+    });
   }, [cart]);
 
   useEffect(() => {
@@ -267,16 +314,16 @@ export default function CommandePage() {
   useEffect(() => {
     if (!isFixedDeliveryArea(deliveryArea)) return;
 
-    const nextOptions = getPaymentOptions(hasPreorderProduct);
+    const nextOptions = getPaymentOptions(selectedOrderAvailabilityStatus);
 
     if (!nextOptions.includes(paymentMethod)) {
       const timeoutId = window.setTimeout(() => {
-        setPaymentMethod(getDefaultPaymentOption(hasPreorderProduct));
+        setPaymentMethod(getDefaultPaymentOption(selectedOrderAvailabilityStatus));
       }, 0);
 
       return () => window.clearTimeout(timeoutId);
     }
-  }, [deliveryArea, hasPreorderProduct, paymentMethod]);
+  }, [deliveryArea, selectedOrderAvailabilityStatus, paymentMethod]);
 
   function generateOrderReference() {
     const year = new Date().getFullYear();
@@ -934,10 +981,14 @@ Merci de me communiquer le montant total avec livraison.
 
                   if (value === "Abidjan") {
                     setCustomerCity("Cocody");
-                    setPaymentMethod(getDefaultPaymentOption(hasPreorderProduct));
+                    setPaymentMethod(
+                      getDefaultPaymentOption(selectedOrderAvailabilityStatus)
+                    );
                   } else if (isFixedDeliveryArea(value)) {
                     setCustomerCity(value);
-                    setPaymentMethod(getDefaultPaymentOption(hasPreorderProduct));
+                    setPaymentMethod(
+                      getDefaultPaymentOption(selectedOrderAvailabilityStatus)
+                    );
                   } else {
                     setCustomerCity("");
                     setPaymentMethod("À confirmer");
@@ -1014,6 +1065,58 @@ Merci de me communiquer le montant total avec livraison.
 
             {isFixedDeliveryArea(deliveryArea) ? (
               <div className="space-y-4">
+                <div className="space-y-3 rounded-2xl border border-[#bfedf0] bg-white p-4">
+                  <p className="text-sm font-black text-gray-700">
+                    Délai souhaité
+                  </p>
+
+                  {cart.map((item, index) => {
+                    const productOptions =
+                      cartAvailabilityOptions[item.productId] || [
+                        availabilityOptions[0],
+                      ];
+                    const selectedAvailability =
+                      selectedAvailabilityByProductId[item.productId] ||
+                      productOptions[0];
+
+                    return (
+                      <div
+                        key={`${item.productId}-${item.selectedSize}-${index}`}
+                        className="grid gap-2 md:grid-cols-[1fr_280px] md:items-center"
+                      >
+                        <p className="line-clamp-2 text-sm font-black text-gray-950">
+                          {item.productName}
+                        </p>
+
+                        {productOptions.length > 1 ? (
+                          <KidiclassSelect
+                            label="Choisir le délai"
+                            value={selectedAvailability}
+                            options={productOptions}
+                            onChange={(value) =>
+                              setSelectedAvailabilityByProductId(
+                                (currentSelections) => ({
+                                  ...currentSelections,
+                                  [item.productId]: value,
+                                }),
+                              )
+                            }
+                          />
+                        ) : (
+                          <span className="rounded-2xl bg-[#e9fbfc] px-4 py-3 text-sm font-black text-[#087f83]">
+                            {selectedAvailability}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  <p className="rounded-2xl bg-[#fff9cf] p-3 text-sm font-black leading-6 text-[#9a7e00]">
+                    Délai retenu pour cette commande :{" "}
+                    {selectedOrderAvailabilityStatus}
+                  </p>
+                </div>
+
                 <KidiclassSelect
                   label="Option de paiement"
                   value={paymentMethod}
@@ -1023,9 +1126,9 @@ Merci de me communiquer le montant total avec livraison.
 
                 <div className="space-y-3 rounded-2xl bg-[#e9fbfc] p-5 text-sm font-bold leading-6 text-[#1db7bd]">
                   <p>
-                    {hasPreorderProduct
-                      ? "Votre panier contient au moins un article en précommande. Un acompte de 50 % est demandé pour réserver la commande."
-                      : "Vos articles sont disponibles sous 24h. Choisissez comment vous souhaitez régler la commande."}
+                    {selectedOrderAvailabilityStatus === availabilityOptions[2]
+                      ? "Pour le délai 30-45 jours, vous pouvez régler en 2 fois ou en 3 fois."
+                      : "Choisissez votre mode de paiement selon le délai retenu pour la commande."}
                   </p>
 
                   <p className="font-black text-gray-950">
@@ -1182,6 +1285,13 @@ Merci de me communiquer le montant total avec livraison.
                 {remainingAmount > 0 && depositAmount > 0 && (
                   <>
                     <br />
+                    {secondInstallmentAmount > 0 && (
+                      <>
+                        Deuxième paiement :{" "}
+                        {secondInstallmentAmount.toLocaleString("fr-FR")} FCFA
+                        <br />
+                      </>
+                    )}
                     Solde restant : {remainingAmount.toLocaleString("fr-FR")} FCFA
                   </>
                 )}

@@ -4,7 +4,10 @@ import KidiclassSelect from "@/components/KidiclassSelect";
 import {
   getAdminWhatsappMessage,
   getDepositAmount,
+  getPaidAmount,
   getRemainingAmount,
+  getSecondInstallmentAmount,
+  hasSecondInstallmentPaid,
   needsAdminBalancePaymentLink,
 } from "@/lib/paymentWorkflow";
 import { DATA_RESET_AT } from "@/lib/dataReset";
@@ -339,8 +342,13 @@ export default function AdminOrdersList() {
     const totalAmount = Number(order.total_amount || 0);
     const itemsTotal = totalAmount - Number(order.delivery_fee || 0);
     const deposit = getDepositAmount(totalAmount, order.payment_method);
+    const paidAmount = getPaidAmount(totalAmount, order.payment_method);
+    const secondInstallment = getSecondInstallmentAmount(
+      totalAmount,
+      order.payment_method,
+    );
     const remaining = getRemainingAmount(totalAmount, order.payment_method);
-    const amountToPayNow = deposit > 0 ? deposit : totalAmount;
+    const amountToPayNow = remaining;
     const receiptItems = (order.order_items || [])
       .map((item) => {
         const image = item.products?.image_url
@@ -453,7 +461,13 @@ export default function AdminOrdersList() {
               <div class="line payment"><span>Option paiement</span><strong>${order.payment_method || ""}</strong></div>
               ${
                 deposit > 0
-                  ? `<div class="line"><span>Payé / à payer maintenant</span><strong>${deposit.toLocaleString("fr-FR")}F</strong></div>
+                  ? `<div class="line"><span>Premier paiement</span><strong>${deposit.toLocaleString("fr-FR")}F</strong></div>
+                     ${
+                       secondInstallment > 0
+                         ? `<div class="line"><span>Deuxième paiement</span><strong>${hasSecondInstallmentPaid(order.payment_method) ? "Réglé" : secondInstallment.toLocaleString("fr-FR") + "F"}</strong></div>`
+                         : ""
+                     }
+                     <div class="line"><span>Déjà payé</span><strong>${paidAmount.toLocaleString("fr-FR")}F</strong></div>
                      <div class="line"><span>Solde restant</span><strong>${remaining.toLocaleString("fr-FR")}F</strong></div>`
                   : ""
               }
@@ -667,6 +681,28 @@ export default function AdminOrdersList() {
                     <p className="mt-2 text-sm font-bold leading-6 text-gray-500">
                       Paiement initial :{" "}
                       {getDepositAmount(
+                        Number(order.total_amount || 0),
+                        order.payment_method
+                      ).toLocaleString("fr-FR")}{" "}
+                      FCFA
+                      <br />
+                      {getSecondInstallmentAmount(
+                        Number(order.total_amount || 0),
+                        order.payment_method
+                      ) > 0 && (
+                        <>
+                          Deuxième paiement :{" "}
+                          {hasSecondInstallmentPaid(order.payment_method)
+                            ? "réglé"
+                            : `${getSecondInstallmentAmount(
+                                Number(order.total_amount || 0),
+                                order.payment_method
+                              ).toLocaleString("fr-FR")} FCFA`}
+                          <br />
+                        </>
+                      )}
+                      Déjà payé :{" "}
+                      {getPaidAmount(
                         Number(order.total_amount || 0),
                         order.payment_method
                       ).toLocaleString("fr-FR")}{" "}

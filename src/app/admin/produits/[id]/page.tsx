@@ -4,7 +4,9 @@ import AdminShell from "../../AdminShell";
 import KidiclassSelect from "@/components/KidiclassSelect";
 import {
   availabilityOptions,
+  encodeAvailabilityStatuses,
   getProductAvailabilityLabel,
+  parseAvailabilityStatuses,
 } from "@/lib/productAvailability";
 import {
   characterThemes,
@@ -120,6 +122,18 @@ function keepOnlyDigits(value: string) {
   return value.replace(/\D/g, "");
 }
 
+function toggleAvailabilityStatus(
+  currentStatuses: string[],
+  status: string,
+  updateStatuses: (statuses: string[]) => void,
+) {
+  const nextStatuses = currentStatuses.includes(status)
+    ? currentStatuses.filter((currentStatus) => currentStatus !== status)
+    : [...currentStatuses, status];
+
+  updateStatuses(nextStatuses.length > 0 ? nextStatuses : [status]);
+}
+
 function convertComponentNameToPackItem(item: ProductPackItemRow): PackItem {
   const existingOption = packComponentOptions.find((option) => {
     return option.toLowerCase() === item.component_name.toLowerCase();
@@ -168,9 +182,9 @@ export default function EditProductPage() {
   const [price, setPrice] = useState("");
   const [oldPrice, setOldPrice] = useState("");
   const [stock, setStock] = useState("");
-  const [availabilityStatus, setAvailabilityStatus] = useState(
-    availabilityOptions[0]
-  );
+  const [availabilityStatuses, setAvailabilityStatuses] = useState<string[]>([
+    availabilityOptions[0],
+  ]);
 
   const [category, setCategory] = useState("");
   const [productType, setProductType] = useState("");
@@ -237,8 +251,8 @@ export default function EditProductPage() {
       setPrice(String(product.price || ""));
       setOldPrice(product.old_price ? String(product.old_price) : "");
       setStock(String(product.stock || ""));
-      setAvailabilityStatus(
-        getProductAvailabilityLabel(product.availability_status)
+      setAvailabilityStatuses(
+        parseAvailabilityStatuses(product.availability_status)
       );
       setCategory(
         product.category === "PACK" || product.category === "Scolaire"
@@ -595,7 +609,7 @@ export default function EditProductPage() {
           price: Number(price),
           old_price: oldPrice ? Number(oldPrice) : null,
           stock: finalStock,
-          availability_status: availabilityStatus,
+          availability_status: encodeAvailabilityStatuses(availabilityStatuses),
           category,
           product_type: productType,
           character_theme: characterTheme,
@@ -758,7 +772,9 @@ export default function EditProductPage() {
               )}
 
               <p className="mt-2 text-sm font-bold text-gray-500">
-                {getProductAvailabilityLabel(availabilityStatus)}
+                {getProductAvailabilityLabel(
+                  encodeAvailabilityStatuses(availabilityStatuses)
+                )}
               </p>
             </div>
           </div>
@@ -957,12 +973,38 @@ export default function EditProductPage() {
                 </label>
               )}
 
-              <KidiclassSelect
-                label="Disponibilité affichée au client"
-                value={availabilityStatus}
-                options={availabilityOptions}
-                onChange={setAvailabilityStatus}
-              />
+              <div>
+                <p className="mb-2 block text-sm font-black text-gray-700">
+                  Disponibilités proposées au client
+                </p>
+
+                <div className="grid gap-3 md:grid-cols-3">
+                  {availabilityOptions.map((status) => (
+                    <label
+                      key={status}
+                      className={`flex cursor-pointer items-center gap-3 rounded-[1.4rem] border-2 p-4 text-sm font-black transition ${
+                        availabilityStatuses.includes(status)
+                          ? "border-[#1db7bd] bg-[#e9fbfc] text-[#087f83]"
+                          : "border-[#bfedf0] bg-white text-gray-700 hover:border-[#1db7bd]"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        className="h-5 w-5 accent-[#1db7bd]"
+                        checked={availabilityStatuses.includes(status)}
+                        onChange={() =>
+                          toggleAvailabilityStatus(
+                            availabilityStatuses,
+                            status,
+                            setAvailabilityStatuses,
+                          )
+                        }
+                      />
+                      <span>{status}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
 
               <div className="grid gap-5 md:grid-cols-2">
                 <KidiclassSelect
