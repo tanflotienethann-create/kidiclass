@@ -297,7 +297,7 @@ export default function AdminOrdersList() {
 
       if (!response.ok || !result.checkoutUrl) {
         setMessage(
-          result.error || "Impossible de générer le lien PayDunya.",
+          result.error || "Impossible de générer le lien de paiement.",
         );
         return;
       }
@@ -307,10 +307,10 @@ export default function AdminOrdersList() {
         [order.id]: result.checkoutUrl || "",
       }));
       setMessage(
-        "Lien PayDunya généré. Le message WhatsApp de cette commande contient maintenant le lien.",
+        "Lien de paiement généré. Le message WhatsApp de cette commande contient maintenant le lien.",
       );
     } catch {
-      setMessage("PayDunya est momentanément indisponible.");
+      setMessage("Le paiement en ligne est momentanément indisponible.");
     } finally {
       setGeneratingPaymentLinkId(null);
     }
@@ -774,7 +774,7 @@ export default function AdminOrdersList() {
                       <Banknote size={18} strokeWidth={2.5} />
                       {generatingPaymentLinkId === order.id
                         ? "Génération..."
-                        : "Générer lien PayDunya"}
+                        : "Générer lien paiement"}
                     </button>
                   )}
 
@@ -790,7 +790,7 @@ export default function AdminOrdersList() {
 
                 {paymentLinksByOrderId[order.id] && (
                   <div className="mt-4 rounded-2xl border border-green-100 bg-green-50 p-4 text-sm font-bold leading-6 text-green-700">
-                    Lien PayDunya prêt : {paymentLinksByOrderId[order.id]}
+                    Lien de paiement prêt : {paymentLinksByOrderId[order.id]}
                   </div>
                 )}
               </div>

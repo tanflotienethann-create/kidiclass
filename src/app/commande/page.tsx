@@ -650,7 +650,7 @@ Merci de me communiquer le montant total avec livraison.
 
     if (isFixedDeliveryArea(deliveryArea) && requiresOnlinePayment && !paydunyaReady) {
       setMessage(
-        "Le paiement en ligne PayDunya est en cours de configuration. Veuillez réessayer dans quelques instants.",
+        "Le paiement en ligne est en cours de configuration. Veuillez réessayer dans quelques instants.",
       );
       setLoading(false);
       return;
@@ -754,7 +754,7 @@ Merci de me communiquer le montant total avec livraison.
       if (!response.ok || !paymentResult.checkoutUrl) {
         setMessage(
           paymentResult.error ||
-            "La commande est enregistrée, mais PayDunya n'a pas pu ouvrir le paiement.",
+            "La commande est enregistrée, mais le paiement en ligne n'a pas pu s'ouvrir.",
         );
         setLoading(false);
         return;
@@ -1137,7 +1137,7 @@ Merci de me communiquer le montant total avec livraison.
 
                   {requiresOnlinePayment && (
                     <p>
-                      Après validation, vous serez redirigé vers PayDunya pour
+                      Après validation, vous serez redirigé vers une page de paiement
                       payer en ligne de façon sécurisée. La commande sera mise à
                       jour automatiquement après confirmation du paiement.
                     </p>
@@ -1177,7 +1177,7 @@ Merci de me communiquer le montant total avec livraison.
                 : "Validation..."
               : isFixedDeliveryArea(deliveryArea)
               ? requiresOnlinePayment
-                ? "Payer avec PayDunya"
+                ? "Payer en ligne"
                 : "Valider la commande"
               : "Enregistrer et finaliser sur WhatsApp"}
           </button>

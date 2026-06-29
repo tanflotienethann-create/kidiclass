@@ -200,7 +200,7 @@ export function getPaymentInstruction(total: number, paymentMethod?: string | nu
   }
 
   if (paymentMethod.includes(paymentOnlineFull)) {
-    return `Total à régler en ligne avec PayDunya : ${firstPayment.toLocaleString(
+    return `Total à régler en ligne de façon sécurisée : ${firstPayment.toLocaleString(
       "fr-FR",
     )} FCFA.`;
   }
@@ -282,7 +282,7 @@ export function getAdminWhatsappMessage(
 
     return `${intro}${delayLine}\n\nPetit rappel pour votre commande : le deuxième paiement de ${secondPayment.toLocaleString(
       "fr-FR",
-    )} FCFA peut être réglé à partir du 15e jour.\n\nLien de paiement sécurisé PayDunya :\n${paymentLink}\n\nAprès ce paiement, il restera ${finalPayment.toLocaleString(
+    )} FCFA peut être réglé à partir du 15e jour.\n\nLien de paiement sécurisé :\n${paymentLink}\n\nAprès ce paiement, il restera ${finalPayment.toLocaleString(
       "fr-FR",
     )} FCFA à régler à la livraison.${outro}`;
   }
@@ -298,7 +298,7 @@ export function getAdminWhatsappMessage(
   if (method.includes(paymentOnlinePartial) || method.includes(paymentTwoTimes)) {
     return `${intro}${delayLine}\n\nVotre commande est bien confirmée. Vous avez déjà réglé ${paidAmount.toLocaleString(
       "fr-FR",
-    )} FCFA via PayDunya.\n\nLe reste à payer à la livraison est de ${remaining.toLocaleString(
+    )} FCFA en ligne.\n\nLe reste à payer à la livraison est de ${remaining.toLocaleString(
       "fr-FR",
     )} FCFA.${outro}`;
   }
@@ -306,7 +306,7 @@ export function getAdminWhatsappMessage(
   if (method.includes(paymentOnlineFull)) {
     return `${intro}${delayLine}\n\nVotre commande est bien confirmée et le paiement intégral de ${total.toLocaleString(
       "fr-FR",
-    )} FCFA a été réglé via PayDunya.\n\nNous préparons la livraison selon le délai choisi.${outro}`;
+    )} FCFA a été réglé en ligne.\n\nNous préparons la livraison selon le délai choisi.${outro}`;
   }
 
   if (method.includes(paymentDelivery)) {
@@ -321,8 +321,8 @@ export function getAdminWhatsappMessage(
       method.includes("solde avant livraison"))
   ) {
     const linkLine = paymentLink
-      ? `Voici votre lien de paiement sécurisé PayDunya :\n${paymentLink}`
-      : "Nous préparons votre lien de paiement sécurisé PayDunya et vous le transmettons dans un instant.";
+      ? `Voici votre lien de paiement sécurisé :\n${paymentLink}`
+      : "Nous préparons votre lien de paiement sécurisé et vous le transmettons dans un instant.";
 
     return `${intro}\n\nBonne nouvelle : votre précommande est arrivée à Abidjan.\n\nLe solde restant à régler est de ${remaining.toLocaleString(
       "fr-FR",

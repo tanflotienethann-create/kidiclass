@@ -34,7 +34,7 @@ export default async function PaymentReturnPage({
         </div>
 
         <p className="mb-2 text-sm font-black uppercase tracking-[0.2em] text-[#f36f45]">
-          Paiement PayDunya
+          Paiement en ligne
         </p>
 
         <h1 className="text-4xl font-black text-gray-950">
@@ -44,7 +44,7 @@ export default async function PaymentReturnPage({
         <p className="mx-auto mt-4 max-w-2xl text-base font-bold leading-7 text-gray-600">
           {isCancelled
             ? "Votre paiement n'a pas été finalisé. Vous pouvez reprendre votre commande ou contacter KidiClass si besoin."
-            : "Merci. PayDunya confirme automatiquement le paiement à KidiClass. Votre commande sera mise à jour dès que la notification est reçue."}
+            : "Merci. Le paiement est confirmé automatiquement à KidiClass. Votre commande sera mise à jour dès que la notification est reçue."}
         </p>
 
         {reference && (
