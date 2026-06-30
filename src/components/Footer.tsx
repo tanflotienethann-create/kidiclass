@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Mail, Music2, Phone, Truck } from "lucide-react";
+import { Mail, Phone, Truck } from "lucide-react";
 
 const shopLinks = [
   { label: "Promotions", href: "/promotions" },
@@ -31,12 +31,50 @@ const socialLinks = [
     href: "https://www.instagram.com/kidiclass",
     mark: "ig",
   },
-  {
-    label: "TikTok",
-    href: "https://www.tiktok.com/@kidiclass",
-    mark: "tt",
-  },
 ];
+
+function InstagramIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-[18px] w-[18px]"
+      fill="none"
+    >
+      <rect
+        x="3"
+        y="3"
+        width="18"
+        height="18"
+        rx="5"
+        stroke="url(#instagram-gradient)"
+        strokeWidth="2.4"
+      />
+      <circle
+        cx="12"
+        cy="12"
+        r="4"
+        stroke="url(#instagram-gradient)"
+        strokeWidth="2.4"
+      />
+      <circle cx="17.2" cy="6.8" r="1.3" fill="#f36f45" />
+      <defs>
+        <linearGradient
+          id="instagram-gradient"
+          x1="3"
+          y1="21"
+          x2="21"
+          y2="3"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#f36f45" />
+          <stop offset="0.55" stopColor="#e84a77" />
+          <stop offset="1" stopColor="#7c3aed" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
 
 export default function Footer() {
   const pathname = usePathname();
@@ -82,8 +120,8 @@ export default function Footer() {
                 className="flex h-10 items-center gap-2 rounded-full border border-[#eadfce] bg-[#fffdf7] px-3 text-sm font-black text-gray-900 transition hover:border-[#f36f45] hover:text-[#e85035]"
                 aria-label={social.label}
               >
-                {social.label === "TikTok" ? (
-                  <Music2 size={17} strokeWidth={2.5} />
+                {social.label === "Instagram" ? (
+                  <InstagramIcon />
                 ) : (
                   <span className="text-xs uppercase">{social.mark}</span>
                 )}
