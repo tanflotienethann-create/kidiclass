@@ -141,8 +141,8 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-[9999] border-b border-gray-100 bg-white shadow-sm">
       <div className="border-b-4 border-[#f36f45] bg-[#087f83] px-3 py-1.5 text-center text-[11px] font-black leading-4 text-white sm:px-4 sm:py-2 sm:text-sm">
-        Livraison : Abidjan 1 000 FCFA • sac à roulette 2 000 FCFA •
-        Bassam/Songon/Anyama 2 500 FCFA
+        Livraison à Abidjan et alentours • Expéditions en Côte d’Ivoire et à
+        l’international
       </div>
 
       <div className="bg-white">

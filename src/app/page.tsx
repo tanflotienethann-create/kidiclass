@@ -224,6 +224,45 @@ export default function HomePage() {
                 Spécial rentrée
               </Link>
             </div>
+
+            <div className="mt-7 overflow-hidden rounded-2xl border border-[#f4b7a5] bg-white shadow-sm md:hidden">
+              <Link
+                href="/ecole-sorties"
+                className="block bg-[#fff3bf] px-4 py-4"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#9a6b00]">
+                      Rentrée scolaire
+                    </p>
+                    <h2 className="mt-1 text-2xl font-black leading-tight text-gray-950">
+                      Les essentiels école en premier
+                    </h2>
+                  </div>
+                  <School
+                    className="shrink-0 text-[#e85035]"
+                    size={34}
+                    strokeWidth={2.5}
+                  />
+                </div>
+                <p className="mt-3 text-sm font-bold leading-6 text-gray-700">
+                  Packs, sacs, gourdes et trousses faciles à retrouver sur
+                  téléphone.
+                </p>
+              </Link>
+
+              <div className="grid grid-cols-2 gap-2 p-3">
+                {schoolSelection.slice(0, 4).map((item) => (
+                  <Link
+                    key={item.title}
+                    href={item.href}
+                    className="rounded-xl border border-[#f7c873] bg-[#fffdf7] px-3 py-3 text-sm font-black leading-tight text-[#6f4e00]"
+                  >
+                    {item.title}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="hidden gap-4 md:grid sm:grid-cols-2">
