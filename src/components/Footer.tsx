@@ -26,52 +26,17 @@ const socialLinks = [
     href: "https://www.facebook.com/kidiclass",
     mark: "f",
   },
-  {
-    label: "Instagram",
-    href: "https://www.instagram.com/kidiclass",
-    mark: "ig",
-  },
 ];
 
-function InstagramIcon() {
+function FacebookIcon() {
   return (
     <svg
       aria-hidden="true"
       viewBox="0 0 24 24"
       className="h-[18px] w-[18px]"
-      fill="none"
+      fill="currentColor"
     >
-      <rect
-        x="3"
-        y="3"
-        width="18"
-        height="18"
-        rx="5"
-        stroke="url(#instagram-gradient)"
-        strokeWidth="2.4"
-      />
-      <circle
-        cx="12"
-        cy="12"
-        r="4"
-        stroke="url(#instagram-gradient)"
-        strokeWidth="2.4"
-      />
-      <circle cx="17.2" cy="6.8" r="1.3" fill="#f36f45" />
-      <defs>
-        <linearGradient
-          id="instagram-gradient"
-          x1="3"
-          y1="21"
-          x2="21"
-          y2="3"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#f36f45" />
-          <stop offset="0.55" stopColor="#e84a77" />
-          <stop offset="1" stopColor="#7c3aed" />
-        </linearGradient>
-      </defs>
+      <path d="M13.8 21v-7.4h2.5l.4-2.9h-2.9V8.8c0-.8.2-1.4 1.4-1.4h1.6V4.8c-.8-.1-1.6-.2-2.4-.2-2.4 0-4.1 1.5-4.1 4.2v1.9H7.6v2.9h2.7V21h3.5Z" />
     </svg>
   );
 }
@@ -120,11 +85,7 @@ export default function Footer() {
                 className="flex h-10 items-center gap-2 rounded-full border border-[#eadfce] bg-[#fffdf7] px-3 text-sm font-black text-gray-900 transition hover:border-[#f36f45] hover:text-[#e85035]"
                 aria-label={social.label}
               >
-                {social.label === "Instagram" ? (
-                  <InstagramIcon />
-                ) : (
-                  <span className="text-xs uppercase">{social.mark}</span>
-                )}
+                <FacebookIcon />
                 <span className="hidden sm:inline">{social.label}</span>
               </a>
             ))}
