@@ -6,6 +6,8 @@ import { supabase } from "@/lib/supabase";
 import KidiclassSelect from "@/components/KidiclassSelect";
 import {
   ArrowRight,
+  ChevronLeft,
+  ChevronRight,
   Gamepad2,
   Heart,
   PackageCheck,
@@ -20,7 +22,7 @@ import {
   Waves,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Product = {
   id: number;
@@ -122,6 +124,7 @@ const schoolSelection = [
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [productFilter, setProductFilter] = useState("Tous les articles");
+  const productCarouselRef = useRef<HTMLDivElement>(null);
 
   const productFilterOptions = [
     "Tous les articles",
@@ -189,6 +192,44 @@ export default function HomePage() {
       return department.categories.includes(product.category);
     })
     .slice(0, 8);
+
+  function scrollProductCarousel(direction: "previous" | "next") {
+    const carousel = productCarouselRef.current;
+    if (!carousel) return;
+
+    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+    if (maxScroll <= 0) return;
+
+    const distance = carousel.clientWidth * 0.78;
+    const nextScroll =
+      direction === "next"
+        ? Math.min(carousel.scrollLeft + distance, maxScroll)
+        : Math.max(carousel.scrollLeft - distance, 0);
+
+    carousel.scrollTo({ left: nextScroll, behavior: "smooth" });
+  }
+
+  useEffect(() => {
+    productCarouselRef.current?.scrollTo({ left: 0, behavior: "smooth" });
+  }, [productFilter]);
+
+  useEffect(() => {
+    const carousel = productCarouselRef.current;
+    if (!carousel || displayedProducts.length <= 2) return;
+
+    const timer = window.setInterval(() => {
+      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+      if (maxScroll <= 0) return;
+
+      const isAtEnd = carousel.scrollLeft >= maxScroll - 8;
+      carousel.scrollTo({
+        left: isAtEnd ? 0 : Math.min(carousel.scrollLeft + carousel.clientWidth * 0.78, maxScroll),
+        behavior: "smooth",
+      });
+    }, 4300);
+
+    return () => window.clearInterval(timer);
+  }, [displayedProducts.length, productFilter]);
 
   return (
     <main className="min-h-screen bg-[#faf8f4]">
@@ -350,88 +391,141 @@ export default function HomePage() {
               </p>
             </div>
           ) : (
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-6 lg:grid-cols-4">
-              {displayedProducts.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/produit/${product.id}`}
-                  className="kidiclass-card group overflow-hidden"
-                >
-                  <div className="relative h-44 overflow-hidden bg-[#f4efe7] sm:h-72">
-                    {getProductImage(product) ? (
-                      <img
-                        src={getProductImage(product)}
-                        alt={product.name}
-                        className="h-full w-full object-cover object-top transition duration-300 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-gray-400">
-                        <PackageCheck size={44} strokeWidth={2.5} />
-                      </div>
-                    )}
-
-                    <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-                      {product.is_promo && (
-                        <span className="rounded-full bg-[#f36f45] px-3 py-1 text-xs font-black text-white">
-                          Promo
-                        </span>
+            <div className="relative mt-6 sm:mt-8">
+              <div
+                ref={productCarouselRef}
+                className="kidiclass-carousel-scroll flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-3 sm:gap-6"
+              >
+                {displayedProducts.map((product) => (
+                  <Link
+                    key={product.id}
+                    href={`/produit/${product.id}`}
+                    className="kidiclass-card group w-[46%] min-w-[155px] flex-none snap-start overflow-hidden sm:w-[30%] lg:w-[23.5%]"
+                  >
+                    <div className="relative h-44 overflow-hidden bg-[#f4efe7] sm:h-72">
+                      {getProductImage(product) ? (
+                        <img
+                          src={getProductImage(product)}
+                          alt={product.name}
+                          className="h-full w-full object-cover object-top transition duration-300 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-gray-400">
+                          <PackageCheck size={44} strokeWidth={2.5} />
+                        </div>
                       )}
 
-                      {product.is_new && (
-                        <span className="rounded-full bg-[#e9fbfc] px-3 py-1 text-xs font-black text-[#0f766e] shadow-sm">
-                          Nouveau
-                        </span>
-                      )}
+                      <div className="absolute left-2 top-2 flex flex-wrap gap-1.5 sm:left-4 sm:top-4 sm:gap-2">
+                        {product.is_promo && (
+                          <span className="rounded-full bg-[#f36f45] px-2 py-1 text-[9px] font-black text-white sm:px-3 sm:text-xs">
+                            Promo
+                          </span>
+                        )}
 
-                      {product.is_favorite && (
-                        <span className="rounded-full bg-[#fff1f5] px-3 py-1 text-xs font-black text-[#f36f45] shadow-sm">
-                          Coup de cœur
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                        {product.is_new && (
+                          <span className="rounded-full bg-[#e9fbfc] px-2 py-1 text-[9px] font-black text-[#0f766e] shadow-sm sm:px-3 sm:text-xs">
+                            Nouveau
+                          </span>
+                        )}
 
-                  <div className="p-3 sm:p-5">
-                    <p className="text-[10px] font-black uppercase text-[#1db7bd] sm:text-xs">
-                      {product.category}
-                    </p>
-
-                    <h3 className="mt-2 line-clamp-2 text-sm font-black text-gray-950 sm:text-xl">
-                      {product.name}
-                    </h3>
-
-                    <div className="mt-4 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-end min-[420px]:justify-between">
-                      <div>
-                        <p className="text-sm font-black text-[#f36f45] sm:text-xl">
-                          {Number(product.price || 0).toLocaleString("fr-FR")}{" "}
-                          FCFA
-                        </p>
-
-                        {product.old_price && (
-                          <p className="text-sm font-bold text-gray-400 line-through">
-                            {Number(product.old_price).toLocaleString("fr-FR")}{" "}
-                            FCFA
-                          </p>
+                        {product.is_favorite && (
+                          <span className="rounded-full bg-[#fff1f5] px-2 py-1 text-[9px] font-black text-[#f36f45] shadow-sm sm:px-3 sm:text-xs">
+                            Coup de cœur
+                          </span>
                         )}
                       </div>
-
-                      <span
-                        className={`w-fit rounded-full px-2 py-1 text-[10px] font-black sm:px-3 sm:text-xs ${
-                          Number(product.stock || 0) > 0
-                            ? "bg-[#e9fbfc] text-[#0f766e]"
-                            : "bg-red-50 text-red-500"
-                        }`}
-                      >
-                        {Number(product.stock || 0) > 0
-                          ? getProductAvailabilityLabel(
-                              product.availability_status
-                            )
-                          : "Rupture"}
-                      </span>
                     </div>
-                  </div>
-                </Link>
-              ))}
+
+                    <div className="p-3 sm:p-5">
+                      <p className="text-[10px] font-black uppercase text-[#1db7bd] sm:text-xs">
+                        {product.category}
+                      </p>
+
+                      <h3 className="mt-2 line-clamp-2 text-sm font-black text-gray-950 sm:text-xl">
+                        {product.name}
+                      </h3>
+
+                      <div className="mt-4 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-end min-[420px]:justify-between">
+                        <div>
+                          <p className="text-sm font-black text-[#f36f45] sm:text-xl">
+                            {Number(product.price || 0).toLocaleString(
+                              "fr-FR"
+                            )}{" "}
+                            FCFA
+                          </p>
+
+                          {product.old_price && (
+                            <p className="text-sm font-bold text-gray-400 line-through">
+                              {Number(product.old_price).toLocaleString(
+                                "fr-FR"
+                              )}{" "}
+                              FCFA
+                            </p>
+                          )}
+                        </div>
+
+                        <span
+                          className={`w-fit rounded-full px-2 py-1 text-[10px] font-black sm:px-3 sm:text-xs ${
+                            Number(product.stock || 0) > 0
+                              ? "bg-[#e9fbfc] text-[#0f766e]"
+                              : "bg-red-50 text-red-500"
+                          }`}
+                        >
+                          {Number(product.stock || 0) > 0
+                            ? getProductAvailabilityLabel(
+                                product.availability_status
+                              )
+                            : "Rupture"}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              {displayedProducts.length > 2 && (
+                <div className="pointer-events-none absolute inset-y-0 left-0 right-0 hidden items-center justify-between sm:flex">
+                  <button
+                    type="button"
+                    onClick={() => scrollProductCarousel("previous")}
+                    className="pointer-events-auto -ml-3 flex h-10 w-10 items-center justify-center rounded-full border border-[#1db7bd]/40 bg-white/95 text-[#087f83] shadow-sm backdrop-blur transition hover:border-[#f36f45] hover:text-[#f36f45]"
+                    aria-label="Produits précédents"
+                  >
+                    <ChevronLeft size={21} strokeWidth={2.6} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => scrollProductCarousel("next")}
+                    className="pointer-events-auto -mr-3 flex h-10 w-10 items-center justify-center rounded-full border border-[#f36f45]/40 bg-white/95 text-[#f36f45] shadow-sm backdrop-blur transition hover:border-[#087f83] hover:text-[#087f83]"
+                    aria-label="Produits suivants"
+                  >
+                    <ChevronRight size={21} strokeWidth={2.6} />
+                  </button>
+                </div>
+              )}
+
+              {displayedProducts.length > 2 && (
+                <div className="mt-2 flex justify-center gap-2 sm:hidden">
+                  <button
+                    type="button"
+                    onClick={() => scrollProductCarousel("previous")}
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#1db7bd]/40 bg-white text-[#087f83] shadow-sm"
+                    aria-label="Produits précédents"
+                  >
+                    <ChevronLeft size={20} strokeWidth={2.6} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => scrollProductCarousel("next")}
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-[#f36f45]/40 bg-white text-[#f36f45] shadow-sm"
+                    aria-label="Produits suivants"
+                  >
+                    <ChevronRight size={20} strokeWidth={2.6} />
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -259,6 +259,15 @@ select option {
   box-shadow: 0 8px 26px rgba(31, 41, 51, 0.06);
 }
 
+.kidiclass-carousel-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.kidiclass-carousel-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 .retail-section-title {
   color: #111827;
   letter-spacing: 0;
