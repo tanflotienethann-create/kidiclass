@@ -1,12 +1,12 @@
 "use client";
 
 import KidiclassSelect from "@/components/KidiclassSelect";
+import { useTaxonomySettings } from "@/hooks/useTaxonomySettings";
 import { getProductAvailabilityLabel } from "@/lib/productAvailability";
 import {
-  characterThemes as offerCharacterThemes,
-  schoolLevels as offerSchoolLevels,
-} from "@/lib/schoolOffer";
-import { shopCategoryLabels, shopProductTypes } from "@/lib/shopNavigation";
+  getTaxonomyCategoryLabels,
+  getTaxonomyDepartmentCategories,
+} from "@/lib/taxonomySettings";
 import { supabase } from "@/lib/supabase";
 import {
   Backpack,
@@ -78,16 +78,9 @@ type CatalogueClientProps = {
   initialHighlight?: string;
   allowedCategories?: string[];
   categoryOptions?: string[];
+  departmentId?: string;
   theme?: CatalogueTheme;
 };
-
-const categories = ["Toutes", ...shopCategoryLabels];
-
-const productTypes = ["Tous", ...shopProductTypes];
-
-const characterThemes = ["Tous", ...offerCharacterThemes];
-
-const schoolLevels = ["Tous", ...offerSchoolLevels];
 
 const genders = ["Tous", "Fille", "Garçon", "Mixte"];
 
@@ -365,18 +358,38 @@ export default function CatalogueClient({
   initialHighlight = "Tous",
   allowedCategories,
   categoryOptions,
+  departmentId,
   theme = defaultTheme,
 }: CatalogueClientProps) {
   const searchParams = useSearchParams();
+  const { settings: taxonomySettings } = useTaxonomySettings();
   const themeStyle = themeStyles[theme.variant];
   const themeVariables = {
     "--kc-accent": themeStyle.accent,
     "--kc-soft": themeStyle.soft,
     "--kc-ink": themeStyle.ink,
   } as CSSProperties;
-  const visibleCategories = categoryOptions
-    ? ["Toutes", ...categoryOptions]
-    : categories;
+  const dynamicDepartmentCategories = useMemo(
+    () =>
+      departmentId
+        ? getTaxonomyDepartmentCategories(taxonomySettings, departmentId)
+        : undefined,
+    [departmentId, taxonomySettings],
+  );
+  const effectiveAllowedCategories = useMemo(
+    () =>
+      dynamicDepartmentCategories && dynamicDepartmentCategories.length > 0
+        ? dynamicDepartmentCategories
+        : allowedCategories,
+    [allowedCategories, dynamicDepartmentCategories],
+  );
+  const visibleCategories =
+    categoryOptions || effectiveAllowedCategories
+      ? ["Toutes", ...(categoryOptions || effectiveAllowedCategories || [])]
+      : ["Toutes", ...getTaxonomyCategoryLabels(taxonomySettings)];
+  const productTypes = ["Tous", ...taxonomySettings.productTypes];
+  const characterThemes = ["Tous", ...taxonomySettings.characters];
+  const schoolLevels = ["Tous", ...taxonomySettings.schoolLevels];
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -453,7 +466,8 @@ export default function CatalogueClient({
         category === "Toutes" || categoryValues.includes(product.category);
 
       const matchesDepartment =
-        !allowedCategories || allowedCategories.includes(product.category);
+        !effectiveAllowedCategories ||
+        effectiveAllowedCategories.includes(product.category);
 
       const matchesType =
         productType === "Tous" || product.product_type === productType;
@@ -540,7 +554,7 @@ export default function CatalogueClient({
     ageSearch,
     favoriteIds,
     sortBy,
-    allowedCategories,
+    effectiveAllowedCategories,
   ]);
 
   function toggleFavorite(productId: number) {

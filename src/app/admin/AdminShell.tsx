@@ -12,6 +12,7 @@ import {
   LogOut,
   Menu,
   PackageCheck,
+  Settings,
   ShoppingBag,
   Store,
   Users,
@@ -31,6 +32,7 @@ const menuItems = [
   { label: "Commandes", href: "/admin/commandes", icon: PackageCheck },
   { label: "Clients", href: "/admin/clients", icon: Users },
   { label: "Promotions", href: "/admin/promotions", icon: BadgePercent },
+  { label: "Réglages", href: "/admin/reglages", icon: Settings },
   { label: "Historique", href: "/admin/historique", icon: History },
 ];
 

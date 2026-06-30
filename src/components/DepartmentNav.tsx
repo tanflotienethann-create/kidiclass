@@ -1,5 +1,7 @@
 "use client";
 
+import { useTaxonomySettings } from "@/hooks/useTaxonomySettings";
+import { getTaxonomyNavigationItems } from "@/lib/taxonomySettings";
 import { ChevronDown, LayoutGrid } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -9,6 +11,7 @@ type DepartmentNavProps = {
   title: string;
   homeHref: string;
   items: Array<{ label: string; href: string }>;
+  departmentId?: string;
   palette: { accent: string; soft: string; ink: string };
 };
 
@@ -16,8 +19,10 @@ export default function DepartmentNav({
   title,
   homeHref,
   items,
+  departmentId,
   palette,
 }: DepartmentNavProps) {
+  const { settings: taxonomySettings } = useTaxonomySettings();
   const [open, setOpen] = useState(false);
   const categoriesId = useId();
   const pathname = usePathname();
@@ -49,8 +54,12 @@ export default function DepartmentNav({
         : "border-gray-200 bg-white text-gray-800 hover:border-[var(--department-accent)] hover:bg-[var(--department-soft)] hover:text-[var(--department-ink)]"
     }`;
 
+  const visibleItems = departmentId
+    ? getTaxonomyNavigationItems(taxonomySettings, departmentId)
+    : items;
+
   const selectedLabel =
-    items.find((item) => isActive(item.href))?.label || "Tout voir";
+    visibleItems.find((item) => isActive(item.href))?.label || "Tout voir";
 
   return (
     <nav
@@ -105,7 +114,7 @@ export default function DepartmentNav({
               >
                 Tout voir
               </Link>
-              {items.map((item) => (
+              {visibleItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}

@@ -1,7 +1,7 @@
 import AdminShell from "./AdminShell";
 import AdminStats from "./AdminStats";
 import Link from "next/link";
-import { PackageCheck, ShoppingBag, Store } from "lucide-react";
+import { PackageCheck, Settings, ShoppingBag, Store } from "lucide-react";
 
 export default function AdminPage() {
   return (
@@ -11,7 +11,7 @@ export default function AdminPage() {
     >
       <AdminStats />
 
-      <section className="mt-8 grid gap-5 md:grid-cols-3">
+      <section className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         <Link
           href="/admin/produits"
           className="rounded-[2rem] border border-gray-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
@@ -68,6 +68,25 @@ export default function AdminPage() {
           </p>
 
           <p className="mt-5 font-black text-[#c7a900]">Ouvrir →</p>
+        </Link>
+
+        <Link
+          href="/admin/reglages"
+          className="rounded-[2rem] border border-gray-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+        >
+          <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f2edff] text-[#7c3aed]">
+            <Settings size={30} strokeWidth={2.5} />
+          </div>
+
+          <h2 className="text-2xl font-black text-gray-950">
+            Réglages boutique
+          </h2>
+
+          <p className="mt-3 text-sm font-bold leading-6 text-gray-600">
+            Gérer les catégories, personnages, niveaux et types de produit.
+          </p>
+
+          <p className="mt-5 font-black text-[#7c3aed]">Ouvrir →</p>
         </Link>
       </section>
     </AdminShell>

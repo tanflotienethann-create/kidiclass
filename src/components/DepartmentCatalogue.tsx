@@ -17,8 +17,6 @@ export default function DepartmentCatalogue({
 
   if (!department) return null;
 
-  const isCharacterPage = department.id === "personnages";
-
   return (
     <>
       <Suspense
@@ -28,17 +26,13 @@ export default function DepartmentCatalogue({
           title={department.label}
           homeHref={department.href}
           items={getDepartmentNavigationItems(department.id)}
+          departmentId={department.id}
           palette={department.palette}
         />
       </Suspense>
       <Suspense fallback={<main className="min-h-screen bg-[#faf8f4]" />}>
         <CatalogueClient
-          allowedCategories={
-            isCharacterPage ? undefined : department.categories
-          }
-          categoryOptions={
-            isCharacterPage ? undefined : department.categories
-          }
+          departmentId={department.id}
           theme={{
             eyebrow: department.eyebrow,
             title: department.title,

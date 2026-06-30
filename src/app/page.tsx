@@ -2,6 +2,8 @@
 
 import { getProductAvailabilityLabel } from "@/lib/productAvailability";
 import { shopDepartments } from "@/lib/shopNavigation";
+import { useTaxonomySettings } from "@/hooks/useTaxonomySettings";
+import { getTaxonomyDepartmentCategories } from "@/lib/taxonomySettings";
 import { supabase } from "@/lib/supabase";
 import KidiclassSelect from "@/components/KidiclassSelect";
 import {
@@ -125,6 +127,7 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [productFilter, setProductFilter] = useState("Tous les articles");
   const productCarouselRef = useRef<HTMLDivElement>(null);
+  const { settings: taxonomySettings } = useTaxonomySettings();
 
   const productFilterOptions = [
     "Tous les articles",
@@ -189,7 +192,12 @@ export default function HomePage() {
         );
       }
 
-      return department.categories.includes(product.category);
+      const departmentCategories = getTaxonomyDepartmentCategories(
+        taxonomySettings,
+        department.id,
+      );
+
+      return departmentCategories.includes(product.category);
     })
     .slice(0, 8);
 

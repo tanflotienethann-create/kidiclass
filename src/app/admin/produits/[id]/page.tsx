@@ -2,6 +2,7 @@
 
 import AdminShell from "../../AdminShell";
 import KidiclassSelect from "@/components/KidiclassSelect";
+import { useTaxonomySettings } from "@/hooks/useTaxonomySettings";
 import {
   availabilityOptions,
   encodeAvailabilityStatuses,
@@ -9,15 +10,10 @@ import {
   parseAvailabilityStatuses,
 } from "@/lib/productAvailability";
 import {
-  characterThemes,
-  getSchoolOfferCategory,
-  schoolLevels,
-} from "@/lib/schoolOffer";
-import {
-  getDefaultProductType,
-  shopCategoryLabels,
-  shopProductTypes,
-} from "@/lib/shopNavigation";
+  getTaxonomyCategoryLabels,
+  getTaxonomyDefaultProductType,
+  getTaxonomySchoolLevel,
+} from "@/lib/taxonomySettings";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -94,20 +90,6 @@ type ProductPackItemRow = {
   required_quantity: number | null;
 };
 
-const categories = shopCategoryLabels;
-const productTypes = shopProductTypes;
-
-const packComponentOptions = [
-  "Sac à dos",
-  "Sac à roulette",
-  "Sac à goûter",
-  "Set gourde et boîte à goûter",
-  "Boîte à goûter",
-  "Gourde",
-  "Trousse",
-  "Autre",
-];
-
 const genderOptions = ["Fille", "Garçon", "Mixte"];
 
 function getPackComponentName(item: PackItem) {
@@ -134,7 +116,10 @@ function toggleAvailabilityStatus(
   updateStatuses(nextStatuses.length > 0 ? nextStatuses : [status]);
 }
 
-function convertComponentNameToPackItem(item: ProductPackItemRow): PackItem {
+function convertComponentNameToPackItem(
+  item: ProductPackItemRow,
+  packComponentOptions: string[],
+): PackItem {
   const existingOption = packComponentOptions.find((option) => {
     return option.toLowerCase() === item.component_name.toLowerCase();
   });
@@ -164,6 +149,12 @@ export default function EditProductPage() {
   const params = useParams();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { settings: taxonomySettings } = useTaxonomySettings();
+  const categories = getTaxonomyCategoryLabels(taxonomySettings);
+  const productTypes = taxonomySettings.productTypes;
+  const characterThemes = taxonomySettings.characters;
+  const schoolLevels = taxonomySettings.schoolLevels;
+  const packComponentOptions = taxonomySettings.packComponents;
 
   const productId = Number(params.id);
 
@@ -224,7 +215,10 @@ export default function EditProductPage() {
     },
   ]);
 
-  const isPack = category === "Packs scolaires" || category === "PACK";
+  const isPack =
+    category === "Packs scolaires" ||
+    category === "PACK" ||
+    productType === "Pack scolaire";
 
   useEffect(() => {
     async function fetchProduct() {
@@ -281,7 +275,8 @@ export default function EditProductPage() {
           .order("id", { ascending: true });
 
         const convertedPackItems = ((packRows as ProductPackItemRow[]) || []).map(
-          convertComponentNameToPackItem
+          (packRow) =>
+            convertComponentNameToPackItem(packRow, packComponentOptions),
         );
 
         setPackItems(
@@ -332,7 +327,7 @@ export default function EditProductPage() {
     if (productId) {
       fetchProduct();
     }
-  }, [productId]);
+  }, [packComponentOptions, productId]);
 
   function handleImageSelection(e: ChangeEvent<HTMLInputElement>) {
     const selectedFiles = Array.from(e.target.files || []);
@@ -1014,12 +1009,11 @@ export default function EditProductPage() {
                   placeholder="Choisir une catégorie"
                   onChange={(value) => {
                     setCategory(value);
-                    const offerCategory = getSchoolOfferCategory(value);
                     setProductType(
-                      offerCategory?.productType || getDefaultProductType(value),
+                      getTaxonomyDefaultProductType(taxonomySettings, value),
                     );
                     setSchoolLevel(
-                      offerCategory?.schoolLevel || "Non concerné",
+                      getTaxonomySchoolLevel(taxonomySettings, value),
                     );
                   }}
                 />

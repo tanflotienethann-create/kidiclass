@@ -1,20 +1,16 @@
 "use client";
 
 import KidiclassSelect from "@/components/KidiclassSelect";
+import { useTaxonomySettings } from "@/hooks/useTaxonomySettings";
 import {
   availabilityOptions,
   encodeAvailabilityStatuses,
 } from "@/lib/productAvailability";
 import {
-  characterThemes,
-  getSchoolOfferCategory,
-  schoolLevels,
-} from "@/lib/schoolOffer";
-import {
-  getDefaultProductType,
-  shopCategoryLabels,
-  shopProductTypes,
-} from "@/lib/shopNavigation";
+  getTaxonomyCategoryLabels,
+  getTaxonomyDefaultProductType,
+  getTaxonomySchoolLevel,
+} from "@/lib/taxonomySettings";
 import { supabase } from "@/lib/supabase";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import {
@@ -42,20 +38,6 @@ type PackItem = {
   componentStock: string;
   requiredQuantity: string;
 };
-
-const categories = shopCategoryLabels;
-const productTypes = shopProductTypes;
-
-const packComponentOptions = [
-  "Sac à dos",
-  "Sac à roulette",
-  "Sac à goûter",
-  "Set gourde et boîte à goûter",
-  "Boîte à goûter",
-  "Gourde",
-  "Trousse",
-  "Autre",
-];
 
 const genderOptions = ["Fille", "Garçon", "Mixte"];
 
@@ -85,6 +67,12 @@ function toggleAvailabilityStatus(
 
 export default function AddProductForm() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { settings: taxonomySettings } = useTaxonomySettings();
+  const categories = getTaxonomyCategoryLabels(taxonomySettings);
+  const productTypes = taxonomySettings.productTypes;
+  const characterThemes = taxonomySettings.characters;
+  const schoolLevels = taxonomySettings.schoolLevels;
+  const packComponentOptions = taxonomySettings.packComponents;
 
   const [name, setName] = useState("");
   const [reference, setReference] = useState("");
@@ -139,7 +127,10 @@ export default function AddProductForm() {
   );
   const [loading, setLoading] = useState(false);
 
-  const isPack = category === "Packs scolaires" || category === "PACK";
+  const isPack =
+    category === "Packs scolaires" ||
+    category === "PACK" ||
+    productType === "Pack scolaire";
 
   function handleImageSelection(e: ChangeEvent<HTMLInputElement>) {
     const selectedFiles = Array.from(e.target.files || []);
@@ -819,12 +810,11 @@ export default function AddProductForm() {
                   placeholder="Choisir une catégorie"
                   onChange={(value) => {
                     setCategory(value);
-                    const offerCategory = getSchoolOfferCategory(value);
                     setProductType(
-                      offerCategory?.productType || getDefaultProductType(value),
+                      getTaxonomyDefaultProductType(taxonomySettings, value),
                     );
                     setSchoolLevel(
-                      offerCategory?.schoolLevel || "Non concerné",
+                      getTaxonomySchoolLevel(taxonomySettings, value),
                     );
                   }}
                 />
