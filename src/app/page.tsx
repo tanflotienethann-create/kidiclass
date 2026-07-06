@@ -257,7 +257,7 @@ export default function HomePage() {
 
             <p className="mt-4 max-w-2xl text-[0.95rem] font-bold leading-7 text-gray-700 sm:text-lg sm:leading-8">
               Des essentiels enfant faciles à porter, des packs pratiques et
-              des accessoires colorés, présentés comme une vraie boutique mode.
+              des accessoires colorés.
             </p>
 
             <div className="mt-6 grid gap-3 min-[420px]:flex min-[420px]:flex-wrap sm:mt-8 sm:gap-4">
