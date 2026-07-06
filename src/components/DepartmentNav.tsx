@@ -48,7 +48,7 @@ export default function DepartmentNav({
   } as CSSProperties;
 
   const linkClass = (active: boolean) =>
-    `rounded-lg border text-sm font-black transition ${
+    `rounded-lg border text-[13px] font-black leading-tight transition sm:text-sm ${
       active
         ? "border-[var(--department-accent)] bg-[var(--department-soft)] text-[var(--department-ink)] shadow-sm"
         : "border-gray-200 bg-white text-gray-800 hover:border-[var(--department-accent)] hover:bg-[var(--department-soft)] hover:text-[var(--department-ink)]"
@@ -71,20 +71,20 @@ export default function DepartmentNav({
         <button
           type="button"
           onClick={() => setOpen((current) => !current)}
-          className="flex w-full items-center justify-between gap-4 rounded-lg border border-[var(--department-accent)] bg-white px-4 py-3 text-left text-[var(--department-ink)] shadow-sm transition hover:bg-[var(--department-soft)] sm:px-5"
+          className="flex w-full items-center justify-between gap-3 rounded-lg border border-[var(--department-accent)] bg-white px-3 py-2.5 text-left text-[var(--department-ink)] shadow-sm transition hover:bg-[var(--department-soft)] sm:gap-4 sm:px-5 sm:py-3"
           aria-label={`${open ? "Fermer" : "Voir"} les catégories de ${title}`}
           aria-expanded={open}
           aria-controls={categoriesId}
         >
-          <span className="flex min-w-0 items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--department-soft)] text-[var(--department-ink)]">
-              <LayoutGrid size={20} strokeWidth={2.5} />
+          <span className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--department-soft)] text-[var(--department-ink)] sm:h-10 sm:w-10">
+              <LayoutGrid size={18} strokeWidth={2.5} />
             </span>
             <span className="min-w-0">
-              <span className="block text-xs font-black uppercase text-[var(--department-accent)]">
+              <span className="block text-[10px] font-black uppercase leading-tight text-[var(--department-accent)] sm:text-xs">
                 {title}
               </span>
-              <span className="block text-sm font-black text-gray-950 sm:text-base">
+              <span className="block text-[13px] font-black leading-tight text-gray-950 sm:text-base">
                 Voir les catégories
               </span>
             </span>
@@ -94,7 +94,7 @@ export default function DepartmentNav({
               {selectedLabel}
             </span>
             <ChevronDown
-              size={22}
+              size={20}
               strokeWidth={2.5}
               className={`shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
             />
@@ -106,11 +106,11 @@ export default function DepartmentNav({
             id={categoriesId}
             className="mt-3 max-h-80 overflow-y-auto rounded-lg border border-[var(--department-accent)] bg-white p-3 shadow-lg sm:p-4"
           >
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-2 min-[360px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
               <Link
                 href={homeHref}
                 onClick={() => setOpen(false)}
-                className={`${linkClass(!hasSelection)} px-3 py-3`}
+                className={`${linkClass(!hasSelection)} px-3 py-2.5 sm:py-3`}
               >
                 Tout voir
               </Link>
@@ -119,7 +119,7 @@ export default function DepartmentNav({
                   key={item.href}
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className={`${linkClass(isActive(item.href))} px-3 py-3`}
+                  className={`${linkClass(isActive(item.href))} px-3 py-2.5 sm:py-3`}
                 >
                   {item.label}
                 </Link>

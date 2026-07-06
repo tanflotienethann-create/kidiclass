@@ -146,12 +146,12 @@ export default function ProductActions({
   }
 
   return (
-    <div className="rounded-[2.5rem] border border-gray-100 bg-white p-7 shadow-sm">
-      <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#e9fbfc] text-[#1db7bd]">
-        <ShoppingBag size={30} strokeWidth={2.5} />
+    <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-[2.5rem] sm:p-7">
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e9fbfc] text-[#1db7bd] sm:mb-6 sm:h-14 sm:w-14">
+        <ShoppingBag size={26} strokeWidth={2.5} />
       </div>
 
-      <h2 className="text-3xl font-black text-gray-950">
+      <h2 className="text-2xl font-black text-gray-950 sm:text-3xl">
         Ajouter au panier
       </h2>
 
@@ -172,7 +172,7 @@ export default function ProductActions({
                 key={size}
                 type="button"
                 onClick={() => setSelectedSize(size)}
-                className={`rounded-full border-2 px-5 py-3 text-sm font-black transition ${
+                className={`rounded-full border-2 px-4 py-2.5 text-sm font-black transition sm:px-5 sm:py-3 ${
                   selectedSize === size
                     ? "border-[#1db7bd] bg-[#1db7bd] text-white"
                     : "border-gray-200 bg-white text-gray-700 hover:border-[#1db7bd] hover:text-[#1db7bd]"
@@ -188,17 +188,17 @@ export default function ProductActions({
       <div className="mt-6">
         <p className="mb-3 text-sm font-black text-gray-700">Quantité</p>
 
-        <div className="flex w-fit items-center gap-3 rounded-full border border-gray-200 bg-white p-2">
+        <div className="flex w-fit items-center gap-2 rounded-full border border-gray-200 bg-white p-1.5 sm:gap-3 sm:p-2">
           <button
             type="button"
             onClick={decreaseQuantity}
             disabled={quantity <= 1 || isOutOfStock}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white disabled:cursor-not-allowed disabled:opacity-40 sm:h-11 sm:w-11"
           >
             <Minus size={18} strokeWidth={2.5} />
           </button>
 
-          <span className="min-w-10 text-center text-lg font-black text-gray-950">
+          <span className="min-w-9 text-center text-base font-black text-gray-950 sm:min-w-10 sm:text-lg">
             {quantity}
           </span>
 
@@ -206,7 +206,7 @@ export default function ProductActions({
             type="button"
             onClick={increaseQuantity}
             disabled={quantity >= stock || isOutOfStock}
-            className="flex h-11 w-11 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white disabled:cursor-not-allowed disabled:opacity-40 sm:h-11 sm:w-11"
           >
             <Plus size={18} strokeWidth={2.5} />
           </button>
@@ -243,7 +243,7 @@ export default function ProductActions({
           type="button"
           onClick={addToCart}
           disabled={isOutOfStock}
-          className="rounded-full bg-[#f36f45] px-7 py-4 font-black text-white shadow-sm hover:bg-[#e85e33] disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-full bg-[#f36f45] px-4 py-3 text-sm font-black text-white shadow-sm hover:bg-[#e85e33] disabled:cursor-not-allowed disabled:opacity-50 sm:px-7 sm:py-4 sm:text-base"
         >
           {isOutOfStock ? "Indisponible" : "Ajouter au panier"}
         </button>
@@ -252,7 +252,7 @@ export default function ProductActions({
           type="button"
           onClick={buyNow}
           disabled={isOutOfStock}
-          className="flex items-center justify-center gap-2 rounded-full bg-[#1db7bd] px-7 py-4 font-black text-white shadow-sm hover:bg-[#159ca1] disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex items-center justify-center gap-2 rounded-full bg-[#1db7bd] px-4 py-3 text-sm font-black text-white shadow-sm hover:bg-[#159ca1] disabled:cursor-not-allowed disabled:opacity-50 sm:px-7 sm:py-4 sm:text-base"
         >
           <Zap size={18} strokeWidth={2.5} />
           Acheter maintenant
@@ -260,7 +260,7 @@ export default function ProductActions({
 
         <Link
           href="/panier"
-          className="rounded-full border-2 border-[#1db7bd] px-7 py-4 text-center font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white"
+          className="rounded-full border-2 border-[#1db7bd] px-4 py-3 text-center text-sm font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white sm:px-7 sm:py-4 sm:text-base"
         >
           Voir le panier
         </Link>
@@ -268,7 +268,7 @@ export default function ProductActions({
         <button
           type="button"
           onClick={toggleFavorite}
-          className={`flex items-center justify-center gap-2 rounded-full border-2 px-7 py-4 font-black transition ${
+          className={`flex items-center justify-center gap-2 rounded-full border-2 px-4 py-3 text-sm font-black transition sm:px-7 sm:py-4 sm:text-base ${
             isFavorite
               ? "border-[#f36f45] bg-[#fff1f5] text-[#f36f45]"
               : "border-[#f36f45] bg-white text-[#f36f45] hover:bg-[#fff1f5]"

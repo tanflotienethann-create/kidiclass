@@ -621,7 +621,7 @@ export default function CatalogueClient({
               {theme.eyebrow}
             </p>
 
-            <h1 className="mt-3 text-3xl font-black leading-tight text-[#111827] min-[390px]:text-4xl sm:mt-4 sm:text-5xl md:text-7xl">
+            <h1 className="mt-3 text-3xl font-black leading-tight text-[#111827] min-[390px]:text-[2rem] sm:mt-4 sm:text-5xl md:text-7xl">
               {theme.title}
             </h1>
 

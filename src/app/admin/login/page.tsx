@@ -146,7 +146,7 @@ export default function AdminLoginPage() {
                     type="email"
                     autoComplete="email"
                     placeholder="admin@email.com"
-                    className="w-full bg-transparent py-4 text-black outline-none"
+                    className="w-full bg-transparent py-3.5 text-black outline-none sm:py-4"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -170,7 +170,7 @@ export default function AdminLoginPage() {
                     type="password"
                     autoComplete="current-password"
                     placeholder="Mot de passe admin"
-                    className="w-full bg-transparent py-4 text-black outline-none"
+                    className="w-full bg-transparent py-3.5 text-black outline-none sm:py-4"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -182,7 +182,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="mt-6 w-full rounded-full bg-[#f36f45] px-6 py-4 font-black text-white shadow-sm hover:bg-[#e85e33] disabled:cursor-wait disabled:opacity-60"
+              className="mt-6 w-full rounded-full bg-[#f36f45] px-4 py-3.5 text-sm font-black leading-tight text-white shadow-sm hover:bg-[#e85e33] disabled:cursor-wait disabled:opacity-60 sm:px-6 sm:py-4 sm:text-base"
             >
               {loading ? "Connexion..." : "Se connecter à l’admin"}
             </button>

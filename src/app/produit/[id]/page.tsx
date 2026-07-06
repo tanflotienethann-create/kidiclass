@@ -137,11 +137,11 @@ export default async function ProductPage({
 
   return (
     <main className="min-h-screen bg-[#fffdf7]">
-      <section className="border-b border-gray-100 bg-[#e9fbfc] px-6 py-6">
+      <section className="border-b border-gray-100 bg-[#e9fbfc] px-4 py-4 sm:px-6 sm:py-6">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <Link
             href="/catalogue"
-            className="flex w-fit items-center gap-2 rounded-full bg-white px-5 py-3 font-black text-[#1db7bd] shadow-sm hover:bg-[#1db7bd] hover:text-white"
+            className="flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-black text-[#1db7bd] shadow-sm hover:bg-[#1db7bd] hover:text-white sm:px-5 sm:py-3 sm:text-base"
           >
             <ChevronLeft size={20} strokeWidth={2.5} />
             Retour au catalogue
@@ -149,21 +149,21 @@ export default async function ProductPage({
 
           <div className="flex flex-wrap gap-2">
             {product.is_new && (
-              <span className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-black text-[#1db7bd] shadow-sm">
+              <span className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-black text-[#1db7bd] shadow-sm sm:px-4 sm:py-2">
                 <Sparkles size={16} strokeWidth={2.5} />
                 Nouveauté
               </span>
             )}
 
             {product.is_favorite && (
-              <span className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-black text-[#c7a900] shadow-sm">
+              <span className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-black text-[#c7a900] shadow-sm sm:px-4 sm:py-2">
                 <Star size={16} strokeWidth={2.5} />
                 Coup de cœur
               </span>
             )}
 
             {product.is_promo && (
-              <span className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-black text-[#f36f45] shadow-sm">
+              <span className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-black text-[#f36f45] shadow-sm sm:px-4 sm:py-2">
                 <Tag size={16} strokeWidth={2.5} />
                 Promo
               </span>
@@ -172,38 +172,38 @@ export default async function ProductPage({
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-10 px-6 py-10 lg:grid-cols-[1.1fr_0.9fr]">
+      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-7 sm:px-6 sm:py-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
         <ProductGallery images={productImages} productName={product.name} />
 
         <div className="space-y-6">
-          <div className="rounded-[2.5rem] border border-gray-100 bg-white p-7 shadow-sm">
+          <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-[2.5rem] sm:p-7">
             <div className="mb-5 flex flex-wrap gap-2">
               {product.category && (
-                <span className="rounded-full bg-[#e9fbfc] px-4 py-2 text-xs font-black text-[#1db7bd]">
+                <span className="rounded-full bg-[#e9fbfc] px-3 py-1.5 text-xs font-black text-[#1db7bd] sm:px-4 sm:py-2">
                   {product.category}
                 </span>
               )}
 
               {product.product_type && (
-                <span className="rounded-full bg-[#fff1f5] px-4 py-2 text-xs font-black text-[#f36f45]">
+                <span className="rounded-full bg-[#fff1f5] px-3 py-1.5 text-xs font-black text-[#f36f45] sm:px-4 sm:py-2">
                   {product.product_type}
                 </span>
               )}
 
               {isPack && (
-                <span className="rounded-full bg-[#fff9cf] px-4 py-2 text-xs font-black text-[#c7a900]">
+                <span className="rounded-full bg-[#fff9cf] px-3 py-1.5 text-xs font-black text-[#c7a900] sm:px-4 sm:py-2">
                   Pack scolaire
                 </span>
               )}
 
               {isOutOfStock && (
-                <span className="rounded-full bg-red-50 px-4 py-2 text-xs font-black text-red-500">
+                <span className="rounded-full bg-red-50 px-3 py-1.5 text-xs font-black text-red-500 sm:px-4 sm:py-2">
                   Rupture de stock
                 </span>
               )}
             </div>
 
-            <h1 className="text-4xl font-black leading-tight text-gray-950 md:text-5xl">
+            <h1 className="text-3xl font-black leading-tight text-gray-950 min-[390px]:text-[2.15rem] md:text-5xl">
               {product.name}
             </h1>
 
@@ -215,7 +215,7 @@ export default async function ProductPage({
 
             <div className="mt-6">
               <div className="flex flex-wrap items-end gap-3">
-                <p className="text-4xl font-black text-[#f36f45]">
+                <p className="text-[1.75rem] font-black text-[#f36f45] min-[390px]:text-3xl sm:text-4xl">
                   {Number(product.price).toLocaleString("fr-FR")} FCFA
                 </p>
 
@@ -226,14 +226,14 @@ export default async function ProductPage({
                 )}
 
                 {discountPercent > 0 && (
-                  <span className="mb-1 rounded-full bg-[#fff1f5] px-4 py-2 text-sm font-black text-[#f36f45]">
+                  <span className="mb-1 rounded-full bg-[#fff1f5] px-3 py-1.5 text-xs font-black text-[#f36f45] sm:px-4 sm:py-2 sm:text-sm">
                     -{discountPercent}%
                   </span>
                 )}
               </div>
 
               <p
-                className={`mt-4 w-fit rounded-full px-5 py-2 text-sm font-black ${
+                className={`mt-4 max-w-full rounded-2xl px-3 py-2 text-xs font-black leading-tight sm:w-fit sm:px-5 sm:text-sm ${
                   isOutOfStock
                     ? "bg-red-50 text-red-500"
                     : "bg-green-50 text-green-600"

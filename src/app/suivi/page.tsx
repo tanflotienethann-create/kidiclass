@@ -190,28 +190,28 @@ export default function SuiviPage() {
 
   return (
     <main className="min-h-screen bg-[#faf8f4]">
-      <section className="retail-band border-b border-[#ddd6cc] px-6 py-14">
+      <section className="retail-band border-b border-[#ddd6cc] px-4 py-10 sm:px-6 sm:py-14">
         <div className="relative mx-auto max-w-5xl text-center">
-          <div className="retail-chip mb-5 inline-flex items-center gap-2 px-5 py-2 text-sm uppercase">
+          <div className="retail-chip mb-4 inline-flex items-center gap-2 px-4 py-2 text-xs uppercase sm:mb-5 sm:px-5 sm:text-sm">
             <Truck size={18} strokeWidth={2.5} />
             Suivi de commande
           </div>
 
-          <h1 className="retail-section-title text-5xl font-black leading-tight md:text-7xl">
+          <h1 className="retail-section-title text-[2.15rem] font-black leading-tight min-[390px]:text-[2.35rem] sm:text-5xl md:text-7xl">
             Suivre mon colis
           </h1>
 
-          <p className="mx-auto mt-5 max-w-2xl text-lg font-bold leading-8 text-gray-600">
+          <p className="mx-auto mt-4 max-w-2xl text-sm font-bold leading-6 text-gray-600 sm:mt-5 sm:text-lg sm:leading-8">
             Entrez votre numéro de téléphone ou la référence reçue après achat
             pour retrouver l’avancement de votre commande.
           </p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-6 py-10">
+      <section className="mx-auto max-w-5xl px-4 py-7 sm:px-6 sm:py-10">
         <form
           onSubmit={handleSearch}
-          className="retail-card p-7"
+          className="retail-card p-4 sm:p-7"
         >
           <div className="grid gap-4 md:grid-cols-[220px_1fr_1fr_auto] md:items-end">
             <KidiclassSelect
@@ -229,7 +229,7 @@ export default function SuiviPage() {
               <input
                 type="tel"
                 placeholder="Ex : 07 79 31 15 55"
-                className="w-full rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold text-black outline-none placeholder:text-gray-400 focus:border-[#0a9ba2] focus:ring-4 focus:ring-[#0a9ba2]/10"
+                className="w-full rounded-xl border border-[#ddd6cc] bg-white p-3.5 font-bold text-black outline-none placeholder:text-gray-400 focus:border-[#0a9ba2] focus:ring-4 focus:ring-[#0a9ba2]/10 sm:p-4"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
@@ -243,7 +243,7 @@ export default function SuiviPage() {
               <input
                 type="text"
                 placeholder="Ex : KDC-2026-1234"
-                className="w-full rounded-xl border border-[#ddd6cc] bg-white p-4 font-bold uppercase text-black outline-none placeholder:text-gray-400 focus:border-[#0a9ba2] focus:ring-4 focus:ring-[#0a9ba2]/10"
+                className="w-full rounded-xl border border-[#ddd6cc] bg-white p-3.5 font-bold uppercase text-black outline-none placeholder:text-gray-400 focus:border-[#0a9ba2] focus:ring-4 focus:ring-[#0a9ba2]/10 sm:p-4"
                 value={reference}
                 onChange={(e) => setReference(e.target.value)}
               />
@@ -252,7 +252,7 @@ export default function SuiviPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex h-[58px] items-center justify-center gap-2 rounded-xl bg-[#d9472d] px-7 font-black text-white shadow-sm hover:bg-[#087f83] disabled:opacity-50"
+              className="flex h-12 items-center justify-center gap-2 rounded-xl bg-[#d9472d] px-5 text-sm font-black text-white shadow-sm hover:bg-[#087f83] disabled:opacity-50 sm:h-[58px] sm:px-7 sm:text-base"
             >
               <Search size={20} strokeWidth={2.5} />
               {loading ? "Recherche..." : "Suivre"}
@@ -278,7 +278,7 @@ export default function SuiviPage() {
               return (
                 <article
                   key={order.id}
-                  className="rounded-[2.5rem] border border-gray-100 bg-white p-7 shadow-sm"
+                  className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-[2.5rem] sm:p-7"
                 >
                   <div className="flex flex-col justify-between gap-5 md:flex-row md:items-start">
                     <div>
@@ -292,7 +292,7 @@ export default function SuiviPage() {
                         {order.status || "En attente"}
                       </span>
 
-                      <h2 className="mt-4 text-3xl font-black text-gray-950">
+                      <h2 className="mt-4 text-xl font-black text-gray-950 sm:text-3xl">
                         {order.order_reference || "Commande KidiClass"}
                       </h2>
 
@@ -301,10 +301,10 @@ export default function SuiviPage() {
                       </p>
                     </div>
 
-                    <div className="rounded-2xl bg-[#fff9cf] p-4 text-right">
+                    <div className="rounded-2xl bg-[#fff9cf] p-3 text-left sm:p-4 sm:text-right">
                       <p className="text-sm font-bold text-[#c7a900]">Total</p>
 
-                      <p className="text-2xl font-black text-[#f36f45]">
+                      <p className="text-xl font-black text-[#f36f45] sm:text-2xl">
                         {Number(order.total_amount || 0).toLocaleString(
                           "fr-FR"
                         )}{" "}
@@ -355,7 +355,7 @@ export default function SuiviPage() {
                   </div>
 
                   <div className="mt-8">
-                    <h3 className="mb-5 text-2xl font-black text-gray-950">
+                    <h3 className="mb-5 text-xl font-black text-gray-950 sm:text-2xl">
                       Avancement de la commande
                     </h3>
 

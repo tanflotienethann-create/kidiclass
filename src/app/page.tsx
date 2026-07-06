@@ -251,7 +251,7 @@ export default function HomePage() {
               Boutique enfant tendance
             </p>
 
-            <h1 className="mt-3 max-w-3xl text-[2.35rem] font-black leading-[1.08] text-[#111827] min-[390px]:text-[2.65rem] sm:mt-4 sm:text-5xl md:text-7xl">
+            <h1 className="mt-3 max-w-3xl text-[2rem] font-black leading-[1.07] text-[#111827] min-[390px]:text-[2.25rem] sm:mt-4 sm:text-5xl md:text-7xl">
               La rentrée, la plage et les looks kids réunis
             </h1>
 
@@ -277,38 +277,38 @@ export default function HomePage() {
               </Link>
             </div>
 
-            <div className="mt-7 overflow-hidden rounded-2xl border border-[#f4b7a5] bg-white shadow-sm md:hidden">
+            <div className="mt-6 overflow-hidden rounded-xl border border-[#f4b7a5] bg-white shadow-sm md:hidden">
               <Link
                 href="/ecole-sorties"
-                className="block bg-[#fff3bf] px-4 py-4"
+                className="block bg-[#fff3bf] px-3 py-3"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#9a6b00]">
+                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[#9a6b00]">
                       Rentrée scolaire
                     </p>
-                    <h2 className="mt-1 text-xl font-black leading-tight text-gray-950 min-[390px]:text-2xl">
+                    <h2 className="mt-1 text-lg font-black leading-tight text-gray-950 min-[390px]:text-xl">
                       Les essentiels école en premier
                     </h2>
                   </div>
                   <School
                     className="shrink-0 text-[#e85035]"
-                    size={34}
+                    size={28}
                     strokeWidth={2.5}
                   />
                 </div>
-                <p className="mt-3 text-sm font-bold leading-6 text-gray-700">
+                <p className="mt-2 text-xs font-bold leading-5 text-gray-700 min-[390px]:text-sm">
                   Packs, sacs, gourdes et trousses faciles à retrouver sur
                   téléphone.
                 </p>
               </Link>
 
-              <div className="grid grid-cols-2 gap-2 p-3">
+              <div className="grid grid-cols-2 gap-2 p-2.5">
                 {schoolSelection.slice(0, 4).map((item) => (
                   <Link
                     key={item.title}
                     href={item.href}
-                    className="min-w-0 rounded-xl border border-[#f7c873] bg-[#fffdf7] px-3 py-3 text-sm font-black leading-tight text-[#6f4e00]"
+                    className="min-w-0 rounded-lg border border-[#f7c873] bg-[#fffdf7] px-2.5 py-2.5 text-[12px] font-black leading-tight text-[#6f4e00] min-[390px]:text-sm"
                   >
                     {item.title}
                   </Link>
