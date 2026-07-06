@@ -41,6 +41,19 @@ function FacebookIcon() {
   );
 }
 
+function WhatsAppIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-[18px] w-[18px]"
+      fill="currentColor"
+    >
+      <path d="M12 3.2a8.6 8.6 0 0 0-7.3 13.1L3.8 21l4.8-1.2A8.6 8.6 0 1 0 12 3.2Zm0 15.6a6.9 6.9 0 0 1-3.5-1l-.3-.2-2.5.7.7-2.4-.2-.3A7 7 0 1 1 12 18.8Zm3.9-5.2c-.2-.1-1.3-.6-1.5-.7-.2-.1-.4-.1-.5.1-.2.2-.6.7-.7.9-.1.1-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.5c.1-.2.2-.3.3-.5.1-.1.1-.3 0-.5 0-.1-.5-1.2-.7-1.6-.2-.4-.4-.4-.5-.4h-.4c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2 0 1.2.9 2.4 1 2.5.1.2 1.7 2.7 4.2 3.7.6.3 1 .4 1.4.5.6.2 1.1.1 1.5.1.5-.1 1.3-.5 1.5-1 .2-.5.2-.9.1-1-.1-.1-.2-.2-.4-.3Z" />
+    </svg>
+  );
+}
+
 export default function Footer() {
   const pathname = usePathname();
   const hideFooter =
@@ -168,6 +181,16 @@ export default function Footer() {
           >
             <Phone className="text-[#087f83]" size={19} strokeWidth={2.5} />
             0779311555
+          </a>
+
+          <a
+            href="https://wa.me/2250779311555"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-3 rounded-full bg-[#e9fbfc] px-4 py-3 font-black text-[#087f83] transition hover:bg-[#087f83] hover:text-white"
+          >
+            <WhatsAppIcon />
+            Nous contacter sur WhatsApp
           </a>
 
           <p className="flex items-start gap-3 font-bold leading-5 text-gray-600 sm:leading-6">
