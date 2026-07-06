@@ -5,7 +5,8 @@ export default function PacksScolairesPage() {
   return (
     <Suspense fallback={<main className="min-h-screen bg-[#e9fbfc]" />}>
       <CatalogueClient
-        initialCategory="Packs scolaires"
+        initialCategory="Toutes"
+        departmentId="ecole-sorties"
         theme={{
           eyebrow: "Packs scolaires",
           title: "Tout pour une rentrée bien équipée",
