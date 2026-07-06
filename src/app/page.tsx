@@ -1,6 +1,9 @@
 "use client";
 
-import { getProductAvailabilityLabel } from "@/lib/productAvailability";
+import {
+  getProductAvailabilityLabel,
+  getProductAvailabilityShortLabel,
+} from "@/lib/productAvailability";
 import { shopDepartments } from "@/lib/shopNavigation";
 import { useTaxonomySettings } from "@/hooks/useTaxonomySettings";
 import { getTaxonomyDepartmentCategories } from "@/lib/taxonomySettings";
@@ -473,14 +476,21 @@ export default function HomePage() {
                         </div>
 
                         <span
-                          className={`w-fit rounded-full px-2 py-1 text-[10px] font-black sm:px-3 sm:text-xs ${
+                          title={
+                            Number(product.stock || 0) > 0
+                              ? getProductAvailabilityLabel(
+                                  product.availability_status,
+                                )
+                              : "Rupture"
+                          }
+                          className={`w-fit max-w-full rounded-full px-2.5 py-1.5 text-[10px] font-black leading-none sm:px-3 sm:text-xs ${
                             Number(product.stock || 0) > 0
                               ? "bg-[#e9fbfc] text-[#0f766e]"
                               : "bg-red-50 text-red-500"
                           }`}
                         >
                           {Number(product.stock || 0) > 0
-                            ? getProductAvailabilityLabel(
+                            ? getProductAvailabilityShortLabel(
                                 product.availability_status
                               )
                             : "Rupture"}

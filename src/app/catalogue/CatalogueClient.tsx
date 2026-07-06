@@ -2,7 +2,10 @@
 
 import KidiclassSelect from "@/components/KidiclassSelect";
 import { useTaxonomySettings } from "@/hooks/useTaxonomySettings";
-import { getProductAvailabilityLabel } from "@/lib/productAvailability";
+import {
+  getProductAvailabilityLabel,
+  getProductAvailabilityShortLabel,
+} from "@/lib/productAvailability";
 import {
   getTaxonomyCategoryLabels,
   getTaxonomyDepartmentCategories,
@@ -995,14 +998,21 @@ export default function CatalogueClient({
                       </div>
 
                       <span
-                        className={`w-fit rounded-full px-2 py-1 text-[10px] font-black sm:px-3 sm:text-xs ${
+                        title={
+                          Number(product.stock || 0) > 0
+                            ? getProductAvailabilityLabel(
+                                product.availability_status,
+                              )
+                            : "Rupture"
+                        }
+                        className={`w-fit max-w-full rounded-full px-2.5 py-1.5 text-[10px] font-black leading-none sm:px-3 sm:text-xs ${
                           Number(product.stock || 0) > 0
                             ? "bg-[var(--kc-soft)] text-[var(--kc-ink)]"
                             : "bg-red-50 text-red-500"
                         }`}
                       >
                         {Number(product.stock || 0) > 0
-                          ? getProductAvailabilityLabel(
+                          ? getProductAvailabilityShortLabel(
                               product.availability_status
                             )
                           : "Rupture"}

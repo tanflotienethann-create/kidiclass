@@ -40,6 +40,19 @@ export function getProductAvailabilityLabel(availabilityStatus?: string | null) 
   return parseAvailabilityStatuses(availabilityStatus).join(" / ");
 }
 
+export function getProductAvailabilityShortLabel(
+  availabilityStatus?: string | null,
+) {
+  const statuses = parseAvailabilityStatuses(availabilityStatus);
+
+  if (statuses.length > 1) return "Plusieurs délais";
+  if (statuses[0] === availabilityOptions[0]) return "Dispo 24h";
+  if (statuses[0] === availabilityOptions[1]) return "Préco 7-10 j";
+  if (statuses[0] === availabilityOptions[2]) return "Préco 30-45 j";
+
+  return "Disponible";
+}
+
 export function getLongestAvailabilityStatus(statuses: string[]) {
   const normalizedStatuses = statuses.map((status) =>
     normalizeAvailabilityStatus(status),
