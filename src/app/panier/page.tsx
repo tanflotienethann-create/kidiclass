@@ -265,15 +265,15 @@ export default function PanierPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#fffdf7] px-6 py-12">
-        <section className="mx-auto max-w-3xl rounded-[2.5rem] bg-white p-10 text-center shadow-sm">
+      <main className="min-h-screen bg-[#fffdf7] px-4 py-8 sm:px-6 sm:py-12">
+        <section className="mx-auto max-w-3xl rounded-[2.5rem] bg-white p-6 text-center shadow-sm sm:p-10">
           <ShoppingBag
             size={44}
             className="mx-auto text-[#1db7bd]"
             strokeWidth={2.5}
           />
 
-          <p className="mt-5 text-xl font-black text-[#1db7bd]">
+          <p className="mt-5 text-lg font-black text-[#1db7bd] sm:text-xl">
             Chargement du panier...
           </p>
         </section>
@@ -283,27 +283,27 @@ export default function PanierPage() {
 
   if (cart.length === 0) {
     return (
-      <main className="min-h-screen bg-[#fffdf7] px-6 py-12">
-        <section className="mx-auto max-w-3xl rounded-[2.5rem] border border-gray-100 bg-white p-10 text-center shadow-sm">
-          <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd]">
-            <ShoppingBag size={46} strokeWidth={2.5} />
+      <main className="min-h-screen bg-[#fffdf7] px-4 py-8 sm:px-6 sm:py-12">
+        <section className="mx-auto max-w-3xl rounded-[2.5rem] border border-gray-100 bg-white p-6 text-center shadow-sm sm:p-10">
+          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] sm:mb-6 sm:h-24 sm:w-24">
+            <ShoppingBag size={40} strokeWidth={2.5} />
           </div>
 
           <p className="mb-2 text-sm font-black uppercase tracking-[0.2em] text-[#f36f45]">
             Panier KidiClass
           </p>
 
-          <h1 className="text-4xl font-black text-gray-950">
+          <h1 className="text-3xl font-black text-gray-950 sm:text-4xl">
             Votre panier est vide
           </h1>
 
-          <p className="mt-4 text-base font-bold leading-7 text-gray-500">
+          <p className="mt-3 text-sm font-bold leading-6 text-gray-500 sm:mt-4 sm:text-base sm:leading-7">
             Ajoutez des articles au panier avant de finaliser votre commande.
           </p>
 
           <Link
             href="/catalogue"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#f36f45] px-8 py-4 font-black text-white shadow-sm hover:bg-[#e85e33]"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#f36f45] px-6 py-3.5 text-sm font-black text-white shadow-sm hover:bg-[#e85e33] sm:mt-8 sm:px-8 sm:py-4 sm:text-base"
           >
             <ArrowLeft size={20} strokeWidth={2.5} />
             Retour au catalogue
@@ -315,11 +315,11 @@ export default function PanierPage() {
 
   return (
     <main className="min-h-screen bg-[#fffdf7]">
-      <section className="border-b border-gray-100 bg-[#e9fbfc] px-6 py-10">
+      <section className="border-b border-gray-100 bg-[#e9fbfc] px-4 py-6 sm:px-6 sm:py-10">
         <div className="mx-auto max-w-7xl">
           <Link
             href="/catalogue"
-            className="mb-6 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 font-black text-[#1db7bd] shadow-sm hover:bg-[#1db7bd] hover:text-white"
+            className="mb-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-black text-[#1db7bd] shadow-sm hover:bg-[#1db7bd] hover:text-white sm:mb-6 sm:px-5 sm:py-3 sm:text-base"
           >
             <ArrowLeft size={20} strokeWidth={2.5} />
             Continuer mes achats
@@ -329,21 +329,21 @@ export default function PanierPage() {
             Panier
           </p>
 
-          <h1 className="text-5xl font-black text-gray-950">
+          <h1 className="text-3xl font-black leading-tight text-gray-950 sm:text-5xl">
             Votre sélection KidiClass
           </h1>
 
-          <p className="mt-3 max-w-2xl font-bold leading-7 text-gray-600">
+          <p className="mt-3 max-w-2xl text-sm font-bold leading-6 text-gray-600 sm:text-base sm:leading-7">
             Vérifiez vos articles, les tailles sélectionnées et les quantités
             avant de passer à la commande.
           </p>
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-[1fr_390px]">
-        <div className="space-y-5">
+      <section className="mx-auto grid max-w-7xl gap-5 px-4 py-6 sm:px-6 sm:py-10 lg:grid-cols-[1fr_390px] lg:gap-8">
+        <div className="space-y-4 sm:space-y-5">
           {message && (
-            <div className="flex items-start gap-3 rounded-2xl bg-red-50 p-5 font-bold leading-6 text-red-500">
+            <div className="flex items-start gap-3 rounded-2xl bg-red-50 p-4 text-sm font-bold leading-6 text-red-500 sm:p-5 sm:text-base">
               <AlertCircle size={22} className="shrink-0" strokeWidth={2.5} />
               <span>{message}</span>
             </div>
@@ -358,80 +358,80 @@ export default function PanierPage() {
             return (
               <article
                 key={`${item.productId}-${item.selectedSize}-${index}`}
-                className="rounded-[2.2rem] border border-gray-100 bg-white p-5 shadow-sm"
+                className="rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:p-5"
               >
-                <div className="grid gap-5 md:grid-cols-[150px_1fr_auto]">
+                <div className="grid gap-3 min-[420px]:grid-cols-[96px_1fr] md:grid-cols-[150px_1fr_auto] md:gap-5">
                   <Link
                     href={`/produit/${item.productId}`}
-                    className="block overflow-hidden rounded-[1.5rem] bg-gray-100"
+                    className="block h-32 overflow-hidden rounded-xl bg-gray-100 min-[420px]:h-full md:h-auto md:rounded-[1.5rem]"
                   >
                     {item.productImage ? (
                       <img
                         src={item.productImage}
                         alt={item.productName}
-                        className="h-44 w-full object-cover object-top transition hover:scale-105"
+                        className="h-full w-full object-cover object-top transition hover:scale-105"
                       />
                     ) : (
-                      <div className="flex h-44 items-center justify-center text-sm font-bold text-gray-400">
+                      <div className="flex h-full min-h-32 items-center justify-center text-sm font-bold text-gray-400 md:min-h-44">
                         Aucune image
                       </div>
                     )}
                   </Link>
 
                   <div>
-                    <div className="mb-3 flex flex-wrap gap-2">
+                    <div className="mb-2 flex flex-wrap gap-1.5 sm:mb-3 sm:gap-2">
                       {isPack && (
-                        <span className="rounded-full bg-[#fff9cf] px-4 py-2 text-xs font-black text-[#c7a900]">
+                        <span className="rounded-full bg-[#fff9cf] px-3 py-1.5 text-[11px] font-black text-[#c7a900] sm:px-4 sm:py-2 sm:text-xs">
                           Pack scolaire
                         </span>
                       )}
 
                       {item.selectedSize && (
-                        <span className="rounded-full bg-[#e9fbfc] px-4 py-2 text-xs font-black text-[#1db7bd]">
+                        <span className="rounded-full bg-[#e9fbfc] px-3 py-1.5 text-[11px] font-black text-[#1db7bd] sm:px-4 sm:py-2 sm:text-xs">
                           Taille / pointure : {item.selectedSize}
                         </span>
                       )}
 
                       {isOutOfStock && (
-                        <span className="rounded-full bg-red-50 px-4 py-2 text-xs font-black text-red-500">
+                        <span className="rounded-full bg-red-50 px-3 py-1.5 text-[11px] font-black text-red-500 sm:px-4 sm:py-2 sm:text-xs">
                           Rupture
                         </span>
                       )}
 
                       {quantityTooHigh && !isOutOfStock && (
-                        <span className="rounded-full bg-orange-50 px-4 py-2 text-xs font-black text-orange-600">
+                        <span className="rounded-full bg-orange-50 px-3 py-1.5 text-[11px] font-black text-orange-600 sm:px-4 sm:py-2 sm:text-xs">
                           Quantité indisponible
                         </span>
                       )}
                     </div>
 
                     <Link href={`/produit/${item.productId}`}>
-                      <h2 className="text-2xl font-black leading-8 text-gray-950 hover:text-[#1db7bd]">
+                      <h2 className="text-lg font-black leading-6 text-gray-950 hover:text-[#1db7bd] sm:text-2xl sm:leading-8">
                         {item.productName}
                       </h2>
                     </Link>
 
-                    <p className="mt-3 text-xl font-black text-[#f36f45]">
+                    <p className="mt-2 text-lg font-black text-[#f36f45] sm:mt-3 sm:text-xl">
                       {Number(item.productPrice).toLocaleString("fr-FR")} FCFA
                     </p>
 
                     {(isOutOfStock || quantityTooHigh) && (
-                      <p className="mt-3 w-fit rounded-full bg-red-50 px-4 py-2 text-xs font-black text-red-500">
+                      <p className="mt-2 w-fit rounded-full bg-red-50 px-3 py-1.5 text-[11px] font-black text-red-500 sm:mt-3 sm:px-4 sm:py-2 sm:text-xs">
                         Quantité indisponible
                       </p>
                     )}
 
-                    <div className="mt-5 flex w-fit items-center gap-3 rounded-full border border-gray-200 bg-white p-2">
+                    <div className="mt-3 flex w-fit items-center gap-2 rounded-full border border-gray-200 bg-white p-1.5 sm:mt-5 sm:gap-3 sm:p-2">
                       <button
                         type="button"
                         onClick={() => decreaseQuantity(index)}
                         disabled={item.quantity <= 1}
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex h-9 w-9 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white disabled:cursor-not-allowed disabled:opacity-40 sm:h-10 sm:w-10"
                       >
                         <Minus size={17} strokeWidth={2.5} />
                       </button>
 
-                      <span className="min-w-10 text-center text-lg font-black text-gray-950">
+                      <span className="min-w-8 text-center text-base font-black text-gray-950 sm:min-w-10 sm:text-lg">
                         {item.quantity}
                       </span>
 
@@ -439,29 +439,29 @@ export default function PanierPage() {
                         type="button"
                         onClick={() => increaseQuantity(index)}
                         disabled={isOutOfStock || item.quantity >= availableStock}
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                        className="flex h-9 w-9 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white disabled:cursor-not-allowed disabled:opacity-40 sm:h-10 sm:w-10"
                       >
                         <Plus size={17} strokeWidth={2.5} />
                       </button>
                     </div>
                   </div>
 
-                  <div className="flex flex-col justify-between gap-5 md:items-end">
+                  <div className="flex flex-row-reverse items-end justify-between gap-3 min-[420px]:col-span-2 md:col-span-1 md:flex-col md:items-end md:gap-5">
                     <button
                       type="button"
                       onClick={() => removeItem(index)}
-                      className="flex w-fit items-center gap-2 rounded-full bg-red-50 px-5 py-3 font-black text-red-500 hover:bg-red-100"
+                      className="flex w-fit items-center gap-2 rounded-full bg-red-50 px-4 py-2.5 text-sm font-black text-red-500 hover:bg-red-100 sm:px-5 sm:py-3 sm:text-base"
                     >
                       <Trash2 size={18} strokeWidth={2.5} />
                       Retirer
                     </button>
 
                     <div className="text-left md:text-right">
-                      <p className="text-sm font-bold text-gray-500">
+                      <p className="text-xs font-bold text-gray-500 sm:text-sm">
                         Sous-total article
                       </p>
 
-                      <p className="mt-1 text-2xl font-black text-gray-950">
+                      <p className="mt-1 text-lg font-black text-gray-950 sm:text-2xl">
                         {(item.productPrice * item.quantity).toLocaleString(
                           "fr-FR"
                         )}{" "}
@@ -477,27 +477,27 @@ export default function PanierPage() {
           <button
             type="button"
             onClick={clearCart}
-            className="rounded-full border-2 border-red-200 px-6 py-4 font-black text-red-500 hover:bg-red-50"
+            className="rounded-full border-2 border-red-200 px-5 py-3 text-sm font-black text-red-500 hover:bg-red-50 sm:px-6 sm:py-4 sm:text-base"
           >
             Vider le panier
           </button>
         </div>
 
-        <aside className="h-fit rounded-[2.5rem] border border-gray-100 bg-white p-7 shadow-sm lg:sticky lg:top-44">
-          <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#e9fbfc] text-[#1db7bd]">
-            <PackageCheck size={34} strokeWidth={2.5} />
+        <aside className="h-fit rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-[2.5rem] sm:p-7 lg:sticky lg:top-44">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e9fbfc] text-[#1db7bd] sm:mb-6 sm:h-16 sm:w-16">
+            <PackageCheck size={28} strokeWidth={2.5} />
           </div>
 
-          <h2 className="text-3xl font-black text-gray-950">
+          <h2 className="text-2xl font-black text-gray-950 sm:text-3xl">
             Résumé du panier
           </h2>
 
-          <p className="mt-2 text-sm font-bold leading-6 text-gray-500">
+          <p className="mt-2 text-xs font-bold leading-5 text-gray-500 sm:text-sm sm:leading-6">
             Livraison Abidjan : 1 000 FCFA. Avec un sac à roulette : 2 000
             FCFA. Bassam, Songon et Anyama : 2 500 FCFA.
           </p>
 
-          <div className="mt-7 space-y-4">
+          <div className="mt-5 space-y-3 text-sm sm:mt-7 sm:space-y-4 sm:text-base">
             <div className="flex justify-between gap-4 text-gray-700">
               <span className="font-bold">Articles</span>
               <span className="font-black">
@@ -523,19 +523,19 @@ export default function PanierPage() {
               </span>
             </div>
 
-            <div className="rounded-2xl bg-[#fff9cf] p-4 text-sm font-bold leading-6 text-[#c7a900]">
+            <div className="rounded-2xl bg-[#fff9cf] p-3 text-xs font-bold leading-5 text-[#c7a900] sm:p-4 sm:text-sm sm:leading-6">
               Les frais de livraison sont appliqués selon la zone choisie au
               moment de la commande.
             </div>
 
-            <div className="rounded-2xl border border-[#bfedf0] p-4">
+            <div className="rounded-2xl border border-[#bfedf0] p-3 sm:p-4">
               <p className="text-sm font-black text-gray-950">Code promo</p>
 
-              <div className="mt-3 flex gap-2">
+              <div className="mt-3 grid gap-2 min-[430px]:flex">
                 <input
                   type="text"
                   placeholder="Votre code"
-                  className="min-w-0 flex-1 rounded-full border-2 border-[#bfedf0] px-4 py-3 text-sm font-black uppercase outline-none focus:border-[#1db7bd]"
+                  className="min-w-0 flex-1 rounded-full border-2 border-[#bfedf0] px-4 py-2.5 text-sm font-black uppercase outline-none focus:border-[#1db7bd] sm:py-3"
                   value={promoCode}
                   onChange={(event) => setPromoCode(event.target.value)}
                 />
@@ -544,7 +544,7 @@ export default function PanierPage() {
                   type="button"
                   onClick={() => void applyPromoCode()}
                   disabled={promoLoading}
-                  className="rounded-full bg-[#1db7bd] px-5 py-3 text-sm font-black text-white hover:bg-[#159ca1]"
+                  className="rounded-full bg-[#1db7bd] px-5 py-2.5 text-sm font-black text-white hover:bg-[#159ca1] sm:py-3"
                 >
                   {promoLoading ? "Vérification..." : "Appliquer"}
                 </button>
@@ -571,13 +571,13 @@ export default function PanierPage() {
             )}
           </div>
 
-          <div className="mt-6 border-t border-gray-100 pt-6">
+          <div className="mt-5 border-t border-gray-100 pt-5 sm:mt-6 sm:pt-6">
             <div className="flex justify-between gap-4">
-              <span className="text-xl font-black text-gray-950">
+              <span className="text-base font-black text-gray-950 sm:text-xl">
                 Total estimé
               </span>
 
-              <span className="text-right text-2xl font-black text-[#f36f45]">
+              <span className="text-right text-xl font-black text-[#f36f45] sm:text-2xl">
                 {estimatedTotal.toLocaleString("fr-FR")} FCFA
               </span>
             </div>
@@ -592,14 +592,14 @@ export default function PanierPage() {
                 e.preventDefault();
               }
             }}
-            className="mt-7 block rounded-full bg-[#f36f45] px-8 py-5 text-center text-lg font-black text-white shadow-sm hover:bg-[#e85e33]"
+            className="mt-5 block rounded-full bg-[#f36f45] px-6 py-4 text-center text-base font-black text-white shadow-sm hover:bg-[#e85e33] sm:mt-7 sm:px-8 sm:py-5 sm:text-lg"
           >
             Passer la commande
           </Link>
 
           <Link
             href="/catalogue"
-            className="mt-3 block rounded-full border-2 border-[#1db7bd] px-8 py-4 text-center font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white"
+            className="mt-3 block rounded-full border-2 border-[#1db7bd] px-6 py-3.5 text-center text-sm font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white sm:px-8 sm:py-4 sm:text-base"
           >
             Continuer mes achats
           </Link>

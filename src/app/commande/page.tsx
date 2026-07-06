@@ -810,23 +810,23 @@ Merci de me communiquer le montant total avec livraison.
 
   if (cart.length === 0 && !orderReference) {
     return (
-      <main className="min-h-screen bg-white px-6 py-12">
-        <section className="mx-auto max-w-3xl rounded-[2.5rem] bg-[#e9fbfc] p-10 text-center">
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white text-[#1db7bd] shadow-sm">
-            <ShoppingCart size={38} strokeWidth={2.5} />
+      <main className="min-h-screen bg-white px-4 py-8 sm:px-6 sm:py-12">
+        <section className="mx-auto max-w-3xl rounded-[2.5rem] bg-[#e9fbfc] p-6 text-center sm:p-10">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-white text-[#1db7bd] shadow-sm sm:mb-6 sm:h-20 sm:w-20">
+            <ShoppingCart size={32} strokeWidth={2.5} />
           </div>
 
-          <h1 className="text-4xl font-black text-gray-950">
+          <h1 className="text-3xl font-black text-gray-950 sm:text-4xl">
             Votre panier est vide
           </h1>
 
-          <p className="mt-4 text-gray-600">
+          <p className="mt-3 text-sm text-gray-600 sm:mt-4 sm:text-base">
             Ajoutez des articles avant de finaliser votre commande.
           </p>
 
           <Link
             href="/catalogue"
-            className="mt-7 inline-block rounded-full bg-[#f36f45] px-8 py-4 font-black text-white hover:bg-[#e85e33]"
+            className="mt-6 inline-block rounded-full bg-[#f36f45] px-6 py-3.5 text-sm font-black text-white hover:bg-[#e85e33] sm:mt-7 sm:px-8 sm:py-4 sm:text-base"
           >
             Retour au catalogue
           </Link>
@@ -837,46 +837,46 @@ Merci de me communiquer le montant total avec livraison.
 
   if (orderReference) {
     return (
-      <main className="min-h-screen bg-[#fffdf7] px-6 py-12">
-        <section className="mx-auto max-w-3xl rounded-[2.5rem] border border-gray-100 bg-white p-10 text-center shadow-sm">
-          <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-green-50 text-green-600">
-            <CheckCircle2 size={48} strokeWidth={2.5} />
+      <main className="min-h-screen bg-[#fffdf7] px-4 py-8 sm:px-6 sm:py-12">
+        <section className="mx-auto max-w-3xl rounded-[2.5rem] border border-gray-100 bg-white p-6 text-center shadow-sm sm:p-10">
+          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-green-50 text-green-600 sm:mb-6 sm:h-24 sm:w-24">
+            <CheckCircle2 size={40} strokeWidth={2.5} />
           </div>
 
           <p className="mb-2 text-sm font-black uppercase tracking-[0.2em] text-[#1db7bd]">
             KidiClass
           </p>
 
-          <h1 className="text-4xl font-black text-gray-950">
+          <h1 className="text-3xl font-black text-gray-950 sm:text-4xl">
             Commande confirmée
           </h1>
 
-          <p className="mt-4 text-gray-600">
+          <p className="mt-3 text-sm leading-6 text-gray-600 sm:mt-4 sm:text-base">
             Merci pour votre commande. Le suivi de votre commande se fait avec le
             numéro de téléphone utilisé lors de l’achat.
           </p>
 
-          <div className="mt-7 rounded-[2rem] bg-[#e9fbfc] p-6">
+          <div className="mt-6 rounded-[2rem] bg-[#e9fbfc] p-4 sm:mt-7 sm:p-6">
             <p className="text-sm font-bold text-gray-600">
               Référence commande
             </p>
 
-            <p className="mt-2 text-3xl font-black text-[#1db7bd]">
+            <p className="mt-2 text-2xl font-black text-[#1db7bd] sm:text-3xl">
               {orderReference}
             </p>
           </div>
 
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <div className="mt-6 flex flex-col justify-center gap-3 sm:mt-8 sm:flex-row">
             <Link
               href="/suivi"
-              className="rounded-full bg-[#1db7bd] px-8 py-4 font-black text-white hover:bg-[#159ca1]"
+              className="rounded-full bg-[#1db7bd] px-6 py-3.5 text-sm font-black text-white hover:bg-[#159ca1] sm:px-8 sm:py-4 sm:text-base"
             >
               Suivre ma commande
             </Link>
 
             <Link
               href="/catalogue"
-              className="rounded-full border-2 border-[#f36f45] px-8 py-4 font-black text-[#f36f45] hover:bg-[#f36f45] hover:text-white"
+              className="rounded-full border-2 border-[#f36f45] px-6 py-3.5 text-sm font-black text-[#f36f45] hover:bg-[#f36f45] hover:text-white sm:px-8 sm:py-4 sm:text-base"
             >
               Retour au catalogue
             </Link>
@@ -888,47 +888,47 @@ Merci de me communiquer le montant total avec livraison.
 
   return (
     <main className="min-h-screen bg-[#fffdf7]">
-      <section className="border-b border-gray-100 bg-[#e9fbfc] px-6 py-10">
+      <section className="border-b border-gray-100 bg-[#e9fbfc] px-4 py-6 sm:px-6 sm:py-10">
         <div className="mx-auto max-w-7xl">
           <p className="mb-2 text-sm font-black uppercase tracking-[0.2em] text-[#1db7bd]">
             Finalisation
           </p>
 
-          <h1 className="text-5xl font-black text-gray-950">
+          <h1 className="text-3xl font-black leading-tight text-gray-950 sm:text-5xl">
             Finaliser la commande
           </h1>
 
-          <p className="mt-3 max-w-2xl text-gray-600">
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-600 sm:text-base">
             Renseignez vos informations de livraison pour valider votre commande
             KidiClass.
           </p>
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-[2fr_0.9fr]">
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <section className="mx-auto grid max-w-7xl gap-5 px-4 py-6 sm:px-6 sm:py-10 lg:grid-cols-[2fr_0.9fr] lg:gap-8">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           {message && (
-            <p className="rounded-2xl bg-red-50 p-4 font-bold text-red-500">
+            <p className="rounded-2xl bg-red-50 p-4 text-sm font-bold text-red-500 sm:text-base">
               {message}
             </p>
           )}
 
-          <div className="rounded-[2rem] border border-gray-100 bg-white p-6 shadow-sm">
-            <div className="mb-6">
-              <p className="text-sm font-black uppercase tracking-[0.2em] text-[#f36f45]">
+          <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-[2rem] sm:p-6">
+            <div className="mb-4 sm:mb-6">
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#f36f45] sm:text-sm sm:tracking-[0.2em]">
                 Étape 1
               </p>
 
-              <h2 className="mt-2 text-2xl font-black text-gray-950">
+              <h2 className="mt-1.5 text-xl font-black text-gray-950 sm:mt-2 sm:text-2xl">
                 Informations client
               </h2>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <input
                 type="text"
                 placeholder="Nom complet"
-                className="w-full rounded-[1.4rem] border-2 border-[#bfedf0] bg-white p-4 font-bold text-black shadow-sm outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15"
+                className="w-full rounded-xl border-2 border-[#bfedf0] bg-white p-3.5 text-sm font-bold text-black shadow-sm outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15 sm:rounded-[1.4rem] sm:p-4 sm:text-base"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 required
@@ -950,7 +950,7 @@ Merci de me communiquer le montant total avec livraison.
                   <input
                     type="tel"
                     placeholder="Numéro de téléphone"
-                    className="w-full rounded-[1.4rem] border-2 border-[#bfedf0] bg-white p-4 font-bold text-black shadow-sm outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15"
+                    className="w-full rounded-xl border-2 border-[#bfedf0] bg-white p-3.5 text-sm font-bold text-black shadow-sm outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15 sm:rounded-[1.4rem] sm:p-4 sm:text-base"
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     required
@@ -960,18 +960,18 @@ Merci de me communiquer le montant total avec livraison.
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-gray-100 bg-white p-6 shadow-sm">
-            <div className="mb-6">
-              <p className="text-sm font-black uppercase tracking-[0.2em] text-[#f36f45]">
+          <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-[2rem] sm:p-6">
+            <div className="mb-4 sm:mb-6">
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#f36f45] sm:text-sm sm:tracking-[0.2em]">
                 Étape 2
               </p>
 
-              <h2 className="mt-2 text-2xl font-black text-gray-950">
+              <h2 className="mt-1.5 text-xl font-black text-gray-950 sm:mt-2 sm:text-2xl">
                 Livraison
               </h2>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <KidiclassSelect
                 label="Zone de livraison"
                 value={deliveryArea}
@@ -1018,7 +1018,7 @@ Merci de me communiquer le montant total avec livraison.
                         ? "Pays et ville de livraison"
                         : "Ville de livraison"
                     }
-                    className="w-full rounded-[1.4rem] border-2 border-[#bfedf0] bg-white p-4 font-bold text-black shadow-sm outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15"
+                    className="w-full rounded-xl border-2 border-[#bfedf0] bg-white p-3.5 text-sm font-bold text-black shadow-sm outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15 sm:rounded-[1.4rem] sm:p-4 sm:text-base"
                     value={customerCity}
                     onChange={(e) => setCustomerCity(e.target.value)}
                     required
@@ -1028,13 +1028,13 @@ Merci de me communiquer le montant total avec livraison.
 
               <textarea
                 placeholder="Adresse manuelle : quartier, rue, repère, immeuble, boutique..."
-                className="min-h-32 w-full rounded-[1.4rem] border-2 border-[#bfedf0] bg-white p-4 font-bold text-black shadow-sm outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15"
+                className="min-h-24 w-full rounded-xl border-2 border-[#bfedf0] bg-white p-3.5 text-sm font-bold text-black shadow-sm outline-none placeholder:text-gray-400 focus:border-[#1db7bd] focus:ring-4 focus:ring-[#1db7bd]/15 sm:min-h-32 sm:rounded-[1.4rem] sm:p-4 sm:text-base"
                 value={customerAddress}
                 onChange={(e) => setCustomerAddress(e.target.value)}
                 required
               />
 
-              <div className="rounded-2xl bg-[#e9fbfc] p-4 text-sm font-bold leading-6 text-[#1db7bd]">
+              <div className="rounded-2xl bg-[#e9fbfc] p-3 text-xs font-bold leading-5 text-[#1db7bd] sm:p-4 sm:text-sm sm:leading-6">
                 La carte est optionnelle, mais elle aide à localiser plus
                 facilement le lieu de livraison.
               </div>
@@ -1052,20 +1052,20 @@ Merci de me communiquer le montant total avec livraison.
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-gray-100 bg-white p-6 shadow-sm">
-            <div className="mb-6">
-              <p className="text-sm font-black uppercase tracking-[0.2em] text-[#f36f45]">
+          <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-[2rem] sm:p-6">
+            <div className="mb-4 sm:mb-6">
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#f36f45] sm:text-sm sm:tracking-[0.2em]">
                 Étape 3
               </p>
 
-              <h2 className="mt-2 text-2xl font-black text-gray-950">
+              <h2 className="mt-1.5 text-xl font-black text-gray-950 sm:mt-2 sm:text-2xl">
                 Paiement
               </h2>
             </div>
 
             {isFixedDeliveryArea(deliveryArea) ? (
-              <div className="space-y-4">
-                <div className="space-y-3 rounded-2xl border border-[#bfedf0] bg-white p-4">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="space-y-3 rounded-2xl border border-[#bfedf0] bg-white p-3 sm:p-4">
                   <p className="text-sm font-black text-gray-700">
                     Délai souhaité
                   </p>
@@ -1103,7 +1103,7 @@ Merci de me communiquer le montant total avec livraison.
                             }
                           />
                         ) : (
-                          <span className="rounded-2xl bg-[#e9fbfc] px-4 py-3 text-sm font-black text-[#087f83]">
+                          <span className="rounded-2xl bg-[#e9fbfc] px-3 py-2.5 text-xs font-black text-[#087f83] sm:px-4 sm:py-3 sm:text-sm">
                             {selectedAvailability}
                           </span>
                         )}
@@ -1111,7 +1111,7 @@ Merci de me communiquer le montant total avec livraison.
                     );
                   })}
 
-                  <p className="rounded-2xl bg-[#fff9cf] p-3 text-sm font-black leading-6 text-[#9a7e00]">
+                  <p className="rounded-2xl bg-[#fff9cf] p-3 text-xs font-black leading-5 text-[#9a7e00] sm:text-sm sm:leading-6">
                     Délai retenu pour cette commande :{" "}
                     {selectedOrderAvailabilityStatus}
                   </p>
@@ -1124,7 +1124,7 @@ Merci de me communiquer le montant total avec livraison.
                   onChange={setPaymentMethod}
                 />
 
-                <div className="space-y-3 rounded-2xl bg-[#e9fbfc] p-5 text-sm font-bold leading-6 text-[#1db7bd]">
+                <div className="space-y-3 rounded-2xl bg-[#e9fbfc] p-3 text-xs font-bold leading-5 text-[#1db7bd] sm:p-5 sm:text-sm sm:leading-6">
                   <p>
                     {selectedOrderAvailabilityStatus === availabilityOptions[2]
                       ? "Pour le délai 30-45 jours, vous pouvez régler en 2 fois ou en 3 fois."
@@ -1144,7 +1144,7 @@ Merci de me communiquer le montant total avec livraison.
                   )}
 
                   {requiresOnlinePayment && paydunyaReady === false && (
-                    <p className="rounded-2xl bg-white p-4 text-[#f36f45]">
+                    <p className="rounded-2xl bg-white p-3 text-[#f36f45] sm:p-4">
                       Le paiement en ligne n&apos;est pas encore activé par
                       l&apos;administrateur.
                     </p>
@@ -1154,7 +1154,7 @@ Merci de me communiquer le montant total avec livraison.
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="rounded-2xl border border-orange-200 bg-orange-50 p-5 text-sm font-bold leading-6 text-orange-700">
+                <div className="rounded-2xl border border-orange-200 bg-orange-50 p-3 text-xs font-bold leading-5 text-orange-700 sm:p-5 sm:text-sm sm:leading-6">
                   Pour les livraisons hors zones fixes ou à l’étranger, les frais
                   de livraison sont calculés au cas par cas. Votre commande sera
                   enregistrée, puis vous serez redirigé vers WhatsApp pour
@@ -1169,7 +1169,7 @@ Merci de me communiquer le montant total avec livraison.
             disabled={
               loading || (requiresOnlinePayment && paydunyaReady !== true)
             }
-            className="w-full rounded-full bg-[#f36f45] px-8 py-5 text-lg font-black text-white shadow-sm hover:bg-[#e85e33] disabled:opacity-50"
+            className="w-full rounded-full bg-[#f36f45] px-6 py-4 text-base font-black text-white shadow-sm hover:bg-[#e85e33] disabled:opacity-50 sm:px-8 sm:py-5 sm:text-lg"
           >
             {loading
               ? requiresOnlinePayment
@@ -1183,31 +1183,31 @@ Merci de me communiquer le montant total avec livraison.
           </button>
         </form>
 
-        <aside className="h-fit rounded-[2rem] border border-gray-100 bg-white p-6 shadow-sm lg:sticky lg:top-44">
-          <h2 className="text-2xl font-black text-gray-950">
+        <aside className="h-fit rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-[2rem] sm:p-6 lg:sticky lg:top-44">
+          <h2 className="text-xl font-black text-gray-950 sm:text-2xl">
             Résumé commande
           </h2>
 
-          <div className="mt-6 space-y-4">
+          <div className="mt-4 space-y-3 sm:mt-6 sm:space-y-4">
             {cart.map((item, index) => (
               <div
                 key={`${item.productId}-${item.selectedSize}-${index}`}
-                className="grid grid-cols-[70px_1fr] gap-4 border-b border-gray-100 pb-4"
+                className="grid grid-cols-[58px_1fr] gap-3 border-b border-gray-100 pb-3 sm:grid-cols-[70px_1fr] sm:gap-4 sm:pb-4"
               >
-                <div className="overflow-hidden rounded-2xl bg-gray-100">
+                <div className="overflow-hidden rounded-xl bg-gray-100 sm:rounded-2xl">
                   {item.productImage ? (
                     <img
                       src={item.productImage}
                       alt={item.productName}
-                      className="h-20 w-full object-cover object-top"
+                      className="h-16 w-full object-cover object-top sm:h-20"
                     />
                   ) : (
-                    <div className="h-20 bg-gray-100" />
+                    <div className="h-16 bg-gray-100 sm:h-20" />
                   )}
                 </div>
 
                 <div>
-                  <p className="line-clamp-2 font-black text-gray-950">
+                  <p className="line-clamp-2 text-sm font-black leading-tight text-gray-950 sm:text-base">
                     {item.productName}
                   </p>
 
@@ -1221,7 +1221,7 @@ Merci de me communiquer le montant total avec livraison.
                     Quantité : {item.quantity}
                   </p>
 
-                  <p className="mt-2 font-black text-[#f36f45]">
+                  <p className="mt-1.5 text-sm font-black text-[#f36f45] sm:mt-2 sm:text-base">
                     {(item.productPrice * item.quantity).toLocaleString(
                       "fr-FR"
                     )}{" "}
@@ -1232,8 +1232,8 @@ Merci de me communiquer le montant total avec livraison.
             ))}
           </div>
 
-          <div className="mt-5 space-y-3">
-            <div className="flex justify-between text-gray-700">
+          <div className="mt-4 space-y-2.5 text-sm sm:mt-5 sm:space-y-3 sm:text-base">
+            <div className="flex justify-between gap-3 text-gray-700">
               <span>Sous-total</span>
               <span className="font-bold">
                 {subtotal.toLocaleString("fr-FR")} FCFA
@@ -1241,7 +1241,7 @@ Merci de me communiquer le montant total avec livraison.
             </div>
 
             {isFixedDeliveryArea(deliveryArea) ? (
-              <div className="flex justify-between text-gray-700">
+              <div className="flex justify-between gap-3 text-gray-700">
                 <span>
                   {deliveryArea === "Abidjan" && hasRollingBag
                     ? "Livraison Abidjan avec sac à roulette"
@@ -1252,18 +1252,18 @@ Merci de me communiquer le montant total avec livraison.
                 </span>
               </div>
             ) : (
-              <div className="rounded-2xl bg-orange-50 p-4 text-sm font-bold leading-6 text-orange-700">
+              <div className="rounded-2xl bg-orange-50 p-3 text-xs font-bold leading-5 text-orange-700 sm:p-4 sm:text-sm sm:leading-6">
                 Livraison hors zones fixes : montant à confirmer sur WhatsApp.
               </div>
             )}
 
-            <div className="rounded-2xl bg-[#e9fbfc] p-4 text-sm font-bold leading-6 text-[#1db7bd]">
+            <div className="rounded-2xl bg-[#e9fbfc] p-3 text-xs font-bold leading-5 text-[#1db7bd] sm:p-4 sm:text-sm sm:leading-6">
               Livraison Abidjan : 1 000 FCFA. Avec un sac à roulette : 2 000
               FCFA. Bassam, Songon et Anyama : 2 500 FCFA.
             </div>
 
             {promoDiscount > 0 && (
-              <div className="flex justify-between text-green-700">
+              <div className="flex justify-between gap-3 text-green-700">
                 <span>
                   Remise {promoCode} (-{promoPercentage}%)
                 </span>
@@ -1274,7 +1274,7 @@ Merci de me communiquer le montant total avec livraison.
             )}
 
             {isFixedDeliveryArea(deliveryArea) && (
-              <div className="rounded-2xl bg-[#fff9cf] p-4 text-sm font-bold leading-6 text-[#c7a900]">
+              <div className="rounded-2xl bg-[#fff9cf] p-3 text-xs font-bold leading-5 text-[#c7a900] sm:p-4 sm:text-sm sm:leading-6">
                 Option de paiement choisie : {savedPaymentMethod}
                 {depositAmount > 0 && (
                   <>
@@ -1299,8 +1299,8 @@ Merci de me communiquer le montant total avec livraison.
             )}
           </div>
 
-          <div className="mt-6 border-t border-gray-100 pt-5">
-            <div className="flex justify-between gap-4 text-2xl font-black text-gray-950">
+          <div className="mt-5 border-t border-gray-100 pt-4 sm:mt-6 sm:pt-5">
+            <div className="flex justify-between gap-3 text-lg font-black text-gray-950 sm:gap-4 sm:text-2xl">
               <span>Total</span>
 
               <span className="text-right text-[#f36f45]">
@@ -1315,7 +1315,7 @@ Merci de me communiquer le montant total avec livraison.
 
           <Link
             href="/panier"
-            className="mt-5 block rounded-full border-2 border-[#1db7bd] px-6 py-4 text-center font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white"
+            className="mt-4 block rounded-full border-2 border-[#1db7bd] px-6 py-3.5 text-center text-sm font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white sm:mt-5 sm:py-4 sm:text-base"
           >
             Modifier mon panier
           </Link>
