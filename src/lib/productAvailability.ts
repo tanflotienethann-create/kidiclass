@@ -53,6 +53,22 @@ export function getProductAvailabilityShortLabel(
   return "Disponible";
 }
 
+export function getProductAvailabilityBadgeLabels(
+  availabilityStatus?: string | null,
+) {
+  return parseAvailabilityStatuses(availabilityStatus).map((status) => {
+    if (status === availabilityOptions[1]) {
+      return "Précommande 7-10 jours ouvrés";
+    }
+
+    if (status === availabilityOptions[2]) {
+      return "Précommande 30-45 jours";
+    }
+
+    return status;
+  });
+}
+
 export function getLongestAvailabilityStatus(statuses: string[]) {
   const normalizedStatuses = statuses.map((status) =>
     normalizeAvailabilityStatus(status),

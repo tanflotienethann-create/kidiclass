@@ -3,8 +3,8 @@
 import KidiclassSelect from "@/components/KidiclassSelect";
 import { useTaxonomySettings } from "@/hooks/useTaxonomySettings";
 import {
+  getProductAvailabilityBadgeLabels,
   getProductAvailabilityLabel,
-  getProductAvailabilityShortLabel,
 } from "@/lib/productAvailability";
 import {
   getTaxonomyCategoryLabels,
@@ -997,26 +997,29 @@ export default function CatalogueClient({
                         )}
                       </div>
 
-                      <span
-                        title={
-                          Number(product.stock || 0) > 0
-                            ? getProductAvailabilityLabel(
-                                product.availability_status,
-                              )
-                            : "Rupture"
-                        }
-                        className={`w-fit max-w-full rounded-full px-2.5 py-1.5 text-[10px] font-black leading-none sm:px-3 sm:text-xs ${
-                          Number(product.stock || 0) > 0
-                            ? "bg-[var(--kc-soft)] text-[var(--kc-ink)]"
-                            : "bg-red-50 text-red-500"
-                        }`}
-                      >
-                        {Number(product.stock || 0) > 0
-                          ? getProductAvailabilityShortLabel(
-                              product.availability_status
-                            )
-                          : "Rupture"}
-                      </span>
+                      {Number(product.stock || 0) > 0 ? (
+                        <div
+                          title={getProductAvailabilityLabel(
+                            product.availability_status,
+                          )}
+                          className="flex max-w-full flex-wrap gap-1.5 min-[520px]:justify-end"
+                        >
+                          {getProductAvailabilityBadgeLabels(
+                            product.availability_status,
+                          ).map((label) => (
+                            <span
+                              key={label}
+                              className="rounded-full bg-[var(--kc-soft)] px-2.5 py-1.5 text-[9px] font-black leading-tight text-[var(--kc-ink)] sm:text-[10px]"
+                            >
+                              {label}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="w-fit rounded-full bg-red-50 px-2.5 py-1.5 text-[10px] font-black leading-none text-red-500 sm:px-3 sm:text-xs">
+                          Rupture
+                        </span>
+                      )}
                     </div>
                   </div>
                 </Link>

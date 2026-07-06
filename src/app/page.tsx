@@ -1,8 +1,8 @@
 "use client";
 
 import {
+  getProductAvailabilityBadgeLabels,
   getProductAvailabilityLabel,
-  getProductAvailabilityShortLabel,
 } from "@/lib/productAvailability";
 import { shopDepartments } from "@/lib/shopNavigation";
 import { useTaxonomySettings } from "@/hooks/useTaxonomySettings";
@@ -475,26 +475,29 @@ export default function HomePage() {
                           )}
                         </div>
 
-                        <span
-                          title={
-                            Number(product.stock || 0) > 0
-                              ? getProductAvailabilityLabel(
-                                  product.availability_status,
-                                )
-                              : "Rupture"
-                          }
-                          className={`w-fit max-w-full rounded-full px-2.5 py-1.5 text-[10px] font-black leading-none sm:px-3 sm:text-xs ${
-                            Number(product.stock || 0) > 0
-                              ? "bg-[#e9fbfc] text-[#0f766e]"
-                              : "bg-red-50 text-red-500"
-                          }`}
-                        >
-                          {Number(product.stock || 0) > 0
-                            ? getProductAvailabilityShortLabel(
-                                product.availability_status
-                              )
-                            : "Rupture"}
-                        </span>
+                        {Number(product.stock || 0) > 0 ? (
+                          <div
+                            title={getProductAvailabilityLabel(
+                              product.availability_status,
+                            )}
+                            className="flex max-w-full flex-wrap gap-1.5 min-[420px]:justify-end"
+                          >
+                            {getProductAvailabilityBadgeLabels(
+                              product.availability_status,
+                            ).map((label) => (
+                              <span
+                                key={label}
+                                className="rounded-full bg-[#e9fbfc] px-2.5 py-1.5 text-[9px] font-black leading-tight text-[#0f766e] sm:text-[10px]"
+                              >
+                                {label}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="w-fit rounded-full bg-red-50 px-2.5 py-1.5 text-[10px] font-black leading-none text-red-500 sm:px-3 sm:text-xs">
+                            Rupture
+                          </span>
+                        )}
                       </div>
                     </div>
                   </Link>
