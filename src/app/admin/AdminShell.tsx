@@ -90,7 +90,7 @@ export default function AdminShell({
   if (checkingAdmin) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#fffdf7] px-5">
-        <div className="max-w-md rounded-[2.5rem] border border-gray-100 bg-white p-10 text-center shadow-sm">
+        <div className="max-w-md rounded-[2.5rem] border border-gray-100 bg-white p-6 text-center shadow-sm sm:p-10">
           <Image
             src="/logo-kidiclass.png"
             alt="KidiClass"
@@ -245,13 +245,13 @@ export default function AdminShell({
       </header>
 
       <section className="w-full overflow-x-hidden">
-        <div className="mx-auto w-full max-w-[1500px] px-5 py-8 sm:px-6 lg:px-8">
-          <div className="mb-8 rounded-[2.5rem] border border-gray-100 bg-white p-6 shadow-sm md:p-8">
-            <p className="text-sm font-black uppercase tracking-[0.3em] text-[#1db7bd]">
+        <div className="mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+          <div className="mb-6 rounded-[2.5rem] border border-gray-100 bg-white p-5 shadow-sm sm:mb-8 sm:p-6 md:p-8">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-[#1db7bd] sm:text-sm sm:tracking-[0.3em]">
               Espace administrateur
             </p>
 
-            <h1 className="mt-3 text-4xl font-black text-gray-950 md:text-6xl">
+            <h1 className="mt-3 text-3xl font-black leading-tight text-gray-950 sm:text-4xl md:text-6xl">
               {title}
             </h1>
 

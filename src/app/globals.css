@@ -337,3 +337,18 @@ main {
 .admin-content-fix div {
   max-width: 100%;
 }
+
+@media (max-width: 640px) {
+  select {
+    min-height: 48px;
+    padding: 0.85rem 2.6rem 0.85rem 0.9rem;
+    font-size: 0.9rem;
+    background-position: right 0.85rem center;
+  }
+
+  .kidiclass-card:hover,
+  .kidiclass-button-primary:hover,
+  .kidiclass-button-secondary:hover {
+    transform: none;
+  }
+}

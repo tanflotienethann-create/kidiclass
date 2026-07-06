@@ -100,10 +100,10 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="flex items-center justify-center px-6 py-12">
+        <div className="flex items-center justify-center px-4 py-8 sm:px-6 sm:py-12">
           <form
             onSubmit={handleLogin}
-            className="w-full max-w-md rounded-[2.5rem] border border-gray-100 bg-white p-8 shadow-sm"
+            className="w-full max-w-md rounded-[2.5rem] border border-gray-100 bg-white p-5 shadow-sm sm:p-8"
           >
             <div className="mb-8 text-center">
               <Link href="/" className="inline-block lg:hidden">
@@ -125,7 +125,7 @@ export default function LoginPage() {
                 Connexion
               </p>
 
-              <h1 className="mt-2 text-4xl font-black text-gray-950">
+              <h1 className="mt-2 text-3xl font-black text-gray-950 sm:text-4xl">
                 Bon retour
               </h1>
 
@@ -184,7 +184,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400 hover:text-[#1db7bd]"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-gray-400 hover:bg-[#e9fbfc] hover:text-[#1db7bd]"
                     aria-label={
                       showPassword
                         ? "Masquer le mot de passe"
@@ -217,7 +217,10 @@ export default function LoginPage() {
 
             <p className="mt-7 text-center text-sm font-bold text-gray-600">
               Pas encore de compte ?{" "}
-              <Link href="/register" className="font-black text-[#1db7bd]">
+              <Link
+                href="/register"
+                className="inline-flex min-h-10 items-center rounded-full px-3 font-black text-[#1db7bd] hover:bg-[#e9fbfc]"
+              >
                 Créer un compte
               </Link>
             </p>
@@ -231,7 +234,7 @@ export default function LoginPage() {
 
             <Link
               href="/"
-              className="mt-4 block text-center text-sm font-black text-[#f36f45]"
+              className="mt-4 block rounded-full px-5 py-3 text-center text-sm font-black text-[#f36f45] hover:bg-[#fff1f5]"
             >
               Retour à la boutique
             </Link>

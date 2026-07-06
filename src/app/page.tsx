@@ -244,18 +244,18 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-[#faf8f4]">
-      <section className="retail-band overflow-hidden px-4 py-7 sm:px-5 md:py-12">
+      <section className="retail-band overflow-hidden px-4 py-6 sm:px-5 sm:py-9 md:py-12">
         <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
             <p className="text-sm font-black uppercase text-[#e85035]">
               Boutique enfant tendance
             </p>
 
-            <h1 className="mt-4 max-w-3xl text-4xl font-black leading-tight text-[#111827] sm:text-5xl md:text-7xl">
+            <h1 className="mt-3 max-w-3xl text-[2.35rem] font-black leading-[1.08] text-[#111827] min-[390px]:text-[2.65rem] sm:mt-4 sm:text-5xl md:text-7xl">
               La rentrée, la plage et les looks kids réunis
             </h1>
 
-            <p className="mt-4 max-w-2xl text-base font-bold leading-7 text-gray-700 sm:text-lg sm:leading-8">
+            <p className="mt-4 max-w-2xl text-[0.95rem] font-bold leading-7 text-gray-700 sm:text-lg sm:leading-8">
               Des essentiels enfant faciles à porter, des packs pratiques et
               des accessoires colorés, présentés comme une vraie boutique mode.
             </p>
@@ -283,11 +283,11 @@ export default function HomePage() {
                 className="block bg-[#fff3bf] px-4 py-4"
               >
                 <div className="flex items-center justify-between gap-3">
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[#9a6b00]">
                       Rentrée scolaire
                     </p>
-                    <h2 className="mt-1 text-2xl font-black leading-tight text-gray-950">
+                    <h2 className="mt-1 text-xl font-black leading-tight text-gray-950 min-[390px]:text-2xl">
                       Les essentiels école en premier
                     </h2>
                   </div>
@@ -308,7 +308,7 @@ export default function HomePage() {
                   <Link
                     key={item.title}
                     href={item.href}
-                    className="rounded-xl border border-[#f7c873] bg-[#fffdf7] px-3 py-3 text-sm font-black leading-tight text-[#6f4e00]"
+                    className="min-w-0 rounded-xl border border-[#f7c873] bg-[#fffdf7] px-3 py-3 text-sm font-black leading-tight text-[#6f4e00]"
                   >
                     {item.title}
                   </Link>
@@ -370,7 +370,7 @@ export default function HomePage() {
                 À shopper
               </p>
 
-              <h2 className="mt-2 text-3xl font-black text-gray-950 sm:text-4xl md:text-5xl">
+              <h2 className="mt-2 text-2xl font-black leading-tight text-gray-950 sm:text-4xl md:text-5xl">
                 Derniers articles
               </h2>
             </div>
@@ -411,9 +411,9 @@ export default function HomePage() {
                   <Link
                     key={product.id}
                     href={`/produit/${product.id}`}
-                    className="kidiclass-card group w-[46%] min-w-[155px] flex-none snap-start overflow-hidden sm:w-[30%] lg:w-[23.5%]"
+                    className="kidiclass-card group w-[68vw] min-w-[220px] max-w-[280px] flex-none snap-start overflow-hidden sm:w-[30%] sm:min-w-0 sm:max-w-none lg:w-[23.5%]"
                   >
-                    <div className="relative h-44 overflow-hidden bg-[#f4efe7] sm:h-72">
+                    <div className="relative h-48 overflow-hidden bg-[#f4efe7] sm:h-72">
                       {getProductImage(product) ? (
                         <img
                           src={getProductImage(product)}
@@ -456,7 +456,7 @@ export default function HomePage() {
                         {product.name}
                       </h3>
 
-                      <div className="mt-4 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-end min-[420px]:justify-between">
+                      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                         <div>
                           <p className="text-sm font-black text-[#f36f45] sm:text-xl">
                             {Number(product.price || 0).toLocaleString(
@@ -480,7 +480,7 @@ export default function HomePage() {
                             title={getProductAvailabilityLabel(
                               product.availability_status,
                             )}
-                            className="flex max-w-full flex-wrap gap-1.5 min-[420px]:justify-end"
+                            className="flex max-w-full flex-wrap gap-1.5 sm:justify-end"
                           >
                             {getProductAvailabilityBadgeLabels(
                               product.availability_status,
@@ -599,7 +599,7 @@ export default function HomePage() {
                 Catégories
               </p>
 
-              <h2 className="mt-3 text-3xl font-black text-gray-950 sm:text-4xl md:text-5xl">
+              <h2 className="mt-3 text-2xl font-black leading-tight text-gray-950 sm:text-4xl md:text-5xl">
                 Explorer la boutique
               </h2>
             </div>
@@ -656,7 +656,7 @@ export default function HomePage() {
                 Sélection spéciale
               </p>
 
-              <h2 className="mt-3 text-3xl font-black text-gray-950 sm:text-4xl md:text-5xl">
+              <h2 className="mt-3 text-2xl font-black leading-tight text-gray-950 sm:text-4xl md:text-5xl">
                 La rentrée avec style
               </h2>
 

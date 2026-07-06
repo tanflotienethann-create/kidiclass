@@ -283,7 +283,7 @@ function CharactersDecor() {
           </span>
         ))}
       </div>
-      <div className="absolute -bottom-10 right-72 h-36 w-36 rotate-12 rounded-lg bg-[#e84a77]/25" />
+      <div className="absolute -bottom-10 right-72 hidden h-36 w-36 rotate-12 rounded-lg bg-[#e84a77]/25 md:block" />
       <div className="absolute right-4 top-4 h-24 w-24 rounded-full bg-white/50 md:hidden" />
     </div>
   );
@@ -303,7 +303,7 @@ function PlayDecor() {
         <div className="absolute bottom-[4.5rem] left-8 h-8 w-8 rounded-full bg-[#17324d]" />
         <div className="absolute bottom-20 left-2 h-3 w-20 rounded-full bg-[#17324d]" />
       </div>
-      <div className="absolute -bottom-12 -right-12 h-48 w-48 rounded-full bg-[#f36f45]/20" />
+      <div className="absolute -bottom-12 -right-12 hidden h-48 w-48 rounded-full bg-[#f36f45]/20 md:block" />
     </div>
   );
 }
@@ -331,7 +331,7 @@ function PromotionDecor() {
       </div>
       <div className="absolute bottom-8 right-72 hidden h-24 w-24 rotate-12 rounded-lg bg-[#087f83] md:block" />
       <div className="absolute bottom-14 right-80 hidden h-12 w-12 -rotate-6 rounded-lg bg-white md:block" />
-      <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-[#ffe773]/75" />
+      <div className="absolute -right-12 -top-12 hidden h-40 w-40 rounded-full bg-[#ffe773]/75 md:block" />
     </div>
   );
 }
@@ -607,7 +607,7 @@ export default function CatalogueClient({
   return (
     <main className="min-h-screen bg-[#faf8f4]" style={themeVariables}>
       <section
-        className={`relative overflow-hidden px-4 py-8 sm:px-5 sm:py-14 ${themeStyle.section}`}
+        className={`relative overflow-hidden px-4 py-7 sm:px-5 sm:py-14 ${themeStyle.section}`}
       >
         <GenericDecor variant={theme.variant} />
 
@@ -621,11 +621,11 @@ export default function CatalogueClient({
               {theme.eyebrow}
             </p>
 
-            <h1 className="mt-4 text-4xl font-black leading-tight text-[#111827] sm:text-5xl md:text-7xl">
+            <h1 className="mt-3 text-3xl font-black leading-tight text-[#111827] min-[390px]:text-4xl sm:mt-4 sm:text-5xl md:text-7xl">
               {theme.title}
             </h1>
 
-            <p className="mt-4 max-w-2xl text-base font-bold leading-7 text-gray-700 sm:mt-5 sm:text-lg sm:leading-8">
+            <p className="mt-4 max-w-2xl text-[0.95rem] font-bold leading-7 text-gray-700 sm:mt-5 sm:text-lg sm:leading-8">
               {theme.description}
             </p>
           </div>
@@ -895,12 +895,12 @@ export default function CatalogueClient({
           </div>
 
           {loading ? (
-            <div className="retail-card mt-8 p-10 text-center font-black text-[var(--kc-ink)]">
+            <div className="retail-card mt-8 p-6 text-center font-black text-[var(--kc-ink)] sm:p-10">
               Chargement des produits...
             </div>
           ) : filteredProducts.length === 0 ? (
-            <div className="retail-card mt-8 border-dashed p-10 text-center">
-              <h3 className="text-2xl font-black text-gray-950">
+            <div className="retail-card mt-8 border-dashed p-6 text-center sm:p-10">
+              <h3 className="text-xl font-black text-gray-950 sm:text-2xl">
                 Aucun produit trouvé
               </h3>
 
@@ -916,7 +916,7 @@ export default function CatalogueClient({
                   href={`/produit/${product.id}`}
                   className="group overflow-hidden rounded-xl border border-[#e4ded4] bg-white shadow-sm transition hover:-translate-y-1 hover:border-[var(--kc-accent)] hover:shadow-xl"
                 >
-                  <div className="relative h-44 overflow-hidden bg-[#f4efe7] sm:h-64 lg:h-80">
+                  <div className="relative h-40 overflow-hidden bg-[#f4efe7] min-[390px]:h-44 sm:h-64 lg:h-80">
                     {getProductImage(product) ? (
                       <img
                         src={getProductImage(product)}
@@ -974,17 +974,17 @@ export default function CatalogueClient({
                   </div>
 
                   <div className="p-3 sm:p-5">
-                    <p className="text-xs font-black uppercase text-[var(--kc-accent)]">
+                    <p className="text-[10px] font-black uppercase leading-tight text-[var(--kc-accent)] sm:text-xs">
                       {product.category}
                     </p>
 
-                    <h3 className="mt-2 line-clamp-2 text-sm font-black text-gray-950 sm:text-xl">
+                    <h3 className="mt-2 line-clamp-2 text-[13px] font-black leading-tight text-gray-950 sm:text-xl">
                       {product.name}
                     </h3>
 
                     <div className="mt-3 flex flex-col gap-2 sm:mt-4 min-[520px]:flex-row min-[520px]:items-end min-[520px]:justify-between">
                       <div>
-                        <p className="text-sm font-black text-[#f36f45] sm:text-xl">
+                        <p className="text-[13px] font-black text-[#f36f45] sm:text-xl">
                           {Number(product.price || 0).toLocaleString("fr-FR")}{" "}
                           FCFA
                         </p>

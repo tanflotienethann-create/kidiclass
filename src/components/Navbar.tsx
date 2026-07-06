@@ -140,7 +140,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-[9999] border-b border-gray-100 bg-white shadow-sm">
-      <div className="border-b-4 border-[#f36f45] bg-[#087f83] px-3 py-1.5 text-center text-[11px] font-black leading-4 text-white sm:px-4 sm:py-2 sm:text-sm">
+      <div className="border-b-4 border-[#f36f45] bg-[#087f83] px-3 py-2 text-center text-[11px] font-black leading-5 text-white sm:px-4 sm:text-sm">
         Livraison à Abidjan et alentours • Expéditions en Côte d’Ivoire et à
         l’international
       </div>
@@ -159,7 +159,7 @@ export default function Navbar() {
 
           <Link
             href="/"
-            className="relative h-14 w-36 shrink-0 justify-self-center overflow-hidden sm:h-16 sm:w-48 lg:h-24 lg:w-64 lg:justify-self-start"
+            className="relative h-[3.25rem] w-32 shrink-0 justify-self-center overflow-hidden min-[390px]:h-14 min-[390px]:w-36 sm:h-16 sm:w-48 lg:h-24 lg:w-64 lg:justify-self-start"
             aria-label="Accueil KidiClass"
           >
             <Image
@@ -311,7 +311,7 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`rounded-xl px-4 py-3 text-sm font-black ${
+                  className={`rounded-xl px-4 py-3.5 text-sm font-black ${
                     isActiveLink(pathname, link.href)
                       ? "bg-[#e9fbfc] text-[#1db7bd]"
                       : "bg-[#fffdf7] text-gray-900"
@@ -324,7 +324,7 @@ export default function Navbar() {
               <Link
                 href="/catalogue?highlight=Favoris"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 rounded-xl bg-[#fff1f5] px-4 py-3 text-sm font-black text-[#f36f45]"
+                className="flex items-center gap-2 rounded-xl bg-[#fff1f5] px-4 py-3.5 text-sm font-black text-[#f36f45]"
               >
                 <Heart size={17} strokeWidth={2.5} />
                 Favoris
@@ -335,7 +335,7 @@ export default function Navbar() {
                   <Link
                     href="/compte"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-2 rounded-xl bg-[#e9fbfc] px-4 py-3 text-sm font-black text-[#1db7bd]"
+                    className="flex items-center gap-2 rounded-xl bg-[#e9fbfc] px-4 py-3.5 text-sm font-black text-[#1db7bd]"
                   >
                     <UserRound size={17} strokeWidth={2.5} />
                     Compte
@@ -344,7 +344,7 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="flex items-center gap-2 rounded-xl bg-red-50 px-4 py-3 text-left text-sm font-black text-red-500"
+                    className="flex items-center gap-2 rounded-xl bg-red-50 px-4 py-3.5 text-left text-sm font-black text-red-500"
                   >
                     <LogOut size={17} strokeWidth={2.5} />
                     Déconnexion
@@ -355,7 +355,7 @@ export default function Navbar() {
                   <Link
                     href="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="rounded-xl bg-[#fff1f5] px-4 py-3 text-sm font-black text-[#f36f45]"
+                    className="rounded-xl bg-[#fff1f5] px-4 py-3.5 text-sm font-black text-[#f36f45]"
                   >
                     Connexion
                   </Link>
@@ -366,7 +366,7 @@ export default function Navbar() {
                 <Link
                   href="/admin"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="rounded-xl bg-[#e9fbfc] px-4 py-3 text-sm font-black text-[#1db7bd]"
+                  className="rounded-xl bg-[#e9fbfc] px-4 py-3.5 text-sm font-black text-[#1db7bd]"
                 >
                   Espace admin
                 </Link>
@@ -392,7 +392,7 @@ export default function Navbar() {
                         "--dept-ink": department.palette.ink,
                       } as CSSProperties
                     }
-                    className={`rounded-lg border bg-white px-4 py-3 text-sm font-black shadow-sm ${
+                    className={`rounded-lg border bg-white px-4 py-3.5 text-sm font-black shadow-sm ${
                       isActiveLink(pathname, department.href)
                         ? "border-[var(--dept-accent)] bg-[var(--dept-soft)] text-[var(--dept-ink)]"
                         : "border-gray-100 text-gray-800 hover:border-[var(--dept-accent)] hover:bg-[var(--dept-soft)] hover:text-[var(--dept-ink)]"

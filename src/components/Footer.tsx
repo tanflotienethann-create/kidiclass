@@ -95,7 +95,7 @@ export default function Footer() {
                 href={social.href}
                 target="_blank"
                 rel="noreferrer"
-                className="flex h-10 items-center gap-2 rounded-full border border-[#eadfce] bg-[#fffdf7] px-3 text-sm font-black text-gray-900 transition hover:border-[#f36f45] hover:text-[#e85035]"
+                className="flex min-h-10 items-center gap-2 rounded-full border border-[#eadfce] bg-[#fffdf7] px-3 text-sm font-black text-gray-900 transition hover:border-[#f36f45] hover:text-[#e85035]"
                 aria-label={social.label}
               >
                 <FacebookIcon />
@@ -113,7 +113,7 @@ export default function Footer() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-full border border-[#eadfce] bg-[#fffdf7] px-2 py-2 text-center text-xs font-black text-gray-800"
+                className="rounded-full border border-[#eadfce] bg-[#fffdf7] px-2 py-3 text-center text-xs font-black text-gray-800"
               >
                 {link.label}
               </Link>
@@ -177,7 +177,7 @@ export default function Footer() {
         <div className="space-y-2 rounded-2xl bg-[#fffdf7] p-3 text-sm sm:space-y-3 sm:p-5">
           <a
             href="tel:+2250779311555"
-            className="flex items-center gap-3 font-black text-gray-950 transition hover:text-[#087f83]"
+            className="flex min-h-10 items-center justify-center gap-3 font-black text-gray-950 transition hover:text-[#087f83] sm:justify-start"
           >
             <Phone className="text-[#087f83]" size={19} strokeWidth={2.5} />
             0779311555
@@ -187,7 +187,7 @@ export default function Footer() {
             href="https://wa.me/2250779311555"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-3 rounded-full bg-[#e9fbfc] px-4 py-3 font-black text-[#087f83] transition hover:bg-[#087f83] hover:text-white"
+            className="flex min-h-12 items-center justify-center gap-3 rounded-full bg-[#e9fbfc] px-4 py-3 text-center font-black leading-tight text-[#087f83] transition hover:bg-[#087f83] hover:text-white"
           >
             <WhatsAppIcon />
             Nous contacter sur WhatsApp

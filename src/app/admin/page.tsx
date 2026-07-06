@@ -11,16 +11,16 @@ export default function AdminPage() {
     >
       <AdminStats />
 
-      <section className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+      <section className="mt-6 grid gap-4 sm:mt-8 md:grid-cols-2 xl:grid-cols-4">
         <Link
           href="/admin/produits"
-          className="rounded-[2rem] border border-gray-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+          className="rounded-[2rem] border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:p-7"
         >
           <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#e9fbfc] text-[#1db7bd]">
             <ShoppingBag size={30} strokeWidth={2.5} />
           </div>
 
-          <h2 className="text-2xl font-black text-gray-950">
+          <h2 className="text-xl font-black text-gray-950 sm:text-2xl">
             Gérer les produits
           </h2>
 
@@ -33,13 +33,13 @@ export default function AdminPage() {
 
         <Link
           href="/admin/commandes"
-          className="rounded-[2rem] border border-gray-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+          className="rounded-[2rem] border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:p-7"
         >
           <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff1f5] text-[#f36f45]">
             <PackageCheck size={30} strokeWidth={2.5} />
           </div>
 
-          <h2 className="text-2xl font-black text-gray-950">
+          <h2 className="text-xl font-black text-gray-950 sm:text-2xl">
             Suivre les commandes
           </h2>
 
@@ -53,13 +53,13 @@ export default function AdminPage() {
 
         <Link
           href="/"
-          className="rounded-[2rem] border border-gray-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+          className="rounded-[2rem] border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:p-7"
         >
           <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff9cf] text-[#c7a900]">
             <Store size={30} strokeWidth={2.5} />
           </div>
 
-          <h2 className="text-2xl font-black text-gray-950">
+          <h2 className="text-xl font-black text-gray-950 sm:text-2xl">
             Voir la boutique
           </h2>
 
@@ -72,13 +72,13 @@ export default function AdminPage() {
 
         <Link
           href="/admin/reglages"
-          className="rounded-[2rem] border border-gray-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+          className="rounded-[2rem] border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg sm:p-7"
         >
           <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f2edff] text-[#7c3aed]">
             <Settings size={30} strokeWidth={2.5} />
           </div>
 
-          <h2 className="text-2xl font-black text-gray-950">
+          <h2 className="text-xl font-black text-gray-950 sm:text-2xl">
             Réglages boutique
           </h2>
 
