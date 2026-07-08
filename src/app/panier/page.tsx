@@ -494,7 +494,8 @@ export default function PanierPage() {
 
           <p className="mt-2 text-xs font-bold leading-5 text-gray-500 sm:text-sm sm:leading-6">
             Livraison Abidjan : 1 000 FCFA. Avec un sac à roulette : 2 000
-            FCFA. Bassam, Songon et Anyama : 2 500 FCFA.
+            FCFA. Bingerville, Songon et Anyama : 2 000 FCFA. Bassam : 2 500
+            FCFA.
           </p>
 
           <div className="mt-5 space-y-3 text-sm sm:mt-7 sm:space-y-4 sm:text-base">

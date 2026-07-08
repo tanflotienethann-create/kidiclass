@@ -16,6 +16,7 @@ export const standardPaymentOptions = [
   paymentOnlinePartial,
 ];
 
+export const preorderPaymentOptions = [paymentOnlineFull, paymentOnlinePartial];
 export const longPreorderPaymentOptions = [paymentTwoTimes, paymentThreeTimes];
 
 export function isPreorderAvailability(availabilityStatus?: string | null) {
@@ -26,7 +27,7 @@ export function isPreorderAvailability(availabilityStatus?: string | null) {
 export function getPaymentOptions(availabilityStatusOrHasPreorder: string | boolean) {
   if (typeof availabilityStatusOrHasPreorder === "boolean") {
     return availabilityStatusOrHasPreorder
-      ? longPreorderPaymentOptions
+      ? preorderPaymentOptions
       : standardPaymentOptions;
   }
 
@@ -36,6 +37,10 @@ export function getPaymentOptions(availabilityStatusOrHasPreorder: string | bool
 
   if (availabilityStatus === availabilityOptions[2]) {
     return longPreorderPaymentOptions;
+  }
+
+  if (availabilityStatus === availabilityOptions[1]) {
+    return preorderPaymentOptions;
   }
 
   return standardPaymentOptions;

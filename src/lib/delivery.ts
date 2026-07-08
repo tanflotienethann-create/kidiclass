@@ -1,8 +1,16 @@
 export const standardDeliveryFee = 1000;
 export const rollingBagDeliveryFee = 2000;
-export const nearbyDeliveryFee = 2500;
+export const nearbyDeliveryFee = 2000;
+export const bassamDeliveryFee = 2500;
 
-export const nearbyDeliveryAreas = ["Bassam", "Songon", "Anyama"];
+export const nearbyDeliveryAreas = ["Bingerville", "Songon", "Anyama", "Bassam"];
+
+const deliveryAreaFees: Record<string, number> = {
+  Bingerville: nearbyDeliveryFee,
+  Songon: nearbyDeliveryFee,
+  Anyama: nearbyDeliveryFee,
+  Bassam: bassamDeliveryFee,
+};
 
 export function normalizeText(value?: string | null) {
   return (value || "")
@@ -31,7 +39,7 @@ export function isFixedDeliveryArea(deliveryArea: string) {
 
 export function getDeliveryFee(deliveryArea: string, hasRollingBag: boolean) {
   if (isNearbyDeliveryArea(deliveryArea)) {
-    return nearbyDeliveryFee;
+    return deliveryAreaFees[deliveryArea] || nearbyDeliveryFee;
   }
 
   if (deliveryArea === "Abidjan") {

@@ -1,6 +1,7 @@
 "use client";
 
 import KidiclassSelect from "@/components/KidiclassSelect";
+import ProductQuickAddButton from "@/components/ProductQuickAddButton";
 import { useTaxonomySettings } from "@/hooks/useTaxonomySettings";
 import {
   getProductAvailabilityBadgeLabels,
@@ -1021,6 +1022,15 @@ export default function CatalogueClient({
                         </span>
                       )}
                     </div>
+
+                    <ProductQuickAddButton
+                      productId={product.id}
+                      productName={product.name}
+                      productPrice={Number(product.price || 0)}
+                      productImage={getProductImage(product)}
+                      stock={Number(product.stock || 0)}
+                      className="mt-3 w-full bg-[#f36f45] px-3 py-2.5 text-xs text-white hover:bg-[#e85e33] sm:mt-4 sm:px-4 sm:py-3 sm:text-sm"
+                    />
                   </div>
                 </Link>
               ))}

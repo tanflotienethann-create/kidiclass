@@ -64,7 +64,6 @@ const abidjanCommunes = [
   "Abobo",
   "Adjamé",
   "Attécoubé",
-  "Bingerville",
   "Cocody",
   "Koumassi",
   "Marcory",
@@ -76,6 +75,7 @@ const abidjanCommunes = [
 
 const deliveryAreas = [
   "Abidjan",
+  "Bingerville",
   "Bassam",
   "Songon",
   "Anyama",
@@ -1131,6 +1131,14 @@ Merci de me communiquer le montant total avec livraison.
                       : "Choisissez votre mode de paiement selon le délai retenu pour la commande."}
                   </p>
 
+                  {selectedOrderAvailabilityStatus === availabilityOptions[1] && (
+                    <p className="rounded-2xl bg-white p-3 text-[#f36f45] sm:p-4">
+                      Pour une précommande, le paiement à la livraison est
+                      désactivé. Vous pouvez régler en ligne en totalité ou
+                      en partie.
+                    </p>
+                  )}
+
                   <p className="font-black text-gray-950">
                     {getPaymentInstruction(total, paymentMethod)}
                   </p>
@@ -1259,7 +1267,8 @@ Merci de me communiquer le montant total avec livraison.
 
             <div className="rounded-2xl bg-[#e9fbfc] p-3 text-xs font-bold leading-5 text-[#1db7bd] sm:p-4 sm:text-sm sm:leading-6">
               Livraison Abidjan : 1 000 FCFA. Avec un sac à roulette : 2 000
-              FCFA. Bassam, Songon et Anyama : 2 500 FCFA.
+              FCFA. Bingerville, Songon et Anyama : 2 000 FCFA. Bassam : 2 500
+              FCFA.
             </div>
 
             {promoDiscount > 0 && (

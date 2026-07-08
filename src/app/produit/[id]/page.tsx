@@ -61,6 +61,72 @@ type ProductVariant = {
   stock: number | null;
 };
 
+function PackContentsCard({ packItems }: { packItems: PackItem[] }) {
+  if (packItems.length === 0) return null;
+
+  return (
+    <div className="rounded-2xl border border-[#f4e49f] bg-[#fffdf7] p-3.5 shadow-sm sm:p-4">
+      <div className="flex items-center gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#fff3bf] text-[#9a6b00]">
+          <Boxes size={22} strokeWidth={2.5} />
+        </span>
+
+        <div>
+          <h2 className="text-lg font-black text-gray-950">
+            Ce pack contient
+          </h2>
+          <p className="text-xs font-bold leading-5 text-gray-500">
+            Les éléments inclus dans ce pack.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-2 min-[520px]:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+        {packItems.map((item) => {
+          const componentStock = Number(item.component_stock || 0);
+          const requiredQuantity = Number(item.required_quantity || 1);
+          const componentIsAvailable = componentStock >= requiredQuantity;
+
+          return (
+            <div
+              key={item.id}
+              className="rounded-xl bg-white px-3 py-2.5 shadow-sm"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-sm font-black leading-snug text-gray-950">
+                    {item.component_name}
+                  </p>
+
+                  {item.component_description && (
+                    <p className="mt-1 line-clamp-2 text-xs font-bold leading-5 text-gray-500">
+                      {item.component_description}
+                    </p>
+                  )}
+                </div>
+
+                <span className="shrink-0 rounded-full bg-[#fff3bf] px-2.5 py-1 text-xs font-black text-[#8b7100]">
+                  x{requiredQuantity}
+                </span>
+              </div>
+
+              <p
+                className={`mt-2 w-fit rounded-full px-2.5 py-1 text-[11px] font-black ${
+                  componentIsAvailable
+                    ? "bg-green-50 text-green-600"
+                    : "bg-red-50 text-red-500"
+                }`}
+              >
+                {componentIsAvailable ? "Disponible" : "Rupture"}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default async function ProductPage({
   params,
 }: {
@@ -172,8 +238,11 @@ export default async function ProductPage({
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-7 sm:px-6 sm:py-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
-        <ProductGallery images={productImages} productName={product.name} />
+      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-7 sm:px-6 sm:py-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1fr)] lg:gap-8">
+        <div className="space-y-4 lg:sticky lg:top-28 lg:self-start">
+          <ProductGallery images={productImages} productName={product.name} />
+          {isPack && <PackContentsCard packItems={packItems} />}
+        </div>
 
         <div className="space-y-6">
           <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-[2.5rem] sm:p-7">
@@ -249,71 +318,6 @@ export default async function ProductPage({
               <p className="mt-6 text-base font-bold leading-8 text-gray-600">
                 {product.description}
               </p>
-            )}
-
-            {isPack && packItems.length > 0 && (
-              <div className="mt-6 rounded-2xl border border-[#f4e49f] bg-[#fffdf7] p-3.5 sm:p-4">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#fff3bf] text-[#9a6b00]">
-                    <Boxes size={22} strokeWidth={2.5} />
-                  </span>
-
-                  <div>
-                    <h2 className="text-lg font-black text-gray-950">
-                      Ce pack contient
-                    </h2>
-                    <p className="text-xs font-bold leading-5 text-gray-500">
-                      Les éléments inclus dans ce pack.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-4 grid gap-2 min-[520px]:grid-cols-2">
-                  {packItems.map((item) => {
-                    const componentStock = Number(item.component_stock || 0);
-                    const requiredQuantity = Number(
-                      item.required_quantity || 1
-                    );
-                    const componentIsAvailable =
-                      componentStock >= requiredQuantity;
-
-                    return (
-                      <div
-                        key={item.id}
-                        className="rounded-xl bg-white px-3 py-2.5 shadow-sm"
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <p className="text-sm font-black leading-snug text-gray-950">
-                              {item.component_name}
-                            </p>
-
-                            {item.component_description && (
-                              <p className="mt-1 line-clamp-2 text-xs font-bold leading-5 text-gray-500">
-                                {item.component_description}
-                              </p>
-                            )}
-                          </div>
-
-                          <span className="shrink-0 rounded-full bg-[#fff3bf] px-2.5 py-1 text-xs font-black text-[#8b7100]">
-                            x{requiredQuantity}
-                          </span>
-                        </div>
-
-                        <p
-                          className={`mt-2 w-fit rounded-full px-2.5 py-1 text-[11px] font-black ${
-                            componentIsAvailable
-                              ? "bg-green-50 text-green-600"
-                              : "bg-red-50 text-red-500"
-                          }`}
-                        >
-                          {componentIsAvailable ? "Disponible" : "Rupture"}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
             )}
 
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
@@ -472,7 +476,8 @@ export default async function ProductPage({
               </p>
 
               <p className="mt-1 text-xs font-bold text-gray-500">
-                Abidjan 1 000 FCFA, sac à roulette 2 000 FCFA
+                Abidjan 1 000 FCFA, sac à roulette 2 000 FCFA. Bingerville,
+                Songon et Anyama 2 000 FCFA
               </p>
             </div>
 
