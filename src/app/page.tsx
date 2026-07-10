@@ -457,9 +457,9 @@ export default function HomePage() {
                         {product.name}
                       </h3>
 
-                      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                        <div>
-                          <p className="text-sm font-black text-[#f36f45] sm:text-xl">
+                      <div className="mt-4 grid gap-3 sm:grid-cols-[max-content_minmax(0,1fr)] sm:items-end">
+                        <div className="min-w-max shrink-0">
+                          <p className="whitespace-nowrap text-sm font-black leading-tight text-[#f36f45] sm:text-xl">
                             {Number(product.price || 0).toLocaleString(
                               "fr-FR"
                             )}{" "}
@@ -467,7 +467,7 @@ export default function HomePage() {
                           </p>
 
                           {product.old_price && (
-                            <p className="text-sm font-bold text-gray-400 line-through">
+                            <p className="whitespace-nowrap text-sm font-bold text-gray-400 line-through">
                               {Number(product.old_price).toLocaleString(
                                 "fr-FR"
                               )}{" "}
@@ -481,14 +481,14 @@ export default function HomePage() {
                             title={getProductAvailabilityLabel(
                               product.availability_status,
                             )}
-                            className="flex max-w-full flex-wrap gap-1.5 sm:justify-end"
+                            className="flex min-w-0 max-w-full flex-wrap gap-1.5 sm:justify-end"
                           >
                             {getProductAvailabilityBadgeLabels(
                               product.availability_status,
                             ).map((label) => (
                               <span
                                 key={label}
-                                className="rounded-full bg-[#e9fbfc] px-2.5 py-1.5 text-[9px] font-black leading-tight text-[#0f766e] sm:text-[10px]"
+                                className="max-w-full rounded-full bg-[#e9fbfc] px-2.5 py-1.5 text-center text-[9px] font-black leading-tight text-[#0f766e] sm:text-[10px]"
                               >
                                 {label}
                               </span>
