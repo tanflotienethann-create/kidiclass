@@ -457,9 +457,9 @@ export default function HomePage() {
                         {product.name}
                       </h3>
 
-                      <div className="mt-4 grid gap-3 sm:grid-cols-[max-content_minmax(0,1fr)] sm:items-end">
+                      <div className="mt-4 flex flex-col items-center gap-2 text-center">
                         <div className="min-w-max shrink-0">
-                          <p className="whitespace-nowrap text-sm font-black leading-tight text-[#f36f45] sm:text-xl">
+                          <p className="whitespace-nowrap text-lg font-black leading-tight text-[#f36f45] sm:text-xl">
                             {Number(product.price || 0).toLocaleString(
                               "fr-FR"
                             )}{" "}
@@ -481,7 +481,7 @@ export default function HomePage() {
                             title={getProductAvailabilityLabel(
                               product.availability_status,
                             )}
-                            className="flex min-w-0 max-w-full flex-wrap gap-1.5 sm:justify-end"
+                            className="flex min-w-0 max-w-full flex-wrap justify-center gap-1.5"
                           >
                             {getProductAvailabilityBadgeLabels(
                               product.availability_status,

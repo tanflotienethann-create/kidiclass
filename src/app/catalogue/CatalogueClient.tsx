@@ -983,9 +983,9 @@ export default function CatalogueClient({
                       {product.name}
                     </h3>
 
-                    <div className="mt-3 grid gap-2 sm:mt-4 min-[520px]:grid-cols-[max-content_minmax(0,1fr)] min-[520px]:items-end">
+                    <div className="mt-3 flex flex-col items-center gap-2 text-center sm:mt-4">
                       <div className="min-w-max shrink-0">
-                        <p className="whitespace-nowrap text-[13px] font-black leading-tight text-[#f36f45] sm:text-xl">
+                        <p className="whitespace-nowrap text-lg font-black leading-tight text-[#f36f45] sm:text-xl">
                           {Number(product.price || 0).toLocaleString("fr-FR")}{" "}
                           FCFA
                         </p>
@@ -1003,7 +1003,7 @@ export default function CatalogueClient({
                           title={getProductAvailabilityLabel(
                             product.availability_status,
                           )}
-                          className="flex min-w-0 max-w-full flex-wrap gap-1.5 min-[520px]:justify-end"
+                          className="flex min-w-0 max-w-full flex-wrap justify-center gap-1.5"
                         >
                           {getProductAvailabilityBadgeLabels(
                             product.availability_status,
