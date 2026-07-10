@@ -110,6 +110,85 @@ const categoryAliases: Record<string, string[]> = {
   Vêtements: ["Vêtements", "Filles", "Garçons", "Bébés"],
 };
 
+const mealProductTypes = [
+  "Gourde",
+  "Boîte à goûter",
+  "Set gourde et boîte à goûter",
+];
+
+function normalizeFilterText(value: string | null | undefined) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, " et ")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+const mealProductTypeKeys = new Set(
+  [
+    ...mealProductTypes,
+    "Set goûter",
+    "Set gouter",
+    "Set à goûter",
+  ].map(normalizeFilterText),
+);
+
+const mealCategoryTypeKeys: Record<string, string[]> = {
+  [normalizeFilterText("Gourdes")]: [normalizeFilterText("Gourde")],
+  [normalizeFilterText("Boîtes à goûter")]: [
+    normalizeFilterText("Boîte à goûter"),
+  ],
+  [normalizeFilterText("Sets gourde & boîte à goûter")]: [
+    normalizeFilterText("Set gourde et boîte à goûter"),
+    normalizeFilterText("Set goûter"),
+    normalizeFilterText("Set gouter"),
+    normalizeFilterText("Set à goûter"),
+  ],
+};
+
+function isMealProductType(productType: string | null | undefined) {
+  return mealProductTypeKeys.has(normalizeFilterText(productType));
+}
+
+function matchesMealProductTypeFilter(
+  selectedProductType: string,
+  productProductType: string | null | undefined,
+) {
+  if (selectedProductType === "Tous") return true;
+
+  const selectedKey = normalizeFilterText(selectedProductType);
+  const productTypeKey = normalizeFilterText(productProductType);
+
+  if (selectedKey === normalizeFilterText("Set gourde et boîte à goûter")) {
+    return [
+      normalizeFilterText("Set gourde et boîte à goûter"),
+      normalizeFilterText("Set goûter"),
+      normalizeFilterText("Set gouter"),
+      normalizeFilterText("Set à goûter"),
+    ].includes(productTypeKey);
+  }
+
+  return selectedKey === productTypeKey;
+}
+
+function matchesMealCategoryFilter(
+  selectedCategory: string,
+  product: Product,
+) {
+  if (selectedCategory === "Toutes") return true;
+
+  const selectedKey = normalizeFilterText(selectedCategory);
+  const productTypeKey = normalizeFilterText(product.product_type);
+  const categoryKey = normalizeFilterText(product.category);
+  const matchingTypeKeys = mealCategoryTypeKeys[selectedKey];
+
+  if (matchingTypeKeys) return matchingTypeKeys.includes(productTypeKey);
+
+  return selectedKey === productTypeKey || selectedKey === categoryKey;
+}
+
 const defaultTheme: CatalogueTheme = {
   eyebrow: "Catalogue KidiClass",
   title: "Toute la boutique, pour tous leurs moments",
@@ -391,7 +470,13 @@ export default function CatalogueClient({
     categoryOptions || effectiveAllowedCategories
       ? ["Toutes", ...(categoryOptions || effectiveAllowedCategories || [])]
       : ["Toutes", ...getTaxonomyCategoryLabels(taxonomySettings)];
-  const productTypes = ["Tous", ...taxonomySettings.productTypes];
+  const productTypes = useMemo(
+    () =>
+      departmentId === "repas-gouters"
+        ? ["Tous", ...mealProductTypes]
+        : ["Tous", ...taxonomySettings.productTypes],
+    [departmentId, taxonomySettings.productTypes],
+  );
   const characterThemes = ["Tous", ...taxonomySettings.characters];
   const schoolLevels = ["Tous", ...taxonomySettings.schoolLevels];
 
@@ -464,17 +549,25 @@ export default function CatalogueClient({
 
       const matchesSearch = !query || searchableText.includes(query);
 
+      const isMealDepartment = departmentId === "repas-gouters";
+
       const categoryValues = categoryAliases[category] || [category];
 
       const matchesCategory =
-        category === "Toutes" || categoryValues.includes(product.category);
+        isMealDepartment
+          ? matchesMealCategoryFilter(category, product)
+          : category === "Toutes" || categoryValues.includes(product.category);
 
       const matchesDepartment =
-        !effectiveAllowedCategories ||
-        effectiveAllowedCategories.includes(product.category);
+        isMealDepartment
+          ? isMealProductType(product.product_type)
+          : !effectiveAllowedCategories ||
+            effectiveAllowedCategories.includes(product.category);
 
       const matchesType =
-        productType === "Tous" || product.product_type === productType;
+        isMealDepartment
+          ? matchesMealProductTypeFilter(productType, product.product_type)
+          : productType === "Tous" || product.product_type === productType;
 
       const matchesTheme =
         characterTheme === "Tous" ||
@@ -559,6 +652,7 @@ export default function CatalogueClient({
     favoriteIds,
     sortBy,
     effectiveAllowedCategories,
+    departmentId,
   ]);
 
   function toggleFavorite(productId: number) {

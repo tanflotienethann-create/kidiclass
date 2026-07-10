@@ -31,7 +31,6 @@ export const educationCategories = schoolOfferCategories
 export const mealCategories = [
   "Gourdes",
   "Boîtes à goûter",
-  "Sacs à goûter",
   "Sets gourde & boîte à goûter",
 ];
 export const beachCategories = [
@@ -83,7 +82,7 @@ export const shopDepartments: ShopDepartment[] = [
     eyebrow: "Repas et goûters",
     title: "Des pauses bien préparées, partout",
     description:
-      "Gourdes, boîtes, sacs à goûter et sets assortis pour l'école comme pour les sorties.",
+      "Gourdes, boîtes à goûter et sets assortis pour l'école comme pour les sorties.",
     variant: "meal",
     palette: { accent: "#f36f45", soft: "#fff0e8", ink: "#9a3412" },
     categories: mealCategories,
@@ -165,6 +164,9 @@ export function getDepartment(id: string) {
 }
 
 const categoryProductTypes: Record<string, string> = {
+  Gourdes: "Gourde",
+  "Boîtes à goûter": "Boîte à goûter",
+  "Sets gourde & boîte à goûter": "Set gourde et boîte à goûter",
   "Sacs de sortie": "Sac de sortie",
   "Maillots de bain": "Maillot de bain",
   "Serviettes de plage": "Serviette de plage",

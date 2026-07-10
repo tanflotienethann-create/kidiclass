@@ -60,7 +60,7 @@ const homeCategories = [
   },
   {
     title: "Repas et goûters",
-    text: "Gourdes, boîtes et sacs à goûter pour les pauses de la journée.",
+    text: "Gourdes, boîtes et sets goûter pour les pauses de la journée.",
     href: "/repas-gouters",
     icon: Sandwich,
     bg: "bg-[#fff0e8]",

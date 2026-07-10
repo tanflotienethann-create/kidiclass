@@ -42,6 +42,41 @@ const departmentDefaultProductTypes: Partial<
   "accessoires-jeux": "Accessoire",
 };
 
+function normalizeTaxonomyText(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, " et ")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+const mealAllowedProductTypeKeys = new Set(
+  [
+    "Gourde",
+    "Boîte à goûter",
+    "Set goûter",
+    "Set gourde et boîte à goûter",
+  ].map(normalizeTaxonomyText),
+);
+
+const mealAllowedCategoryKeys = new Set(
+  ["Gourdes", "Boîtes à goûter", "Sets gourde & boîte à goûter"].map(
+    normalizeTaxonomyText,
+  ),
+);
+
+function isMealCategoryAllowed(category: TaxonomyCategory) {
+  const productTypeKey = normalizeTaxonomyText(category.productType || "");
+  const labelKey = normalizeTaxonomyText(category.label || "");
+
+  return (
+    mealAllowedProductTypeKeys.has(productTypeKey) ||
+    mealAllowedCategoryKeys.has(labelKey)
+  );
+}
+
 const extraDefaultCategories: TaxonomyCategory[] = [
   {
     label: "Sacs de sortie",
@@ -90,11 +125,6 @@ const defaultMealCategories: TaxonomyCategory[] = [
     label: "Boîtes à goûter",
     departmentId: "repas-gouters",
     productType: "Boîte à goûter",
-  },
-  {
-    label: "Sacs à goûter",
-    departmentId: "repas-gouters",
-    productType: "Sac à goûter",
   },
   {
     label: "Sets gourde & boîte à goûter",
@@ -226,6 +256,10 @@ export function getTaxonomyDepartmentCategories(
 
   return settings.categories
     .filter((category) => category.departmentId === departmentId)
+    .filter(
+      (category) =>
+        departmentId !== "repas-gouters" || isMealCategoryAllowed(category),
+    )
     .map((category) => category.label);
 }
 
