@@ -915,7 +915,7 @@ export default function CatalogueClient({
                 <Link
                   key={product.id}
                   href={`/produit/${product.id}`}
-                  className="group overflow-hidden rounded-xl border border-[#e4ded4] bg-white shadow-sm transition hover:-translate-y-1 hover:border-[var(--kc-accent)] hover:shadow-xl"
+                  className="group flex h-full flex-col overflow-hidden rounded-xl border border-[#e4ded4] bg-white shadow-sm transition hover:-translate-y-1 hover:border-[var(--kc-accent)] hover:shadow-xl"
                 >
                   <div className="relative h-40 overflow-hidden bg-[#f4efe7] min-[390px]:h-44 sm:h-64 lg:h-80">
                     {getProductImage(product) ? (
@@ -974,7 +974,7 @@ export default function CatalogueClient({
                     </button>
                   </div>
 
-                  <div className="p-3 sm:p-5">
+                  <div className="flex flex-1 flex-col p-3 sm:p-5">
                     <p className="text-[10px] font-black uppercase leading-tight text-[var(--kc-accent)] sm:text-xs">
                       {product.category}
                     </p>
@@ -1029,7 +1029,7 @@ export default function CatalogueClient({
                       productPrice={Number(product.price || 0)}
                       productImage={getProductImage(product)}
                       stock={Number(product.stock || 0)}
-                      className="mt-3 w-full bg-[#f36f45] px-3 py-2.5 text-xs text-white hover:bg-[#e85e33] sm:mt-4 sm:px-4 sm:py-3 sm:text-sm"
+                      className="mt-auto w-full bg-[#f36f45] px-3 py-2.5 text-xs text-white hover:bg-[#e85e33] sm:px-4 sm:py-3 sm:text-sm"
                     />
                   </div>
                 </Link>

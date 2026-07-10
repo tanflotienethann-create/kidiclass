@@ -406,13 +406,13 @@ export default function HomePage() {
             <div className="relative mt-6 sm:mt-8">
               <div
                 ref={productCarouselRef}
-                className="kidiclass-carousel-scroll flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-3 sm:gap-6"
+                className="kidiclass-carousel-scroll flex snap-x snap-mandatory items-stretch gap-3 overflow-x-auto scroll-smooth pb-3 sm:gap-6"
               >
                 {displayedProducts.map((product) => (
                   <Link
                     key={product.id}
                     href={`/produit/${product.id}`}
-                    className="kidiclass-card group w-[68vw] min-w-[220px] max-w-[280px] flex-none snap-start overflow-hidden sm:w-[30%] sm:min-w-0 sm:max-w-none lg:w-[23.5%]"
+                    className="kidiclass-card group flex w-[68vw] min-w-[220px] max-w-[280px] flex-none snap-start flex-col overflow-hidden sm:w-[30%] sm:min-w-0 sm:max-w-none lg:w-[23.5%]"
                   >
                     <div className="relative h-48 overflow-hidden bg-[#f4efe7] sm:h-72">
                       {getProductImage(product) ? (
@@ -448,7 +448,7 @@ export default function HomePage() {
                       </div>
                     </div>
 
-                    <div className="p-3 sm:p-5">
+                    <div className="flex flex-1 flex-col p-3 sm:p-5">
                       <p className="text-[10px] font-black uppercase text-[#1db7bd] sm:text-xs">
                         {product.category}
                       </p>
@@ -507,7 +507,7 @@ export default function HomePage() {
                         productPrice={Number(product.price || 0)}
                         productImage={getProductImage(product)}
                         stock={Number(product.stock || 0)}
-                        className="mt-3 w-full bg-[#f36f45] px-3 py-2.5 text-xs text-white hover:bg-[#e85e33] sm:mt-4 sm:px-4 sm:py-3 sm:text-sm"
+                        className="mt-auto w-full bg-[#f36f45] px-3 py-2.5 text-xs text-white hover:bg-[#e85e33] sm:px-4 sm:py-3 sm:text-sm"
                       />
                     </div>
                   </Link>
