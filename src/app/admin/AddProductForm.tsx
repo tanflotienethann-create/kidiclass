@@ -14,6 +14,8 @@ import {
 import { supabase } from "@/lib/supabase";
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import {
+  ArrowDown,
+  ArrowUp,
   ImagePlus,
   Loader2,
   PackagePlus,
@@ -148,6 +150,24 @@ export default function AddProductForm() {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+  }
+
+  function moveImage(index: number, direction: "up" | "down") {
+    setImages((currentImages) => {
+      const nextIndex = direction === "up" ? index - 1 : index + 1;
+
+      if (nextIndex < 0 || nextIndex >= currentImages.length) {
+        return currentImages;
+      }
+
+      const reorderedImages = [...currentImages];
+      [reorderedImages[index], reorderedImages[nextIndex]] = [
+        reorderedImages[nextIndex],
+        reorderedImages[index],
+      ];
+
+      return reorderedImages;
+    });
   }
 
   function addVariant() {
@@ -557,6 +577,28 @@ export default function AddProductForm() {
                     <p className="mt-2 truncate text-xs font-bold text-gray-500">
                       {index === 0 ? "Image principale" : "Image secondaire"}
                     </p>
+
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => moveImage(index, "up")}
+                        disabled={index === 0}
+                        className="flex items-center justify-center gap-1 rounded-full bg-[#e9fbfc] px-2 py-2 text-xs font-black text-[#087f83] hover:bg-[#d5f5f7] disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        <ArrowUp size={13} strokeWidth={2.7} />
+                        Monter
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => moveImage(index, "down")}
+                        disabled={index === images.length - 1}
+                        className="flex items-center justify-center gap-1 rounded-full bg-[#fff3bf] px-2 py-2 text-xs font-black text-[#8b7100] hover:bg-[#ffe773] disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        <ArrowDown size={13} strokeWidth={2.7} />
+                        Descendre
+                      </button>
+                    </div>
 
                     <button
                       type="button"

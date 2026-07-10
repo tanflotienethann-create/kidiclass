@@ -19,7 +19,9 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import {
+  ArrowDown,
   ArrowLeft,
+  ArrowUp,
   Boxes,
   ImagePlus,
   Loader2,
@@ -89,6 +91,21 @@ type ProductPackItemRow = {
   component_stock: number | null;
   required_quantity: number | null;
 };
+
+type NewImageItem = {
+  id: string;
+  file: File;
+};
+
+type ImageOrderItem =
+  | {
+      type: "existing";
+      id: string;
+    }
+  | {
+      type: "new";
+      id: string;
+    };
 
 const genderOptions = ["Fille", "Garçon", "Mixte"];
 
@@ -195,7 +212,8 @@ export default function EditProductPage() {
 
   const [imageUrl, setImageUrl] = useState("");
   const [existingImages, setExistingImages] = useState<string[]>([]);
-  const [newImages, setNewImages] = useState<File[]>([]);
+  const [newImages, setNewImages] = useState<NewImageItem[]>([]);
+  const [imageOrder, setImageOrder] = useState<ImageOrderItem[]>([]);
 
   const [variants, setVariants] = useState<Variant[]>([
     {
@@ -264,8 +282,21 @@ export default function EditProductPage() {
       setIsPromo(Boolean(product.is_promo));
       setIsFavorite(Boolean(product.is_favorite));
       setIsNew(Boolean(product.is_new));
-      setImageUrl(product.image_url || "");
-      setExistingImages(product.images || []);
+      const loadedImages =
+        product.images && product.images.length > 0
+          ? product.images
+          : product.image_url
+            ? [product.image_url]
+            : [];
+
+      setImageUrl(product.image_url || loadedImages[0] || "");
+      setExistingImages(loadedImages);
+      setImageOrder(
+        loadedImages.map((image) => ({
+          type: "existing" as const,
+          id: image,
+        }))
+      );
 
       if (product.category === "Packs scolaires" || product.category === "PACK" || product.is_pack) {
         const { data: packRows } = await supabase
@@ -334,7 +365,19 @@ export default function EditProductPage() {
 
     if (selectedFiles.length === 0) return;
 
-    setNewImages((currentImages) => [...currentImages, ...selectedFiles]);
+    const nextNewImages = selectedFiles.map((file) => ({
+      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      file,
+    }));
+
+    setNewImages((currentImages) => [...currentImages, ...nextNewImages]);
+    setImageOrder((currentOrder) => [
+      ...currentOrder,
+      ...nextNewImages.map((image) => ({
+        type: "new" as const,
+        id: image.id,
+      })),
+    ]);
   }
 
   function removeExistingImage(imageToRemove: string) {
@@ -343,20 +386,48 @@ export default function EditProductPage() {
     });
 
     setExistingImages(filteredImages);
+    setImageOrder((currentOrder) =>
+      currentOrder.filter((item) => {
+        return !(item.type === "existing" && item.id === imageToRemove);
+      })
+    );
 
     if (imageUrl === imageToRemove) {
       setImageUrl(filteredImages[0] || "");
     }
   }
 
-  function removeNewImage(index: number) {
+  function removeNewImage(imageId: string) {
     setNewImages((currentImages) =>
-      currentImages.filter((_, imageIndex) => imageIndex !== index)
+      currentImages.filter((image) => image.id !== imageId)
+    );
+    setImageOrder((currentOrder) =>
+      currentOrder.filter((item) => {
+        return !(item.type === "new" && item.id === imageId);
+      })
     );
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+  }
+
+  function moveImageOrder(index: number, direction: "up" | "down") {
+    setImageOrder((currentOrder) => {
+      const nextIndex = direction === "up" ? index - 1 : index + 1;
+
+      if (nextIndex < 0 || nextIndex >= currentOrder.length) {
+        return currentOrder;
+      }
+
+      const reorderedImages = [...currentOrder];
+      [reorderedImages[index], reorderedImages[nextIndex]] = [
+        reorderedImages[nextIndex],
+        reorderedImages[index],
+      ];
+
+      return reorderedImages;
+    });
   }
 
   function addVariant() {
@@ -455,9 +526,10 @@ export default function EditProductPage() {
   }
 
   async function uploadNewImages() {
-    const uploadedUrls: string[] = [];
+    const uploadedUrlsById: Record<string, string> = {};
 
-    for (const image of newImages) {
+    for (const imageItem of newImages) {
+      const image = imageItem.file;
       const fileExt = image.name.split(".").pop();
       const fileName = `${Date.now()}-${Math.random()
         .toString(36)
@@ -475,10 +547,10 @@ export default function EditProductPage() {
         .from("product-images")
         .getPublicUrl(fileName);
 
-      uploadedUrls.push(data.publicUrl);
+      uploadedUrlsById[imageItem.id] = data.publicUrl;
     }
 
-    return uploadedUrls;
+    return uploadedUrlsById;
   }
 
   async function saveVariants() {
@@ -588,10 +660,16 @@ export default function EditProductPage() {
         }
       }
 
-      const uploadedUrls = await uploadNewImages();
+      const uploadedUrlsById = await uploadNewImages();
 
-      const finalImages = [...existingImages, ...uploadedUrls];
-      const finalMainImage = imageUrl || finalImages[0] || "";
+      const finalImages = imageOrder
+        .map((item) => {
+          if (item.type === "existing") return item.id;
+
+          return uploadedUrlsById[item.id];
+        })
+        .filter((image): image is string => Boolean(image));
+      const finalMainImage = finalImages[0] || imageUrl || "";
 
       const finalStock = isPack ? calculatePackStock() : calculateClassicStock();
 
@@ -644,6 +722,12 @@ export default function EditProductPage() {
       setExistingImages(finalImages);
       setImageUrl(finalMainImage);
       setNewImages([]);
+      setImageOrder(
+        finalImages.map((image) => ({
+          type: "existing" as const,
+          id: image,
+        }))
+      );
 
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -687,6 +771,18 @@ export default function EditProductPage() {
       </AdminShell>
     );
   }
+
+  const firstOrderedImage = imageOrder[0];
+  const firstNewImage =
+    firstOrderedImage?.type === "new"
+      ? newImages.find((image) => image.id === firstOrderedImage.id)
+      : null;
+  const previewImageUrl =
+    firstOrderedImage?.type === "existing"
+      ? firstOrderedImage.id
+      : firstNewImage
+        ? URL.createObjectURL(firstNewImage.file)
+        : imageUrl;
 
   return (
     <AdminShell
@@ -738,9 +834,9 @@ export default function EditProductPage() {
             </h2>
 
             <div className="mt-6 overflow-hidden rounded-[1.7rem] bg-gray-100">
-              {imageUrl ? (
+              {previewImageUrl ? (
                 <img
-                  src={imageUrl}
+                  src={previewImageUrl}
                   alt={name}
                   className="h-[420px] w-full object-cover object-top"
                 />
@@ -808,67 +904,104 @@ export default function EditProductPage() {
               />
             </label>
 
-            {(existingImages.length > 0 || newImages.length > 0) && (
+            {imageOrder.length > 0 && (
               <div className="mt-6 grid grid-cols-2 gap-3">
-                {existingImages.map((image) => (
-                  <div
-                    key={image}
-                    className={`rounded-2xl border bg-white p-2 ${
-                      imageUrl === image
-                        ? "border-[#1db7bd] ring-2 ring-[#1db7bd]/20"
-                        : "border-gray-100"
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setImageUrl(image)}
-                      className="block w-full overflow-hidden rounded-xl bg-gray-100"
-                    >
-                      <img
-                        src={image}
-                        alt="Image produit"
-                        className="h-32 w-full object-cover object-top"
-                      />
-                    </button>
+                {imageOrder.map((item, index) => {
+                  const newImage =
+                    item.type === "new"
+                      ? newImages.find((image) => image.id === item.id)
+                      : null;
+                  const previewUrl =
+                    item.type === "existing"
+                      ? item.id
+                      : newImage
+                        ? URL.createObjectURL(newImage.file)
+                        : "";
 
-                    <button
-                      type="button"
-                      onClick={() => removeExistingImage(image)}
-                      className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-red-50 px-3 py-2 text-xs font-black text-red-500 hover:bg-red-100"
-                    >
-                      <Trash2 size={14} strokeWidth={2.5} />
-                      Retirer
-                    </button>
-                  </div>
-                ))}
+                  if (!previewUrl) return null;
 
-                {newImages.map((file, index) => (
-                  <div
-                    key={`${file.name}-${index}`}
-                    className="rounded-2xl border border-orange-100 bg-orange-50 p-2"
-                  >
-                    <div className="overflow-hidden rounded-xl bg-white">
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={file.name}
-                        className="h-32 w-full object-cover object-top"
-                      />
+                  return (
+                    <div
+                      key={`${item.type}-${item.id}`}
+                      className={`rounded-2xl border bg-white p-2 ${
+                        index === 0
+                          ? "border-[#1db7bd] ring-2 ring-[#1db7bd]/20"
+                          : item.type === "new"
+                            ? "border-orange-100 bg-orange-50"
+                            : "border-gray-100"
+                      }`}
+                    >
+                      <div className="overflow-hidden rounded-xl bg-gray-100">
+                        <img
+                          src={previewUrl}
+                          alt={
+                            item.type === "existing"
+                              ? "Image produit"
+                              : newImage?.file.name || "Nouvelle image"
+                          }
+                          className="h-32 w-full object-cover object-top"
+                        />
+                      </div>
+
+                      <p
+                        className={`mt-2 truncate text-xs font-bold ${
+                          index === 0
+                            ? "text-[#087f83]"
+                            : item.type === "new"
+                              ? "text-orange-700"
+                              : "text-gray-500"
+                        }`}
+                      >
+                        {index === 0
+                          ? "Image principale"
+                          : item.type === "new"
+                            ? "Nouvelle image"
+                            : "Image secondaire"}
+                      </p>
+
+                      <div className="mt-2 grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => moveImageOrder(index, "up")}
+                          disabled={index === 0}
+                          className="flex items-center justify-center gap-1 rounded-full bg-[#e9fbfc] px-2 py-2 text-xs font-black text-[#087f83] hover:bg-[#d5f5f7] disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          <ArrowUp size={13} strokeWidth={2.7} />
+                          Monter
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => moveImageOrder(index, "down")}
+                          disabled={index === imageOrder.length - 1}
+                          className="flex items-center justify-center gap-1 rounded-full bg-[#fff3bf] px-2 py-2 text-xs font-black text-[#8b7100] hover:bg-[#ffe773] disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          <ArrowDown size={13} strokeWidth={2.7} />
+                          Descendre
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (item.type === "existing") {
+                            removeExistingImage(item.id);
+                          } else {
+                            removeNewImage(item.id);
+                          }
+                        }}
+                        className={`mt-2 flex w-full items-center justify-center gap-2 rounded-full px-3 py-2 text-xs font-black ${
+                          item.type === "new"
+                            ? "bg-white text-orange-600 hover:bg-orange-100"
+                            : "bg-red-50 text-red-500 hover:bg-red-100"
+                        }`}
+                      >
+                        <Trash2 size={14} strokeWidth={2.5} />
+                        Retirer
+                      </button>
                     </div>
-
-                    <p className="mt-2 truncate text-xs font-bold text-orange-700">
-                      Nouvelle image
-                    </p>
-
-                    <button
-                      type="button"
-                      onClick={() => removeNewImage(index)}
-                      className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-white px-3 py-2 text-xs font-black text-orange-600 hover:bg-orange-100"
-                    >
-                      <Trash2 size={14} strokeWidth={2.5} />
-                      Retirer
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
