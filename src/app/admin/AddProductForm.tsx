@@ -578,25 +578,30 @@ export default function AddProductForm() {
                       {index === 0 ? "Image principale" : "Image secondaire"}
                     </p>
 
-                    <div className="mt-2 grid grid-cols-2 gap-2">
+                    <div className="mt-2 flex items-center justify-between gap-2 rounded-full bg-gray-50 p-1">
+                      <span className="pl-2 text-[11px] font-black uppercase tracking-wide text-gray-400">
+                        Ordre
+                      </span>
                       <button
                         type="button"
                         onClick={() => moveImage(index, "up")}
                         disabled={index === 0}
-                        className="flex items-center justify-center gap-1 rounded-full bg-[#e9fbfc] px-2 py-2 text-xs font-black text-[#087f83] hover:bg-[#d5f5f7] disabled:cursor-not-allowed disabled:opacity-40"
+                        title="Monter l'image"
+                        aria-label="Monter l'image"
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#e9fbfc] text-[#087f83] transition hover:bg-[#d5f5f7] disabled:cursor-not-allowed disabled:opacity-35"
                       >
-                        <ArrowUp size={13} strokeWidth={2.7} />
-                        Monter
+                        <ArrowUp size={16} strokeWidth={2.7} />
                       </button>
 
                       <button
                         type="button"
                         onClick={() => moveImage(index, "down")}
                         disabled={index === images.length - 1}
-                        className="flex items-center justify-center gap-1 rounded-full bg-[#fff3bf] px-2 py-2 text-xs font-black text-[#8b7100] hover:bg-[#ffe773] disabled:cursor-not-allowed disabled:opacity-40"
+                        title="Descendre l'image"
+                        aria-label="Descendre l'image"
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#fff3bf] text-[#8b7100] transition hover:bg-[#ffe773] disabled:cursor-not-allowed disabled:opacity-35"
                       >
-                        <ArrowDown size={13} strokeWidth={2.7} />
-                        Descendre
+                        <ArrowDown size={16} strokeWidth={2.7} />
                       </button>
                     </div>
 
