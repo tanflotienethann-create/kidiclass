@@ -49,6 +49,16 @@ function translateAuthError(message: string) {
   return "Une erreur est survenue. Veuillez réessayer.";
 }
 
+function getSafeNextPath() {
+  if (typeof window === "undefined") return "/compte";
+
+  const nextValue = new URLSearchParams(window.location.search).get("next");
+
+  return nextValue && nextValue.startsWith("/") && !nextValue.startsWith("//")
+    ? nextValue
+    : "/compte";
+}
+
 export default function RegisterPage() {
   const router = useRouter();
 
@@ -84,11 +94,14 @@ export default function RegisterPage() {
       return;
     }
 
+    const nextPath = getSafeNextPath();
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${SITE_URL}/login`,
+        emailRedirectTo: `${SITE_URL}/login?next=${encodeURIComponent(
+          nextPath,
+        )}`,
       },
     });
 
@@ -123,7 +136,7 @@ export default function RegisterPage() {
     setLoading(false);
 
     setTimeout(() => {
-      router.push("/login");
+      router.push(`/login?next=${encodeURIComponent(nextPath)}`);
     }, 900);
   }
 

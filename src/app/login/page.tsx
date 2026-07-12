@@ -7,6 +7,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { Eye, EyeOff, LockKeyhole, LogIn, Mail } from "lucide-react";
 
+function getSafeNextPath() {
+  if (typeof window === "undefined") return "/compte";
+
+  const nextValue = new URLSearchParams(window.location.search).get("next");
+
+  return nextValue && nextValue.startsWith("/") && !nextValue.startsWith("//")
+    ? nextValue
+    : "/compte";
+}
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -19,7 +29,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    router.prefetch("/compte");
+    router.prefetch(getSafeNextPath());
   }, [router]);
 
   async function handleLogin(e: React.FormEvent) {
@@ -38,7 +48,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.replace("/compte");
+    router.replace(getSafeNextPath());
   }
 
   return (

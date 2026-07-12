@@ -27,7 +27,7 @@ import {
 import { encodeOrderItemSelection } from "@/lib/orderItemSelection";
 import { getActivePromoCode, getPromoDiscount } from "@/lib/promoCodes";
 import { supabase } from "@/lib/supabase";
-import { CheckCircle2, ShoppingCart } from "lucide-react";
+import { CheckCircle2, LogIn, ShoppingCart, UserPlus } from "lucide-react";
 
 const AddressMap = dynamic(() => import("./AddressMap"), {
   ssr: false,
@@ -167,6 +167,8 @@ export default function CommandePage() {
   const [selectedAvailabilityByProductId, setSelectedAvailabilityByProductId] =
     useState<Record<number, string>>({});
   const [paydunyaReady, setPaydunyaReady] = useState<boolean | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const adminWhatsappNumber = "2250779311555";
 
@@ -174,6 +176,63 @@ export default function CommandePage() {
     countryCodes.find((item) => {
       return `${item.country} ${item.code}` === countryCodeLabel;
     })?.code || "+225";
+
+  useEffect(() => {
+    let active = true;
+
+    async function applyClientProfile(userId: string) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name,phone")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (!active) return;
+
+      if (profile?.full_name) {
+        setCustomerName((currentName) => currentName || profile.full_name || "");
+      }
+
+      if (profile?.phone) {
+        setCustomerPhone((currentPhone) => currentPhone || profile.phone || "");
+      }
+    }
+
+    async function loadSession() {
+      setAuthLoading(true);
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user || null;
+
+      if (!active) return;
+
+      setCurrentUserId(user?.id || null);
+
+      if (user?.id) {
+        void applyClientProfile(user.id);
+      }
+
+      setAuthLoading(false);
+    }
+
+    void loadSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      const user = session?.user || null;
+      setCurrentUserId(user?.id || null);
+      setAuthLoading(false);
+
+      if (user?.id) {
+        void applyClientProfile(user.id);
+      }
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const subtotal = cart.reduce(
     (sum, item) => sum + item.productPrice * item.quantity,
@@ -684,6 +743,14 @@ Merci de me communiquer le montant total avec livraison.
       return;
     }
 
+    if (!currentUserId) {
+      setMessage(
+        "Connectez-vous ou créez un compte client avant de valider votre commande.",
+      );
+      setLoading(false);
+      return;
+    }
+
     if (!customerName.trim()) {
       setMessage("Veuillez renseigner votre nom complet.");
       setLoading(false);
@@ -750,8 +817,6 @@ Merci de me communiquer le montant total avec livraison.
 
     const reference = generateOrderReference();
 
-    const { data: userData } = await supabase.auth.getUser();
-    const currentUserId = userData.user?.id || null;
     const loyaltyPoints = getLoyaltyPoints(total);
 
       const initialStatus = isFixedDeliveryArea(deliveryArea)
@@ -968,6 +1033,79 @@ Merci de me communiquer le montant total avec livraison.
               Retour au catalogue
             </Link>
           </div>
+        </section>
+      </main>
+    );
+  }
+
+  if (authLoading) {
+    return (
+      <main className="min-h-screen bg-[#fffdf7] px-4 py-8 sm:px-6 sm:py-12">
+        <section className="mx-auto max-w-3xl rounded-[2.5rem] border border-gray-100 bg-white p-6 text-center shadow-sm sm:p-10">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] shadow-sm sm:mb-6 sm:h-20 sm:w-20">
+            <LogIn size={32} strokeWidth={2.5} />
+          </div>
+
+          <h1 className="text-3xl font-black text-gray-950 sm:text-4xl">
+            Vérification du compte
+          </h1>
+
+          <p className="mt-3 text-sm font-bold leading-6 text-gray-500 sm:mt-4 sm:text-base sm:leading-7">
+            Nous vérifions votre espace client avant d’ouvrir la commande.
+          </p>
+        </section>
+      </main>
+    );
+  }
+
+  if (!currentUserId) {
+    const checkoutNext = encodeURIComponent("/commande");
+
+    return (
+      <main className="min-h-screen bg-[#fffdf7] px-4 py-8 sm:px-6 sm:py-12">
+        <section className="mx-auto max-w-3xl rounded-[2.5rem] border border-gray-100 bg-white p-6 text-center shadow-sm sm:p-10">
+          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-[#e9fbfc] text-[#1db7bd] shadow-sm sm:mb-6 sm:h-24 sm:w-24">
+            <LogIn size={40} strokeWidth={2.5} />
+          </div>
+
+          <p className="mb-2 text-sm font-black uppercase tracking-[0.2em] text-[#f36f45]">
+            Espace client requis
+          </p>
+
+          <h1 className="text-3xl font-black text-gray-950 sm:text-4xl">
+            Connectez-vous pour passer commande
+          </h1>
+
+          <p className="mt-3 text-sm font-bold leading-6 text-gray-500 sm:mt-4 sm:text-base sm:leading-7">
+            Votre panier est conservé. Connectez-vous ou créez un compte pour
+            finaliser la commande, suivre la livraison et cumuler vos points
+            fidélité.
+          </p>
+
+          <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2">
+            <Link
+              href={`/login?next=${checkoutNext}`}
+              className="flex items-center justify-center gap-2 rounded-full bg-[#f36f45] px-6 py-3.5 text-sm font-black text-white hover:bg-[#e85e33] sm:py-4 sm:text-base"
+            >
+              <LogIn size={19} strokeWidth={2.6} />
+              Se connecter
+            </Link>
+
+            <Link
+              href={`/register?next=${checkoutNext}`}
+              className="flex items-center justify-center gap-2 rounded-full border-2 border-[#1db7bd] px-6 py-3.5 text-sm font-black text-[#1db7bd] hover:bg-[#1db7bd] hover:text-white sm:py-4 sm:text-base"
+            >
+              <UserPlus size={19} strokeWidth={2.6} />
+              Créer un compte
+            </Link>
+          </div>
+
+          <Link
+            href="/panier"
+            className="mt-4 inline-flex min-h-11 items-center rounded-full px-4 text-sm font-black text-[#f36f45] hover:bg-[#fff1f5]"
+          >
+            Retour au panier
+          </Link>
         </section>
       </main>
     );
