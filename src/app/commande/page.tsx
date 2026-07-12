@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import KidiclassSelect from "@/components/KidiclassSelect";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   getDeliveryFee,
   isFixedDeliveryArea,
@@ -24,6 +24,7 @@ import {
   getLongestAvailabilityStatus,
   parseAvailabilityStatuses,
 } from "@/lib/productAvailability";
+import { encodeOrderItemSelection } from "@/lib/orderItemSelection";
 import { getActivePromoCode, getPromoDiscount } from "@/lib/promoCodes";
 import { supabase } from "@/lib/supabase";
 import { CheckCircle2, ShoppingCart } from "lucide-react";
@@ -157,6 +158,9 @@ export default function CommandePage() {
   });
   const [promoPercentage, setPromoPercentage] = useState(0);
   const [hasRollingBag, setHasRollingBag] = useState(false);
+  const [cartProductsById, setCartProductsById] = useState<
+    Record<number, ProductStock>
+  >({});
   const [cartAvailabilityOptions, setCartAvailabilityOptions] = useState<
     Record<number, string[]>
   >({});
@@ -177,15 +181,87 @@ export default function CommandePage() {
   );
 
   const promoDiscount = getPromoDiscount(subtotal, promoPercentage);
-  const deliveryFee = getDeliveryFee(deliveryArea, hasRollingBag);
-  const total = Math.max(subtotal - promoDiscount, 0) + deliveryFee;
-  const selectedCartAvailabilityStatuses = cart.map((item) => {
+  function getSelectedAvailability(item: CartItem) {
     return (
       selectedAvailabilityByProductId[item.productId] ||
       cartAvailabilityOptions[item.productId]?.[0] ||
       availabilityOptions[0]
     );
-  });
+  }
+
+  const shipmentGroups = useMemo(() => {
+    const groups = new Map<
+      string,
+      {
+        availability: string;
+        items: CartItem[];
+        itemsTotal: number;
+        itemsCount: number;
+        hasRollingBag: boolean;
+        deliveryFee: number;
+      }
+    >();
+
+    cart.forEach((item) => {
+      const availability =
+        selectedAvailabilityByProductId[item.productId] ||
+        cartAvailabilityOptions[item.productId]?.[0] ||
+        availabilityOptions[0];
+      const currentGroup =
+        groups.get(availability) ||
+        ({
+          availability,
+          items: [],
+          itemsTotal: 0,
+          itemsCount: 0,
+          hasRollingBag: false,
+          deliveryFee: 0,
+        } satisfies {
+          availability: string;
+          items: CartItem[];
+          itemsTotal: number;
+          itemsCount: number;
+          hasRollingBag: boolean;
+          deliveryFee: number;
+        });
+      const product = cartProductsById[item.productId];
+
+      currentGroup.items.push(item);
+      currentGroup.itemsTotal += item.productPrice * item.quantity;
+      currentGroup.itemsCount += item.quantity;
+      currentGroup.hasRollingBag =
+        currentGroup.hasRollingBag ||
+        isRollingBagProduct(product || { name: item.productName });
+
+      groups.set(availability, currentGroup);
+    });
+
+    return Array.from(groups.values())
+      .sort((first, second) => {
+        return (
+          availabilityOptions.indexOf(first.availability) -
+          availabilityOptions.indexOf(second.availability)
+        );
+      })
+      .map((group) => ({
+        ...group,
+        deliveryFee: isFixedDeliveryArea(deliveryArea)
+          ? getDeliveryFee(deliveryArea, group.hasRollingBag)
+          : 0,
+      }));
+  }, [
+    cart,
+    selectedAvailabilityByProductId,
+    cartAvailabilityOptions,
+    cartProductsById,
+    deliveryArea,
+  ]);
+
+  const deliveryFee = shipmentGroups.reduce((sum, group) => {
+    return sum + group.deliveryFee;
+  }, 0);
+  const total = Math.max(subtotal - promoDiscount, 0) + deliveryFee;
+  const selectedCartAvailabilityStatuses = cart.map(getSelectedAvailability);
   const selectedOrderAvailabilityStatus = getLongestAvailabilityStatus(
     selectedCartAvailabilityStatuses,
   );
@@ -207,6 +283,7 @@ export default function CommandePage() {
       setHasRollingBag(false);
       setCartAvailabilityOptions({});
       setSelectedAvailabilityByProductId({});
+      setCartProductsById({});
       return;
     }
 
@@ -216,12 +293,19 @@ export default function CommandePage() {
       .in("id", productIds);
 
     const products = (data as ProductStock[]) || [];
+    const productMap = products.reduce<Record<number, ProductStock>>(
+      (currentMap, product) => {
+        currentMap[product.id] = product;
+        return currentMap;
+      },
+      {},
+    );
+
+    setCartProductsById(productMap);
 
     setHasRollingBag(
       cart.some((item) => {
-        const product = products.find((productItem) => {
-          return productItem.id === item.productId;
-        });
+        const product = productMap[item.productId];
 
         return isRollingBagProduct(product || { name: item.productName });
       })
@@ -341,7 +425,7 @@ export default function CommandePage() {
       .map((item) => {
         return `- ${item.productName} | Taille/pointure : ${
           item.selectedSize || "Non précisée"
-        } | Quantité : ${item.quantity} | Prix : ${(
+        } | Délai : ${getSelectedAvailability(item)} | Quantité : ${item.quantity} | Prix : ${(
           item.productPrice * item.quantity
         ).toLocaleString("fr-FR")} FCFA`;
       })
@@ -716,7 +800,10 @@ Merci de me communiquer le montant total avec livraison.
       order_id: order.id,
       product_id: item.productId,
       quantity: item.quantity,
-      selected_size: item.selectedSize,
+      selected_size: encodeOrderItemSelection(
+        item.selectedSize,
+        getSelectedAvailability(item),
+      ),
       unit_price: item.productPrice,
     }));
 
@@ -1112,9 +1199,35 @@ Merci de me communiquer le montant total avec livraison.
                   })}
 
                   <p className="rounded-2xl bg-[#fff9cf] p-3 text-xs font-black leading-5 text-[#9a7e00] sm:text-sm sm:leading-6">
-                    Délai retenu pour cette commande :{" "}
+                    Délai le plus long retenu pour le paiement :{" "}
                     {selectedOrderAvailabilityStatus}
                   </p>
+
+                  {shipmentGroups.length > 1 && (
+                    <div className="rounded-2xl border border-[#bfedf0] bg-[#f4fbfa] p-3 sm:p-4">
+                      <p className="text-sm font-black text-gray-950">
+                        Cette commande sera séparée en {shipmentGroups.length}{" "}
+                        livraisons prévues.
+                      </p>
+
+                      <div className="mt-3 grid gap-2">
+                        {shipmentGroups.map((group, index) => (
+                          <div
+                            key={group.availability}
+                            className="rounded-2xl bg-white p-3 text-xs font-bold leading-5 text-gray-600 sm:text-sm sm:leading-6"
+                          >
+                            <p className="font-black text-[#087f83]">
+                              Livraison {index + 1} : {group.availability}
+                            </p>
+                            <p>
+                              {group.itemsCount} article(s) · Livraison :{" "}
+                              {group.deliveryFee.toLocaleString("fr-FR")} FCFA
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <KidiclassSelect
@@ -1249,15 +1362,37 @@ Merci de me communiquer le montant total avec livraison.
             </div>
 
             {isFixedDeliveryArea(deliveryArea) ? (
-              <div className="flex justify-between gap-3 text-gray-700">
-                <span>
-                  {deliveryArea === "Abidjan" && hasRollingBag
-                    ? "Livraison Abidjan avec sac à roulette"
-                    : `Livraison ${deliveryArea}`}
-                </span>
-                <span className="font-bold">
-                  {deliveryFee.toLocaleString("fr-FR")} FCFA
-                </span>
+              <div className="space-y-2 text-gray-700">
+                {shipmentGroups.length > 1 && (
+                  <p className="text-xs font-black uppercase tracking-wide text-[#1db7bd]">
+                    Plusieurs livraisons prévues
+                  </p>
+                )}
+
+                {shipmentGroups.map((group, index) => (
+                  <div
+                    key={group.availability}
+                    className="flex justify-between gap-3"
+                  >
+                    <span>
+                      {shipmentGroups.length > 1
+                        ? `Livraison ${index + 1} · ${group.availability}`
+                        : deliveryArea === "Abidjan" && hasRollingBag
+                          ? "Livraison Abidjan avec sac à roulette"
+                          : `Livraison ${deliveryArea}`}
+                    </span>
+                    <span className="font-bold">
+                      {group.deliveryFee.toLocaleString("fr-FR")} FCFA
+                    </span>
+                  </div>
+                ))}
+
+                {shipmentGroups.length > 1 && (
+                  <div className="flex justify-between gap-3 border-t border-gray-100 pt-2 font-black text-gray-950">
+                    <span>Total livraisons</span>
+                    <span>{deliveryFee.toLocaleString("fr-FR")} FCFA</span>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="rounded-2xl bg-orange-50 p-3 text-xs font-bold leading-5 text-orange-700 sm:p-4 sm:text-sm sm:leading-6">
@@ -1268,7 +1403,8 @@ Merci de me communiquer le montant total avec livraison.
             <div className="rounded-2xl bg-[#e9fbfc] p-3 text-xs font-bold leading-5 text-[#1db7bd] sm:p-4 sm:text-sm sm:leading-6">
               Livraison Abidjan : 1 000 FCFA. Avec un sac à roulette : 2 000
               FCFA. Bingerville, Songon et Anyama : 2 000 FCFA. Bassam : 2 500
-              FCFA.
+              FCFA. Si les articles ont des délais différents, chaque passage
+              est calculé séparément.
             </div>
 
             {promoDiscount > 0 && (

@@ -2,6 +2,7 @@
 
 import KidiclassSelect from "@/components/KidiclassSelect";
 import { DATA_RESET_AT, isAfterDataReset } from "@/lib/dataReset";
+import { buildOrderShipmentGroups } from "@/lib/orderItemSelection";
 import { supabase } from "@/lib/supabase";
 import {
   CheckCircle2,
@@ -27,6 +28,23 @@ type Order = {
   delivery_area: string | null;
   delivery_fee: number | null;
   created_at: string;
+  order_items?: OrderItem[];
+};
+
+type OrderItem = {
+  id: number;
+  order_id: number;
+  quantity: number;
+  selected_size: string | null;
+  unit_price: number;
+  products: {
+    name: string;
+    image_url: string | null;
+  } | null;
+};
+
+type RawOrderItem = Omit<OrderItem, "products"> & {
+  products: OrderItem["products"] | OrderItem["products"][];
 };
 
 const countryCodes = [
@@ -184,7 +202,44 @@ export default function SuiviPage() {
       return;
     }
 
-    setOrders(matchedOrders);
+    const orderIds = matchedOrders.map((order) => order.id);
+    const { data: orderItems } = await supabase
+      .from("order_items")
+      .select(
+        `
+        id,
+        order_id,
+        quantity,
+        selected_size,
+        unit_price,
+        products (
+          name,
+          image_url
+        )
+      `,
+      )
+      .in("order_id", orderIds);
+    const normalizedOrderItems = ((orderItems as unknown as RawOrderItem[]) || []).map(
+      (item) => ({
+        ...item,
+        products: Array.isArray(item.products)
+          ? item.products[0] || null
+          : item.products,
+      }),
+    );
+    const orderItemsByOrderId = normalizedOrderItems.reduce<
+      Record<number, OrderItem[]>
+    >((currentMap, item) => {
+      currentMap[item.order_id] = [...(currentMap[item.order_id] || []), item];
+      return currentMap;
+    }, {});
+
+    setOrders(
+      matchedOrders.map((order) => ({
+        ...order,
+        order_items: orderItemsByOrderId[order.id] || [],
+      })),
+    );
     setLoading(false);
   }
 
@@ -274,6 +329,9 @@ export default function SuiviPage() {
                 order.status === "Annulée" ||
                 order.status === "Paiement annulé" ||
                 order.status === "Paiement échoué";
+              const shipmentGroups = buildOrderShipmentGroups(
+                order.order_items || [],
+              );
 
               return (
                 <article
@@ -353,6 +411,30 @@ export default function SuiviPage() {
                       </p>
                     </div>
                   </div>
+
+                  {shipmentGroups.length > 1 && (
+                    <div className="mt-5 rounded-2xl border border-[#bfedf0] bg-[#f4fbfa] p-4 sm:p-5">
+                      <p className="text-sm font-black uppercase tracking-wide text-[#087f83]">
+                        Livraisons prévues
+                      </p>
+
+                      <div className="mt-3 grid gap-3 md:grid-cols-2">
+                        {shipmentGroups.map((group, index) => (
+                          <div
+                            key={group.availability}
+                            className="rounded-2xl bg-white p-3"
+                          >
+                            <p className="font-black text-gray-950">
+                              Livraison {index + 1} : {group.availability}
+                            </p>
+                            <p className="mt-1 text-sm font-bold text-gray-500">
+                              {group.itemsCount} article(s)
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="mt-8">
                     <h3 className="mb-5 text-xl font-black text-gray-950 sm:text-2xl">

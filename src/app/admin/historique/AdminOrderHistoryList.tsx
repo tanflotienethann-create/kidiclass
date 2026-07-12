@@ -2,6 +2,10 @@
 
 import KidiclassSelect from "@/components/KidiclassSelect";
 import { DATA_RESET_AT } from "@/lib/dataReset";
+import {
+  buildOrderShipmentGroups,
+  parseOrderItemSelection,
+} from "@/lib/orderItemSelection";
 import { supabase } from "@/lib/supabase";
 import {
   Banknote,
@@ -278,6 +282,7 @@ export default function AdminOrderHistoryList() {
         deliveredOrders.map((order) => {
           const whatsappLink = getWhatsappLink(order);
           const mapsLink = getGoogleMapsLink(order);
+          const shipmentGroups = buildOrderShipmentGroups(order.order_items || []);
 
           return (
             <article
@@ -431,48 +436,77 @@ export default function AdminOrderHistoryList() {
                   Articles commandés
                 </h3>
 
+                {shipmentGroups.length > 1 && (
+                  <div className="mb-4 grid gap-3 md:grid-cols-2">
+                    {shipmentGroups.map((group, index) => (
+                      <div
+                        key={group.availability}
+                        className="rounded-[1.5rem] border border-[#bfedf0] bg-[#f4fbfa] p-4"
+                      >
+                        <p className="text-sm font-black text-[#087f83]">
+                          Livraison {index + 1} · {group.availability}
+                        </p>
+                        <p className="mt-1 text-sm font-bold text-gray-600">
+                          {group.itemsCount} article(s) ·{" "}
+                          {group.itemsTotal.toLocaleString("fr-FR")} FCFA
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <div className="space-y-3">
-                  {order.order_items?.map((item) => (
-                    <div
-                      key={item.id}
-                      className="grid gap-4 rounded-[1.5rem] bg-[#fffdf7] p-4 md:grid-cols-[70px_1fr_auto]"
-                    >
-                      <div className="overflow-hidden rounded-2xl bg-gray-100">
-                        {item.products?.image_url ? (
-                          <img
-                            src={item.products.image_url}
-                            alt={item.products.name}
-                            className="h-20 w-full object-cover object-top"
-                          />
-                        ) : (
-                          <div className="h-20 bg-gray-100" />
-                        )}
-                      </div>
+                  {order.order_items?.map((item) => {
+                    const selection = parseOrderItemSelection(item.selected_size);
 
-                      <div>
-                        <p className="font-black text-gray-950">
-                          {item.products?.name || "Produit supprimé"}
-                        </p>
+                    return (
+                      <div
+                        key={item.id}
+                        className="grid gap-4 rounded-[1.5rem] bg-[#fffdf7] p-4 md:grid-cols-[70px_1fr_auto]"
+                      >
+                        <div className="overflow-hidden rounded-2xl bg-gray-100">
+                          {item.products?.image_url ? (
+                            <img
+                              src={item.products.image_url}
+                              alt={item.products.name}
+                              className="h-20 w-full object-cover object-top"
+                            />
+                          ) : (
+                            <div className="h-20 bg-gray-100" />
+                          )}
+                        </div>
 
-                        {item.selected_size && (
-                          <p className="mt-1 text-sm font-bold text-gray-500">
-                            Taille / pointure : {item.selected_size}
+                        <div>
+                          <p className="font-black text-gray-950">
+                            {item.products?.name || "Produit supprimé"}
                           </p>
-                        )}
 
-                        <p className="mt-1 text-sm font-bold text-gray-500">
-                          Quantité : {item.quantity}
+                          {selection.selectedSize && (
+                            <p className="mt-1 text-sm font-bold text-gray-500">
+                              Taille / pointure : {selection.selectedSize}
+                            </p>
+                          )}
+
+                          {selection.availability && (
+                            <p className="mt-1 w-fit rounded-full bg-[#e9fbfc] px-3 py-1 text-xs font-black text-[#087f83]">
+                              {selection.availability}
+                            </p>
+                          )}
+
+                          <p className="mt-1 text-sm font-bold text-gray-500">
+                            Quantité : {item.quantity}
+                          </p>
+                        </div>
+
+                        <p className="font-black text-[#f36f45] md:text-right">
+                          {Number(item.unit_price * item.quantity).toLocaleString(
+                            "fr-FR"
+                          )}{" "}
+                          FCFA
                         </p>
                       </div>
-
-                      <p className="font-black text-[#f36f45] md:text-right">
-                        {Number(item.unit_price * item.quantity).toLocaleString(
-                          "fr-FR"
-                        )}{" "}
-                        FCFA
-                      </p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -484,9 +518,9 @@ export default function AdminOrderHistoryList() {
                     </p>
 
                     <p className="font-black text-gray-950">
-                      {order.delivery_area === "Abidjan"
+                      {Number(order.delivery_fee || 0) > 0
                         ? `${Number(order.delivery_fee || 0).toLocaleString(
-                            "fr-FR"
+                            "fr-FR",
                           )} FCFA`
                         : "À confirmer"}
                     </p>

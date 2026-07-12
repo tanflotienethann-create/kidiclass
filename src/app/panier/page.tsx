@@ -1,8 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getDeliveryFee, isRollingBagProduct } from "@/lib/delivery";
+import {
+  availabilityOptions,
+  parseAvailabilityStatuses,
+} from "@/lib/productAvailability";
 import {
   getActivePromoCode,
   getPromoDiscount,
@@ -34,6 +38,7 @@ type ProductStock = {
   stock: number;
   category: string | null;
   product_type: string | null;
+  availability_status: string | null;
   is_pack: boolean | null;
 };
 
@@ -70,7 +75,7 @@ export default function PanierPage() {
 
     const { data } = await supabase
       .from("products")
-      .select("id,name,stock,category,product_type,is_pack")
+      .select("id,name,stock,category,product_type,availability_status,is_pack")
       .in("id", productIds);
 
     setProductStocks((data as ProductStock[]) || []);
@@ -256,7 +261,60 @@ export default function PanierPage() {
 
     return isRollingBagProduct(product || { name: item.productName });
   });
-  const estimatedDeliveryFee = getDeliveryFee("Abidjan", hasRollingBag);
+  const estimatedShipmentGroups = useMemo(() => {
+    const groups = new Map<
+      string,
+      {
+        availability: string;
+        itemsCount: number;
+        hasRollingBag: boolean;
+        deliveryFee: number;
+      }
+    >();
+
+    cart.forEach((item) => {
+      const product = productStocks.find((stockItem) => {
+        return stockItem.id === item.productId;
+      });
+      const availability =
+        parseAvailabilityStatuses(product?.availability_status)[0] ||
+        availabilityOptions[0];
+      const currentGroup =
+        groups.get(availability) ||
+        ({
+          availability,
+          itemsCount: 0,
+          hasRollingBag: false,
+          deliveryFee: 0,
+        } satisfies {
+          availability: string;
+          itemsCount: number;
+          hasRollingBag: boolean;
+          deliveryFee: number;
+        });
+
+      currentGroup.itemsCount += item.quantity;
+      currentGroup.hasRollingBag =
+        currentGroup.hasRollingBag ||
+        isRollingBagProduct(product || { name: item.productName });
+      groups.set(availability, currentGroup);
+    });
+
+    return Array.from(groups.values())
+      .sort((first, second) => {
+        return (
+          availabilityOptions.indexOf(first.availability) -
+          availabilityOptions.indexOf(second.availability)
+        );
+      })
+      .map((group) => ({
+        ...group,
+        deliveryFee: getDeliveryFee("Abidjan", group.hasRollingBag),
+      }));
+  }, [cart, productStocks]);
+  const estimatedDeliveryFee = estimatedShipmentGroups.reduce((sum, group) => {
+    return sum + group.deliveryFee;
+  }, 0);
   const promoDiscount = getPromoDiscount(
     subtotal,
     appliedPromoPercentage,
@@ -513,20 +571,43 @@ export default function PanierPage() {
               </span>
             </div>
 
-            <div className="flex justify-between gap-4 text-gray-700">
-              <span className="font-bold">
-                {hasRollingBag
-                  ? "Livraison Abidjan avec sac à roulette"
-                  : "Livraison Abidjan"}
-              </span>
-              <span className="font-black">
-                {estimatedDeliveryFee.toLocaleString("fr-FR")} FCFA
-              </span>
+            <div className="space-y-2 text-gray-700">
+              {estimatedShipmentGroups.length > 1 && (
+                <p className="text-xs font-black uppercase tracking-wide text-[#1db7bd]">
+                  Estimation par livraison
+                </p>
+              )}
+
+              {estimatedShipmentGroups.map((group, index) => (
+                <div
+                  key={group.availability}
+                  className="flex justify-between gap-4"
+                >
+                  <span className="font-bold">
+                    {estimatedShipmentGroups.length > 1
+                      ? `Livraison ${index + 1} · ${group.availability}`
+                      : hasRollingBag
+                        ? "Livraison Abidjan avec sac à roulette"
+                        : "Livraison Abidjan"}
+                  </span>
+                  <span className="font-black">
+                    {group.deliveryFee.toLocaleString("fr-FR")} FCFA
+                  </span>
+                </div>
+              ))}
+
+              {estimatedShipmentGroups.length > 1 && (
+                <div className="flex justify-between gap-4 border-t border-gray-100 pt-2 font-black text-gray-950">
+                  <span>Total livraisons</span>
+                  <span>{estimatedDeliveryFee.toLocaleString("fr-FR")} FCFA</span>
+                </div>
+              )}
             </div>
 
             <div className="rounded-2xl bg-[#fff9cf] p-3 text-xs font-bold leading-5 text-[#c7a900] sm:p-4 sm:text-sm sm:leading-6">
               Les frais de livraison sont appliqués selon la zone choisie au
-              moment de la commande.
+              moment de la commande. Si les articles ont plusieurs délais, ils
+              peuvent être livrés en plusieurs passages.
             </div>
 
             <div className="rounded-2xl border border-[#bfedf0] p-3 sm:p-4">
