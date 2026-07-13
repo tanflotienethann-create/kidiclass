@@ -191,13 +191,6 @@ export default function PanierPage() {
     }
   }
 
-  function clearCart() {
-    setMessage("");
-    setCart([]);
-    localStorage.removeItem("kidiclass_cart");
-    window.dispatchEvent(new Event("kidiclass-cart-updated"));
-  }
-
   async function applyPromoCode() {
     const normalizedCode = normalizePromoCode(promoCode);
 
@@ -532,13 +525,6 @@ export default function PanierPage() {
             );
           })}
 
-          <button
-            type="button"
-            onClick={clearCart}
-            className="rounded-full border-2 border-red-200 px-5 py-3 text-sm font-black text-red-500 hover:bg-red-50 sm:px-6 sm:py-4 sm:text-base"
-          >
-            Vider le panier
-          </button>
         </div>
 
         <aside className="h-fit rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:rounded-[2.5rem] sm:p-7 lg:sticky lg:top-44">
