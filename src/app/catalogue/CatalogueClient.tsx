@@ -1011,12 +1011,12 @@ export default function CatalogueClient({
                   href={`/produit/${product.id}`}
                   className="group flex h-full flex-col overflow-hidden rounded-xl border border-[#e4ded4] bg-white shadow-sm transition hover:-translate-y-1 hover:border-[var(--kc-accent)] hover:shadow-xl"
                 >
-                  <div className="relative h-48 overflow-hidden bg-[#fffdf7] p-2 min-[390px]:h-52 sm:h-64 sm:p-3 lg:h-80">
+                  <div className="relative h-44 overflow-hidden bg-[#f4efe7] min-[390px]:h-48 sm:h-64 lg:h-80">
                     {getProductImage(product) ? (
                       <img
                         src={getProductImage(product)}
                         alt={product.name}
-                        className="h-full w-full object-contain transition duration-300 group-hover:scale-105"
+                        className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-105"
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center text-gray-400">

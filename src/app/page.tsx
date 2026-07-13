@@ -414,12 +414,12 @@ export default function HomePage() {
                     href={`/produit/${product.id}`}
                     className="kidiclass-card group flex w-[68vw] min-w-[220px] max-w-[280px] flex-none snap-start flex-col overflow-hidden sm:w-[30%] sm:min-w-0 sm:max-w-none lg:w-[23.5%]"
                   >
-                    <div className="relative h-56 overflow-hidden bg-[#fffdf7] p-2 sm:h-72 sm:p-3">
+                    <div className="relative h-48 overflow-hidden bg-[#f4efe7] sm:h-72">
                       {getProductImage(product) ? (
                         <img
                           src={getProductImage(product)}
                           alt={product.name}
-                          className="h-full w-full object-contain transition duration-300 group-hover:scale-105"
+                          className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-105"
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center text-gray-400">
