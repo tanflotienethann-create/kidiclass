@@ -1451,17 +1451,17 @@ Merci de me communiquer le montant total avec livraison.
             {cart.map((item, index) => (
               <div
                 key={`${item.productId}-${item.selectedSize}-${index}`}
-                className="grid grid-cols-[58px_1fr] gap-3 border-b border-gray-100 pb-3 sm:grid-cols-[70px_1fr] sm:gap-4 sm:pb-4"
+                className="grid grid-cols-[76px_1fr] gap-3 border-b border-gray-100 pb-3 sm:grid-cols-[86px_1fr] sm:gap-4 sm:pb-4"
               >
-                <div className="overflow-hidden rounded-xl bg-gray-100 sm:rounded-2xl">
+                <div className="overflow-hidden rounded-xl border border-gray-100 bg-[#fffdf7] p-1 sm:rounded-2xl">
                   {item.productImage ? (
                     <img
                       src={item.productImage}
                       alt={item.productName}
-                      className="h-16 w-full object-cover object-top sm:h-20"
+                      className="h-20 w-full object-contain sm:h-24"
                     />
                   ) : (
-                    <div className="h-16 bg-gray-100 sm:h-20" />
+                    <div className="h-20 bg-gray-100 sm:h-24" />
                   )}
                 </div>
 

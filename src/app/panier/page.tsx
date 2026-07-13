@@ -411,19 +411,19 @@ export default function PanierPage() {
                 key={`${item.productId}-${item.selectedSize}-${index}`}
                 className="rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:p-5"
               >
-                <div className="grid gap-3 min-[420px]:grid-cols-[96px_1fr] md:grid-cols-[150px_1fr_auto] md:gap-5">
+                <div className="grid gap-3 min-[420px]:grid-cols-[118px_1fr] md:grid-cols-[170px_1fr_auto] md:gap-5">
                   <Link
                     href={`/produit/${item.productId}`}
-                    className="block h-32 overflow-hidden rounded-xl bg-gray-100 min-[420px]:h-full md:h-auto md:rounded-[1.5rem]"
+                    className="block h-44 overflow-hidden rounded-2xl border border-gray-100 bg-[#fffdf7] p-2 min-[420px]:aspect-square min-[420px]:h-auto md:rounded-[1.5rem]"
                   >
                     {item.productImage ? (
                       <img
                         src={item.productImage}
                         alt={item.productName}
-                        className="h-full w-full object-cover object-top transition hover:scale-105"
+                        className="h-full w-full object-contain transition hover:scale-105"
                       />
                     ) : (
-                      <div className="flex h-full min-h-32 items-center justify-center text-sm font-bold text-gray-400 md:min-h-44">
+                      <div className="flex h-full min-h-44 items-center justify-center text-sm font-bold text-gray-400 min-[420px]:min-h-0">
                         Aucune image
                       </div>
                     )}
