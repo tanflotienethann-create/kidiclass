@@ -2,14 +2,20 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
+import {
+  AUTH_COUNTRY_CODE_OPTIONS,
+  DEFAULT_AUTH_COUNTRY_CODE_LABEL,
+  getAuthCountryCodeFromLabel,
+  getPhonePasswordAuthEmail,
+  isValidPhoneForAuth,
+  normalizePhoneForAuth,
+} from "@/lib/phone";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { SITE_URL } from "@/lib/site";
 import {
   Eye,
   EyeOff,
   LockKeyhole,
-  Mail,
   Phone,
   UserPlus,
   UserRound,
@@ -18,20 +24,28 @@ import {
 function translateAuthError(message: string) {
   const lowerMessage = message.toLowerCase();
 
-  if (lowerMessage.includes("email rate limit exceeded")) {
-    return "Trop de tentatives avec cette adresse email. Veuillez patienter quelques minutes avant de réessayer.";
+  if (lowerMessage.includes("rate limit")) {
+    return "Trop de tentatives. Veuillez patienter quelques minutes avant de réessayer.";
   }
 
   if (lowerMessage.includes("user already registered")) {
-    return "Un compte existe déjà avec cette adresse email.";
+    return "Un compte existe déjà avec ce numéro de téléphone.";
   }
 
   if (lowerMessage.includes("already registered")) {
-    return "Un compte existe déjà avec cette adresse email.";
+    return "Un compte existe déjà avec ce numéro de téléphone.";
+  }
+
+  if (lowerMessage.includes("email not confirmed")) {
+    return "La création sans confirmation email n’est pas encore activée dans Supabase.";
   }
 
   if (lowerMessage.includes("invalid email")) {
-    return "L’adresse email renseignée n’est pas valide.";
+    return "Ce numéro de téléphone ne peut pas être utilisé pour créer un compte.";
+  }
+
+  if (lowerMessage.includes("invalid phone") || lowerMessage.includes("phone")) {
+    return "Le numéro de téléphone renseigné n’est pas valide.";
   }
 
   if (lowerMessage.includes("password")) {
@@ -63,8 +77,10 @@ export default function RegisterPage() {
   const router = useRouter();
 
   const [name, setName] = useState("");
+  const [countryCodeLabel, setCountryCodeLabel] = useState(
+    DEFAULT_AUTH_COUNTRY_CODE_LABEL,
+  );
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -94,14 +110,24 @@ export default function RegisterPage() {
       return;
     }
 
+    const selectedCountryCode = getAuthCountryCodeFromLabel(countryCodeLabel);
+    const normalizedPhone = normalizePhoneForAuth(phone, selectedCountryCode);
+
+    if (!isValidPhoneForAuth(normalizedPhone)) {
+      setMessage("Veuillez renseigner un numéro de téléphone valide.");
+      setLoading(false);
+      return;
+    }
+
     const nextPath = getSafeNextPath();
     const { data, error } = await supabase.auth.signUp({
-      email,
+      email: getPhonePasswordAuthEmail(normalizedPhone),
       password,
       options: {
-        emailRedirectTo: `${SITE_URL}/login?next=${encodeURIComponent(
-          nextPath,
-        )}`,
+        data: {
+          full_name: name.trim(),
+          role: "client",
+        },
       },
     });
 
@@ -115,9 +141,9 @@ export default function RegisterPage() {
       const { error: profileError } = await supabase.from("profiles").upsert([
         {
           id: data.user.id,
-          email,
-          full_name: name,
-          phone,
+          email: null,
+          full_name: name.trim(),
+          phone: normalizedPhone,
           role: "client",
         },
       ]);
@@ -243,44 +269,38 @@ export default function RegisterPage() {
                   Téléphone
                 </span>
 
-                <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 focus-within:border-[#1db7bd]">
-                  <Phone
-                    size={20}
-                    className="text-[#f36f45]"
-                    strokeWidth={2.5}
-                  />
+                <div className="grid gap-2 rounded-2xl border border-gray-200 bg-white p-2 focus-within:border-[#1db7bd] sm:grid-cols-[150px_1fr]">
+                  <select
+                    value={countryCodeLabel}
+                    onChange={(e) => setCountryCodeLabel(e.target.value)}
+                    className="min-h-12 rounded-xl bg-[#fff1f5] px-3 text-sm font-black text-[#d9512f] outline-none"
+                    aria-label="Indicatif téléphonique"
+                  >
+                    {AUTH_COUNTRY_CODE_OPTIONS.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
 
-                  <input
-                    type="tel"
-                    placeholder="Numéro de téléphone"
-                    className="w-full bg-transparent py-4 text-black outline-none"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    required
-                  />
-                </div>
-              </label>
+                  <div className="flex items-center gap-3 px-2">
+                    <Phone
+                      size={20}
+                      className="text-[#f36f45]"
+                      strokeWidth={2.5}
+                    />
 
-              <label className="block">
-                <span className="mb-2 block text-sm font-black text-gray-700">
-                  Email
-                </span>
-
-                <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 focus-within:border-[#1db7bd]">
-                  <Mail
-                    size={20}
-                    className="text-[#1db7bd]"
-                    strokeWidth={2.5}
-                  />
-
-                  <input
-                    type="email"
-                    placeholder="votre@email.com"
-                    className="w-full bg-transparent py-4 text-black outline-none"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
+                    <input
+                      type="tel"
+                      inputMode="tel"
+                      autoComplete="tel"
+                      placeholder="Numéro de téléphone"
+                      className="w-full bg-transparent py-3 text-black outline-none"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      required
+                    />
+                  </div>
                 </div>
               </label>
 

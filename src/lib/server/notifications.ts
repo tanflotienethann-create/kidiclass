@@ -1,9 +1,13 @@
 import "server-only";
 
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import {
+  createClient,
+  type SupabaseClient,
+  type User,
+} from "@supabase/supabase-js";
 
 type AdminVerification =
-  | { authorized: true; supabase: SupabaseClient }
+  | { authorized: true; supabase: SupabaseClient; user: User }
   | { authorized: false; status: number; error: string };
 
 type BrevoEmail = {
@@ -52,7 +56,7 @@ export async function verifyAdminRequest(
     return { authorized: false, status: 403, error: "Accès administrateur requis." };
   }
 
-  return { authorized: true, supabase };
+  return { authorized: true, supabase, user: userData.user };
 }
 
 export function normalizeSmsRecipient(phone: string) {

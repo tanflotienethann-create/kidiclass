@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProductAvailabilityLabel } from "@/lib/productAvailability";
 import { supabase } from "@/lib/supabase";
+import ProductQuickAddButton from "@/components/ProductQuickAddButton";
 import ProductGallery from "./ProductGallery";
 import ProductActions from "./ProductActions";
 import {
@@ -59,6 +60,23 @@ type ProductVariant = {
   size: string | null;
   color: string | null;
   stock: number | null;
+};
+
+type SuggestedProduct = {
+  id: number;
+  name: string;
+  price: number;
+  old_price: number | null;
+  stock: number;
+  image_url: string | null;
+  images: string[] | null;
+  category: string | null;
+  product_type: string | null;
+  character_theme: string | null;
+  school_level: string | null;
+  is_promo: boolean | null;
+  is_new: boolean | null;
+  is_favorite: boolean | null;
 };
 
 function PackContentsCard({ packItems }: { packItems: PackItem[] }) {
@@ -124,6 +142,155 @@ function PackContentsCard({ packItems }: { packItems: PackItem[] }) {
         })}
       </div>
     </div>
+  );
+}
+
+function getSuggestedProductImage(product: SuggestedProduct) {
+  if (product.images && product.images.length > 0) return product.images[0];
+  return product.image_url || "";
+}
+
+function getSuggestionScore(product: Product, suggestion: SuggestedProduct) {
+  let score = 0;
+
+  if (product.category && product.category === suggestion.category) score += 5;
+  if (product.product_type && product.product_type === suggestion.product_type) {
+    score += 4;
+  }
+  if (
+    product.character_theme &&
+    product.character_theme === suggestion.character_theme
+  ) {
+    score += 3;
+  }
+  if (product.school_level && product.school_level === suggestion.school_level) {
+    score += 2;
+  }
+  if (Number(suggestion.stock || 0) > 0) score += 1;
+  if (suggestion.is_promo || suggestion.is_new || suggestion.is_favorite) {
+    score += 0.5;
+  }
+
+  return score;
+}
+
+function getProductSuggestions(
+  product: Product,
+  suggestions: SuggestedProduct[],
+) {
+  const scoredSuggestions = suggestions
+    .map((suggestion, index) => ({
+      suggestion,
+      index,
+      score: getSuggestionScore(product, suggestion),
+    }))
+    .sort((first, second) => {
+      if (second.score !== first.score) return second.score - first.score;
+      return first.index - second.index;
+    });
+
+  const relatedSuggestions = scoredSuggestions
+    .filter((item) => item.score > 0)
+    .map((item) => item.suggestion);
+
+  const fallbackSuggestions = scoredSuggestions.map((item) => item.suggestion);
+
+  return (relatedSuggestions.length > 0
+    ? relatedSuggestions
+    : fallbackSuggestions
+  ).slice(0, 4);
+}
+
+function ProductSuggestions({
+  suggestions,
+}: {
+  suggestions: SuggestedProduct[];
+}) {
+  if (suggestions.length === 0) return null;
+
+  return (
+    <section className="rounded-[2rem] border border-gray-100 bg-white p-4 shadow-sm sm:rounded-[2.5rem] sm:p-6">
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#1db7bd]">
+            Suggestions
+          </p>
+          <h2 className="mt-1 text-2xl font-black text-gray-950">
+            Vous aimerez aussi
+          </h2>
+        </div>
+
+        <Link
+          href="/catalogue"
+          className="hidden rounded-full bg-[#e9fbfc] px-4 py-2 text-sm font-black text-[#087f83] hover:bg-[#1db7bd] hover:text-white sm:inline-flex"
+        >
+          Catalogue
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        {suggestions.map((suggestion) => {
+          const image = getSuggestedProductImage(suggestion);
+          const isOutOfStock = Number(suggestion.stock || 0) <= 0;
+          const hasOldPrice =
+            suggestion.old_price !== null &&
+            Number(suggestion.old_price) > Number(suggestion.price);
+
+          return (
+            <article
+              key={suggestion.id}
+              className="flex min-h-full flex-col overflow-hidden rounded-2xl border border-[#f4efe7] bg-[#fffdf7] shadow-sm"
+            >
+              <Link href={`/produit/${suggestion.id}`} className="block">
+                <div className="flex aspect-square items-center justify-center bg-white p-3">
+                  {image ? (
+                    <img
+                      src={image}
+                      alt={suggestion.name}
+                      className="h-full w-full object-contain object-center"
+                    />
+                  ) : (
+                    <div className="h-full w-full rounded-2xl bg-[#e9fbfc]" />
+                  )}
+                </div>
+              </Link>
+
+              <div className="flex flex-1 flex-col p-3 sm:p-4">
+                <p className="line-clamp-2 text-sm font-black leading-tight text-gray-950 sm:text-base">
+                  {suggestion.name}
+                </p>
+
+                <div className="mt-2">
+                  <p className="text-base font-black text-[#f36f45] sm:text-lg">
+                    {Number(suggestion.price).toLocaleString("fr-FR")} FCFA
+                  </p>
+                  {hasOldPrice && (
+                    <p className="text-xs font-black text-gray-400 line-through">
+                      {Number(suggestion.old_price).toLocaleString("fr-FR")} FCFA
+                    </p>
+                  )}
+                </div>
+
+                <div className="mt-auto pt-3">
+                  <ProductQuickAddButton
+                    productId={suggestion.id}
+                    productName={suggestion.name}
+                    productPrice={Number(suggestion.price)}
+                    productImage={image}
+                    stock={Number(suggestion.stock || 0)}
+                    className={`w-full px-3 py-2.5 text-xs ${
+                      isOutOfStock
+                        ? "bg-gray-200 text-gray-500"
+                        : "bg-[#f36f45] text-white hover:bg-[#e85e33]"
+                    }`}
+                  />
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -200,6 +367,21 @@ export default async function ProductPage({
           100
       )
     : 0;
+
+  const { data: suggestionData } = await supabase
+    .from("products")
+    .select(
+      "id,name,price,old_price,stock,image_url,images,category,product_type,character_theme,school_level,is_promo,is_new,is_favorite",
+    )
+    .neq("id", product.id)
+    .or("is_archived.is.false,is_archived.is.null")
+    .order("created_at", { ascending: false })
+    .limit(40);
+
+  const suggestedProducts = getProductSuggestions(
+    product,
+    (suggestionData as SuggestedProduct[]) || [],
+  );
 
   return (
     <main className="min-h-screen bg-[#fffdf7]">
@@ -513,6 +695,8 @@ export default async function ProductPage({
               </p>
             </div>
           </div>
+
+          <ProductSuggestions suggestions={suggestedProducts} />
         </div>
       </section>
     </main>

@@ -2,10 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import {
+  AUTH_COUNTRY_CODE_OPTIONS,
+  DEFAULT_AUTH_COUNTRY_CODE_LABEL,
+  getAuthCountryCodeFromLabel,
+  getPhonePasswordAuthEmail,
+  isValidPhoneForAuth,
+  normalizePhoneForAuth,
+} from "@/lib/phone";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, EyeOff, LockKeyhole, LogIn, Mail } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole, LogIn, Phone } from "lucide-react";
 
 function getSafeNextPath() {
   if (typeof window === "undefined") return "/compte";
@@ -17,10 +25,23 @@ function getSafeNextPath() {
     : "/compte";
 }
 
+function translateLoginError(message: string) {
+  const lowerMessage = message.toLowerCase();
+
+  if (lowerMessage.includes("email not confirmed")) {
+    return "La connexion sans confirmation email n’est pas encore activée dans Supabase.";
+  }
+
+  return "Erreur : numéro de téléphone ou mot de passe incorrect.";
+}
+
 export default function LoginPage() {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
+  const [countryCodeLabel, setCountryCodeLabel] = useState(
+    DEFAULT_AUTH_COUNTRY_CODE_LABEL,
+  );
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
@@ -37,13 +58,22 @@ export default function LoginPage() {
     setMessage("");
     setLoading(true);
 
+    const selectedCountryCode = getAuthCountryCodeFromLabel(countryCodeLabel);
+    const normalizedPhone = normalizePhoneForAuth(phone, selectedCountryCode);
+
+    if (!isValidPhoneForAuth(normalizedPhone)) {
+      setMessage("Veuillez renseigner un numéro de téléphone valide.");
+      setLoading(false);
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
-      email,
+      email: getPhonePasswordAuthEmail(normalizedPhone),
       password,
     });
 
     if (error) {
-      setMessage("Erreur : email ou mot de passe incorrect.");
+      setMessage(translateLoginError(error.message));
       setLoading(false);
       return;
     }
@@ -80,7 +110,7 @@ export default function LoginPage() {
               </h1>
 
               <p className="mt-6 max-w-lg text-lg leading-8 text-gray-700">
-                Connectez-vous pour accéder à votre compte KidiClass, retrouver
+                Connectez-vous avec votre numéro pour accéder à votre compte KidiClass, retrouver
                 vos commandes et suivre vos points fidélité.
               </p>
             </div>
@@ -140,32 +170,48 @@ export default function LoginPage() {
               </h1>
 
               <p className="mt-3 text-sm font-bold leading-6 text-gray-500">
-                Connectez-vous à votre compte client KidiClass.
+                Connectez-vous avec votre numéro de téléphone.
               </p>
             </div>
 
             <div className="space-y-4">
               <label className="block">
                 <span className="mb-2 block text-sm font-black text-gray-700">
-                  Email
+                  Téléphone
                 </span>
 
-                <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 focus-within:border-[#1db7bd]">
-                  <Mail
-                    size={20}
-                    className="text-[#1db7bd]"
-                    strokeWidth={2.5}
-                  />
+                <div className="grid gap-2 rounded-2xl border border-gray-200 bg-white p-2 focus-within:border-[#1db7bd] sm:grid-cols-[150px_1fr]">
+                  <select
+                    value={countryCodeLabel}
+                    onChange={(e) => setCountryCodeLabel(e.target.value)}
+                    className="min-h-12 rounded-xl bg-[#e9fbfc] px-3 text-sm font-black text-[#057b80] outline-none"
+                    aria-label="Indicatif téléphonique"
+                  >
+                    {AUTH_COUNTRY_CODE_OPTIONS.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
 
-                  <input
-                    type="email"
-                    autoComplete="email"
-                    placeholder="votre@email.com"
-                    className="w-full bg-transparent py-4 text-black outline-none"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
+                  <div className="flex items-center gap-3 px-2">
+                    <Phone
+                      size={20}
+                      className="text-[#1db7bd]"
+                      strokeWidth={2.5}
+                    />
+
+                    <input
+                      type="tel"
+                      inputMode="tel"
+                      autoComplete="tel"
+                      placeholder="0779311555"
+                      className="w-full bg-transparent py-3 text-black outline-none"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      required
+                    />
+                  </div>
                 </div>
               </label>
 

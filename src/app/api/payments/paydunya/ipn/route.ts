@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { markSecondInstallmentPaid } from "@/lib/paymentWorkflow";
 import { getPaydunyaIpnUrl, verifyPaydunyaHash } from "@/lib/server/paydunya";
+import { sendAdminPushNotification } from "@/lib/server/pushNotifications";
+
+export const runtime = "nodejs";
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -152,6 +155,15 @@ export async function POST(request: Request) {
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  if (status === "completed") {
+    await sendAdminPushNotification({
+      title: "Paiement confirmé KidiClass",
+      body: `Commande ${orderReference}`,
+      url: "/admin/commandes",
+      tag: `kidiclass-payment-${orderReference}`,
+    });
   }
 
   return new Response("OK", { status: 200 });

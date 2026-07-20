@@ -113,6 +113,7 @@ const categoryAliases: Record<string, string[]> = {
 const mealProductTypes = [
   "Gourde",
   "Boîte à goûter",
+  "Sac à goûter",
   "Set gourde et boîte à goûter",
 ];
 
@@ -140,6 +141,9 @@ const mealCategoryTypeKeys: Record<string, string[]> = {
   [normalizeFilterText("Boîtes à goûter")]: [
     normalizeFilterText("Boîte à goûter"),
   ],
+  [normalizeFilterText("Sacs à goûter")]: [
+    normalizeFilterText("Sac à goûter"),
+  ],
   [normalizeFilterText("Sets gourde & boîte à goûter")]: [
     normalizeFilterText("Set gourde et boîte à goûter"),
     normalizeFilterText("Set goûter"),
@@ -150,6 +154,14 @@ const mealCategoryTypeKeys: Record<string, string[]> = {
 
 function isMealProductType(productType: string | null | undefined) {
   return mealProductTypeKeys.has(normalizeFilterText(productType));
+}
+
+function isMealProduct(product: Product) {
+  const categoryKey = normalizeFilterText(product.category);
+  return (
+    isMealProductType(product.product_type) ||
+    Boolean(mealCategoryTypeKeys[categoryKey])
+  );
 }
 
 function matchesMealProductTypeFilter(
@@ -550,6 +562,7 @@ export default function CatalogueClient({
       const matchesSearch = !query || searchableText.includes(query);
 
       const isMealDepartment = departmentId === "repas-gouters";
+      const isSchoolDepartment = departmentId === "ecole-sorties";
 
       const categoryValues = categoryAliases[category] || [category];
 
@@ -561,8 +574,9 @@ export default function CatalogueClient({
       const matchesDepartment =
         isMealDepartment
           ? isMealProductType(product.product_type)
-          : !effectiveAllowedCategories ||
-            effectiveAllowedCategories.includes(product.category);
+          : (!effectiveAllowedCategories ||
+              effectiveAllowedCategories.includes(product.category)) &&
+            (!isSchoolDepartment || !isMealProduct(product));
 
       const matchesType =
         isMealDepartment

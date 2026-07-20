@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import PwaInstallPrompt from "@/components/PwaInstallPrompt";
 import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -47,6 +48,7 @@ export default function RootLayout({
         <Navbar />
         {children}
         <Footer />
+        <PwaInstallPrompt />
       </body>
     </html>
   );

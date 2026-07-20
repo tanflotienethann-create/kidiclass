@@ -11,6 +11,29 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShieldCheck, Mail, LockKeyhole } from "lucide-react";
 
+function getAdminLoginErrorMessage(message: string) {
+  const lowerMessage = message.toLowerCase();
+
+  if (lowerMessage.includes("email not confirmed")) {
+    return "L’email admin n’est pas confirmé. Dans Supabase, confirmez l’utilisateur admin ou désactivez la confirmation email.";
+  }
+
+  if (
+    lowerMessage.includes("email") &&
+    (lowerMessage.includes("disabled") ||
+      lowerMessage.includes("provider") ||
+      lowerMessage.includes("not enabled"))
+  ) {
+    return "La connexion par email est désactivée dans Supabase. Activez le provider Email pour l’admin.";
+  }
+
+  if (lowerMessage.includes("invalid login credentials")) {
+    return "Email ou mot de passe administrateur incorrect.";
+  }
+
+  return `Connexion admin impossible : ${message}`;
+}
+
 export default function AdminLoginPage() {
   const router = useRouter();
 
@@ -28,14 +51,29 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setMessage("");
     setLoading(true);
+    clearAdminAccessCache();
+
+    const adminEmail = email.trim().toLowerCase();
+
+    if (!adminEmail || !password) {
+      setMessage("Veuillez renseigner l’email admin et le mot de passe.");
+      setLoading(false);
+      return;
+    }
+
+    await supabase.auth.signOut();
 
     const { data, error } = await supabase.auth.signInWithPassword({
-      email,
+      email: adminEmail,
       password,
     });
 
     if (error || !data.user) {
-      setMessage("Email ou mot de passe administrateur incorrect.");
+      setMessage(
+        error
+          ? getAdminLoginErrorMessage(error.message)
+          : "Email ou mot de passe administrateur incorrect.",
+      );
       setLoading(false);
       return;
     }

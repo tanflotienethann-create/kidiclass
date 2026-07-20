@@ -10,7 +10,6 @@ import {
   BadgeCheck,
   Gift,
   LogOut,
-  Mail,
   PackageCheck,
   Phone,
   ShoppingBag,
@@ -20,7 +19,6 @@ import {
 
 type Profile = {
   full_name: string | null;
-  email: string | null;
   phone: string | null;
   role: string | null;
 };
@@ -74,7 +72,7 @@ export default function ComptePage() {
       const [profileResult, ordersResult] = await Promise.all([
         supabase
           .from("profiles")
-          .select("full_name,email,phone,role")
+          .select("full_name,phone,role")
           .eq("id", user.id)
           .maybeSingle(),
         supabase
@@ -184,16 +182,6 @@ export default function ComptePage() {
                 </p>
                 <p className="font-black text-gray-950">
                   {profile?.full_name || "Non renseigné"}
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-[#fffdf7] p-4">
-                <p className="mb-1 flex items-center gap-2 text-sm font-black text-gray-500">
-                  <Mail size={17} />
-                  Email
-                </p>
-                <p className="break-all font-black text-gray-950">
-                  {profile?.email || "Non renseigné"}
                 </p>
               </div>
 

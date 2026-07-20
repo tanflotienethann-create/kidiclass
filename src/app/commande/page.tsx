@@ -171,6 +171,26 @@ export default function CommandePage() {
 
   const adminWhatsappNumber = "2250779311555";
 
+  function notifyAdminOrderCreated(reference: string) {
+    const payload = JSON.stringify({ orderReference: reference });
+
+    if ("sendBeacon" in navigator) {
+      const beaconSent = navigator.sendBeacon(
+        "/api/admin-notifications/order-created",
+        new Blob([payload], { type: "application/json" }),
+      );
+
+      if (beaconSent) return;
+    }
+
+    fetch("/api/admin-notifications/order-created", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: payload,
+      keepalive: true,
+    }).catch(() => undefined);
+  }
+
   const selectedCountryCode =
     countryCodes.find((item) => {
       return `${item.country} ${item.code}` === countryCodeLabel;
@@ -911,6 +931,7 @@ Merci de me communiquer le montant total avec livraison.
         return;
       }
 
+      notifyAdminOrderCreated(reference);
       localStorage.removeItem("kidiclass_cart");
       localStorage.removeItem("kidiclass_promo_code");
       window.dispatchEvent(new Event("kidiclass-cart-updated"));
@@ -931,6 +952,7 @@ Merci de me communiquer le montant total avec livraison.
       return;
     }
 
+    notifyAdminOrderCreated(reference);
     localStorage.removeItem("kidiclass_cart");
     localStorage.removeItem("kidiclass_promo_code");
     window.dispatchEvent(new Event("kidiclass-cart-updated"));

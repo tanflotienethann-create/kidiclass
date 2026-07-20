@@ -5,6 +5,8 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { checkAdminAccess, clearAdminAccessCache } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
+import AdminNotificationBell from "./AdminNotificationBell";
+import PwaInstallButton from "@/components/PwaInstallButton";
 import {
   BarChart3,
   BadgePercent,
@@ -163,6 +165,10 @@ export default function AdminShell({
             })}
           </nav>
 
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            <PwaInstallButton compact className="shrink-0" />
+            <AdminNotificationBell />
+
           <div className="hidden shrink-0 items-center gap-2 2xl:flex">
             <Link
               href="/"
@@ -194,6 +200,7 @@ export default function AdminShell({
               <Menu size={24} strokeWidth={2.5} />
             )}
           </button>
+          </div>
         </div>
 
         {mobileMenuOpen && (

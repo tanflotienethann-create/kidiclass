@@ -56,13 +56,14 @@ const mealAllowedProductTypeKeys = new Set(
   [
     "Gourde",
     "Boîte à goûter",
+    "Sac à goûter",
     "Set goûter",
     "Set gourde et boîte à goûter",
   ].map(normalizeTaxonomyText),
 );
 
 const mealAllowedCategoryKeys = new Set(
-  ["Gourdes", "Boîtes à goûter", "Sets gourde & boîte à goûter"].map(
+  ["Gourdes", "Boîtes à goûter", "Sacs à goûter", "Sets gourde & boîte à goûter"].map(
     normalizeTaxonomyText,
   ),
 );
@@ -127,6 +128,11 @@ const defaultMealCategories: TaxonomyCategory[] = [
     productType: "Boîte à goûter",
   },
   {
+    label: "Sacs à goûter",
+    departmentId: "repas-gouters",
+    productType: "Sac à goûter",
+  },
+  {
     label: "Sets gourde & boîte à goûter",
     departmentId: "repas-gouters",
     productType: "Set gourde et boîte à goûter",
@@ -157,13 +163,18 @@ function uniqueCategories(categories: TaxonomyCategory[]) {
 
 export const defaultTaxonomySettings: TaxonomySettings = {
   categories: uniqueCategories([
-    ...schoolOfferCategories.map((category) => ({
-      label: category.label,
-      departmentId: "ecole-sorties" as const,
-      productType: category.productType,
-      schoolLevel: category.schoolLevel,
-      schoolGroup: category.group,
-    })),
+    ...schoolOfferCategories
+      .filter(
+        (category) =>
+          category.group !== "snacks" && category.label !== "Sacs à goûter",
+      )
+      .map((category) => ({
+        label: category.label,
+        departmentId: "ecole-sorties" as const,
+        productType: category.productType,
+        schoolLevel: category.schoolLevel,
+        schoolGroup: category.group,
+      })),
     ...defaultMealCategories,
     ...extraDefaultCategories,
   ]),
@@ -258,7 +269,8 @@ export function getTaxonomyDepartmentCategories(
     .filter((category) => category.departmentId === departmentId)
     .filter(
       (category) =>
-        departmentId !== "repas-gouters" || isMealCategoryAllowed(category),
+        (departmentId !== "repas-gouters" || isMealCategoryAllowed(category)) &&
+        (departmentId !== "ecole-sorties" || !isMealCategoryAllowed(category)),
     )
     .map((category) => category.label);
 }
