@@ -27,9 +27,11 @@ function isIosDevice() {
 export default function PwaInstallButton({
   compact = false,
   className = "",
+  label,
 }: {
   compact?: boolean;
   className?: string;
+  label?: string;
 }) {
   const [installPrompt, setInstallPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
@@ -85,7 +87,7 @@ export default function PwaInstallButton({
         ) : (
           <Smartphone size={18} strokeWidth={2.6} />
         )}
-        <span>{compact ? "Installer" : "Installer KidiClass"}</span>
+        <span>{label || (compact ? "Installer" : "Installer KidiClass")}</span>
       </button>
 
       {manualHelpVisible && (

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Mail, Phone, Truck } from "lucide-react";
+import PwaInstallButton from "./PwaInstallButton";
 
 const shopLinks = [
   { label: "Promotions", href: "/promotions" },
@@ -192,6 +193,11 @@ export default function Footer() {
             <WhatsAppIcon />
             Nous contacter sur WhatsApp
           </a>
+
+          <PwaInstallButton
+            label="Ajouter à l'écran d'accueil"
+            className="flex justify-center sm:justify-start"
+          />
 
           <p className="flex items-start gap-3 font-bold leading-5 text-gray-600 sm:leading-6">
             <Truck
